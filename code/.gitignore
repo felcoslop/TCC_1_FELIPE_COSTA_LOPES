@@ -7,6 +7,9 @@ data/**/*.csv
 # Excluir modelos treinados (.h5)
 *.h5
 
+# Excluir arrays NumPy (.npy)
+*.npy
+
 # Excluir cache Python
 __pycache__/
 *.py[cod]
