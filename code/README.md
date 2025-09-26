@@ -5,7 +5,7 @@
 
 **Trabalho de Conclusão de Curso 1 - Engenharia de Sistemas - UFMG**  
 **Desenvolvido por: [FELIPE COSTA LOPES](https://github.com/felcoslop)**  
-**Orientadora: [GABRIELA NUNES LOPES]**
+**Orientadora: GABRIELA NUNES LOPES**
 **Repositório GitHub:** [https://github.com/felcoslop/TCC_1_FELIPE_COSTA_LOPES](https://github.com/felcoslop/TCC_1_FELIPE_COSTA_LOPES)
 
 ---
