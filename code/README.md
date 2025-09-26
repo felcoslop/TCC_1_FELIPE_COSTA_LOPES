@@ -1,31 +1,12 @@
+
 # Sistema de Detecção de Estado Operacional para Motobomba Industrial com Deep Learning
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)
-[![TensorFlow](https://img.shields.io/badge/TensorFlow-2.13.0-orange.svg)](https://tensorflow.org)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 **Trabalho de Conclusão de Curso 1 - Engenharia de Sistemas - UFMG**  
 **Desenvolvido por: [FELIPE COSTA LOPES](https://github.com/felcoslop)**  
 **Orientadora: [GABRIELA NUNES LOPES]**
-
 **Repositório GitHub:** [https://github.com/felcoslop/TCC_1_FELIPE_COSTA_LOPES](https://github.com/felcoslop/TCC_1_FELIPE_COSTA_LOPES)
-
----
-
-## Índice
-
-- [Visão Geral](#visão-geral)
-- [Características Principais](#características-principais)
-- [Arquitetura do Sistema](#arquitetura-do-sistema)
-- [Dados Utilizados](#dados-utilizados)
-- [Instalação](#instalação)
-- [Como Usar](#como-usar)
-- [Resultados](#resultados)
-- [Tecnologias](#tecnologias)
-- [Metodologia](#metodologia)
-- [Estrutura do Projeto](#estrutura-do-projeto)
-- [Contribuição](#contribuição)
-- [Licença](#licença)
 
 ---
 
@@ -134,40 +115,6 @@ graph TB
 
 ---
 
-## ⚙️ Instalação
-
-### 📋 Pré-requisitos
-
-- Python 3.8+
-- Git
-- Ambiente virtual (recomendado)
-- 8GB+ RAM recomendado
-
-### 🚀 Instalação Completa
-
-```bash
-# 1. Clone o repositório
-git clone https://github.com/seu-usuario/motobomba-detection.git
-cd motobomba-detection/code
-
-# 2. Crie um ambiente virtual
-python -m venv motobomba_env
-
-# 3. Ative o ambiente virtual
-# Windows:
-motobomba_env\Scripts\activate
-# Linux/Mac:
-source motobomba_env/bin/activate
-
-# 4. Instale as dependências
-pip install -r requirements.txt
-
-# 5. Execute o pipeline completo
-python scripts/normalizar_dados_kmeans.py
-python scripts/kmeans_classificacao_moderado.py
-python scripts/treinar_modelo_robusto_kmeans.py
-```
-
 ### 📦 Dependências Principais
 
 ```bash
@@ -183,25 +130,7 @@ pip install h5py==3.14.0
 
 ---
 
-## 🔧 Como Usar
-
-### 🚀 Pipeline Completo
-
-```bash
-# 1. Normalizar dados brutos
-python scripts/normalizar_dados_kmeans.py
-
-# 2. Executar K-means com seleção inteligente
-python scripts/kmeans_classificacao_moderado.py
-
-# 3. Treinar modelo CNN + ConvAE robusto
-python scripts/treinar_modelo_robusto_kmeans.py
-
-# 4. Classificar em produção
-python scripts/classificador_producao.py
-```
-
-### 🎯 Classificação em Tempo Real
+### 🎯 Classificação com Range de Data
 
 ```bash
 # Classificar arquivo completo
@@ -217,29 +146,6 @@ python scripts/classificador_producao.py \
     --janela 60 \
     --inicio "2025-02-18 16:30:00" \
     --fim "2025-02-18 16:45:00"
-```
-
-### 📊 Exemplo de Uso Programático
-
-```python
-from scripts.classificador_producao import ClassificadorProducao
-
-# Inicializar classificador
-classificador = ClassificadorProducao()
-
-# Processar nova medição
-dados_linha = {
-    'mag_x': 0.5, 'mag_y': 0.3, 'mag_z': 0.8,
-    'object_temp': 25.0,
-    'vel_max_x': 1.2, 'vel_max_y': 0.9, 'vel_rms_x': 0.8,
-    'vel_max_z': 1.1, 'vel_rms_y': 0.7, 'vel_rms_z': 0.9,
-    'time': '2025-02-19 16:37:00'
-}
-
-resultado = classificador.classificar_linha(dados_linha)
-print(f"Estado: {resultado['predicao']}")
-print(f"Probabilidade: {resultado['prob_ligado']:.3f}")
-print(f"Incerteza: {resultado['incerteza']:.3f}")
 ```
 
 ---
@@ -265,26 +171,6 @@ print(f"Incerteza: {resultado['incerteza']:.3f}")
 - **Período analisado**: 6 meses
 - **Janela temporal**: 30 timesteps (10 minutos)
 - **Features utilizadas**: 19 variáveis normalizadas
-
-### 🏆 Benefícios Alcançados
-
-- ✅ **Redução de custos** em instrumentação
-- ✅ **Monitoramento contínuo** 24/7
-- ✅ **Detecção precisa** de estado operacional
-- ✅ **Integração fácil** com sistemas existentes
-- ✅ **Qualidade superior**: Dados 12x mais limpos
-- ✅ **Performance excepcional**: 99.92% vs modelos anteriores
-
-### 📈 Comparação: Antes vs Depois
-
-| Aspecto | Abordagem Anterior | Nova Abordagem |
-|---------|-------------------|----------------|
-| **Dados** | 772.231 amostras com ruído | 93.910 amostras limpos |
-| **Clusters** | Todos os 6 clusters | Apenas 2 com alta certeza |
-| **Acurácia** | ~85-90% | **99.92%** |
-| **Incerteza** | Alta | **0.0003** |
-| **Treinamento** | Lento e instável | **43 minutos** |
-| **Confiabilidade** | Moderada | **Muito alta** |
 
 ---
 
@@ -458,8 +344,14 @@ code/
 ### 5. **`calcular_metricas_completas.py`**
 - **Função**: Calcula métricas para monografia
 - **Entrada**: Modelos treinados
-- **Saída**: Métricas e dados para LaTeX
+- **Saída**: Métricas
 - **Tempo**: ~2 minutos
+- 
+### 6. **`unificar_dados_final.py`**
+- **Função**: Unifica dados brutos por timestamp
+- **Entrada**: `dados_c_636.csv`, `dados_estimated_preenchidos_avancado.csv`, `dados_slip_c_636.csv`
+- **Saída**: `dados_unificados_final.csv` (772k amostras)
+- **Tempo**: ~3-5 minutos
 
 ---
 
@@ -517,56 +409,6 @@ Dense(2, activation='softmax')  # LIGADO/DESLIGADO
 - **Métrica**: Entropia das predições
 - **Threshold**: 0.5 para alta incerteza
 
----
-
-## Conclusão
-
-Este projeto demonstra como uma **estratégia inteligente de seleção de dados** pode transformar um problema complexo em uma solução de alta performance. Ao focar em **qualidade sobre quantidade**, conseguimos:
-
-1. **Reduzir dados em 87.8%** (772k → 93k)
-2. **Aumentar precisão para 99.92%**
-3. **Manter incerteza muito baixa** (0.0003)
-4. **Criar modelo robusto** e confiável
-
-**O modelo está pronto para produção com confiança total!**
-
----
-
-## Como Subir para o GitHub
-
-Para atualizar seu repositório GitHub com esta versão:
-
-```bash
-# 1. Navegue para a pasta do projeto
-cd "C:\Users\manu_\Downloads\.tex TCC1\code"
-
-# 2. Inicialize o repositório Git (se não existir)
-git init
-
-# 3. Adicione o remote do GitHub
-git remote add origin https://github.com/felcoslop/TCC_1_FELIPE_COSTA_LOPES.git
-
-# 4. Adicione todos os arquivos (exceto CSV que estão no .gitignore)
-git add .
-
-# 5. Faça o commit
-git commit -m "Atualização completa do sistema de detecção de estado operacional
-
-- Sistema CNN + ConvAE com 99.92% de precisão
-- Estratégia inteligente de seleção de dados (K-means)
-- Detecção de incerteza com Monte Carlo Dropout
-- Pipeline completo de processamento
-- Documentação atualizada"
-
-# 6. Force push para substituir a branch principal
-git push -f origin main
-```
-
-**Nota**: O arquivo `.gitignore` já está configurado para excluir automaticamente todos os arquivos `.csv` da pasta `data/`, garantindo que apenas o código e documentação sejam enviados para o GitHub.
-
----
-
-*Sistema de detecção de estado operacional com Deep Learning*
 
 
 
