@@ -4,6 +4,9 @@
 # Excluir arquivos CSV da pasta data
 data/**/*.csv
 
+# Excluir modelos treinados (.h5)
+*.h5
+
 # Excluir cache Python
 __pycache__/
 *.py[cod]
