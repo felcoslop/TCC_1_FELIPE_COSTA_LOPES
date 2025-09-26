@@ -1,0 +1,59 @@
+{
+  "timestamp": "2025-09-25T16:05:31.919051",
+  "modelo": "CNN + ConvAE Robusto com Detec\u00e7\u00e3o de Incerteza",
+  "dataset": "dados_classificados_kmeans_moderado.csv",
+  "window_size": 30,
+  "features": 19,
+  "feature_columns": [
+    "mag_x",
+    "mag_y",
+    "mag_z",
+    "object_temp",
+    "vel_max_x",
+    "vel_max_y",
+    "vel_rms_x",
+    "vel_max_z",
+    "vel_rms_y",
+    "vel_rms_z",
+    "estimated_current",
+    "estimated_rotational_speed",
+    "estimated_vel_rms",
+    "slip_fe_frequency",
+    "slip_fe_magnitude_-_1",
+    "slip_fe_magnitude_0",
+    "slip_fe_magnitude_1",
+    "slip_fr_frequency",
+    "slip_rms"
+  ],
+  "train_sequences": 39971,
+  "test_sequences": 9971,
+  "sequence_shape": [
+    30,
+    19
+  ],
+  "classes": [
+    "DESLIGADO",
+    "LIGADO"
+  ],
+  "epochs_treinamento": 100,
+  "training_times": {
+    "convae_seconds": 1617.7543885707855,
+    "cnn_seconds": 993.5074751377106,
+    "total_seconds": 2611.261863708496
+  },
+  "modelos_salvos": [
+    "models/convae_model_robusto.h5",
+    "models/convae_encoder_robusto.h5",
+    "models/convae_decoder_robusto.h5",
+    "models/cnn_model_robusto.h5",
+    "models/cnn_best_robusto.h5",
+    "models/label_encoder_robusto.pkl"
+  ],
+  "caracteristicas_especiais": [
+    "Detec\u00e7\u00e3o de incerteza com Monte Carlo Dropout",
+    "CNN com arquitetura robusta",
+    "ConvAE para extra\u00e7\u00e3o de features",
+    "Classifica\u00e7\u00e3o LIGADO/DESLIGADO",
+    "Capacidade de detectar quando n\u00e3o tem certeza"
+  ]
+}

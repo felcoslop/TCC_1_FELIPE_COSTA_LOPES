@@ -1,0 +1,43 @@
+{
+  "colunas_utilizadas": [
+    "mag_x",
+    "mag_y",
+    "mag_z",
+    "object_temp",
+    "vel_max_x",
+    "vel_max_y",
+    "vel_rms_x",
+    "vel_max_z",
+    "vel_rms_y",
+    "vel_rms_z",
+    "estimated_current",
+    "estimated_rotational_speed",
+    "estimated_vel_rms",
+    "slip_fe_frequency",
+    "slip_fe_magnitude_-_1",
+    "slip_fe_magnitude_0",
+    "slip_fe_magnitude_1",
+    "slip_fr_frequency",
+    "slip_rms"
+  ],
+  "cluster_ligado": 2,
+  "cluster_desligado": 3,
+  "clusters_intermediarios": [
+    0,
+    1,
+    4,
+    5
+  ],
+  "numero_clusters": 6,
+  "total_amostras_originais": 772231,
+  "amostras_classificadas": 93910,
+  "amostras_ligado": 68014,
+  "amostras_desligado": 25896,
+  "percentual_classificados": 12.160868962784452,
+  "estrategia": "Apenas clusters com alta certeza para treinamento CNN",
+  "criterios_desligado": {
+    "vel_rms_max": 1,
+    "current_max": 10,
+    "rpm": 0
+  }
+}

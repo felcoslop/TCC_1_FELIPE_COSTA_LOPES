@@ -1,0 +1,33 @@
+# Sistema de Detecção de Estado Operacional para Motobomba Industrial
+# Dependências Python para o projeto TCC - Engenharia de Sistemas UFMG
+
+# Core Machine Learning
+tensorflow==2.13.0
+keras==2.13.1
+scikit-learn==1.3.2
+
+# Data Processing
+pandas==2.2.3
+numpy==1.24.3
+scipy==1.11.4
+
+# Visualization
+matplotlib==3.8.4
+seaborn==0.13.2
+
+# Model Persistence
+joblib==1.3.2
+h5py==3.14.0
+
+# Utilities
+python-dateutil==2.8.2
+pytz==2023.3
+
+# Optional: Jupyter for development
+# jupyter==1.0.0
+# notebook==7.0.6
+
+# Optional: Development tools
+# pytest==7.4.3
+# black==23.11.0
+# flake8==6.1.0

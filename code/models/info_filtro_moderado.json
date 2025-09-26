@@ -1,0 +1,18 @@
+{
+  "timestamp": "2025-09-25T11:28:41.576739",
+  "arquivo_original": "data/processed/dados_classificados_kmeans_moderado.csv",
+  "arquivo_filtrado": "data/processed/dados_classificados_kmeans_moderado.csv",
+  "linhas_originais": 772231,
+  "linhas_filtradas": 236749,
+  "linhas_removidas": 535482,
+  "percentual_mantido": 30.657795400599042,
+  "status_mantidos": [
+    "LIGADO",
+    "DESLIGADO"
+  ],
+  "distribuicao_final": {
+    "LIGADO": 168863,
+    "DESLIGADO": 67886
+  },
+  "timestamp_mantido": true
+}
