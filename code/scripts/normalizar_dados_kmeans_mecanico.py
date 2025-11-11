@@ -1,10 +1,17 @@
 """
-Script pra preparar os dados pro K-means funcionar direito.
-Pega o arquivo dados_unificados_final.csv que ja tem tudo junto (20 colunas),
-tira as colunas de identificacao que nao interessam pro algoritmo,
-e deixa todos os valores numa escala padronizada (0 a 1).
-K-means nao precisa separar em treino/teste, entao e direto.
-Mantem o timestamp original pra gente saber quando foi cada coisa.
+Script de normalização para equipamentos MECÂNICOS.
+Foco: Temperatura e Vibração (sem current, sem RPM).
+
+Características dos dados mecânicos:
+- object_temp: Temperatura do equipamento
+- vel_rms_x/y/z: Vibração RMS em 3 eixos  
+- vel_max_x/y/z: Picos de vibração
+- mag_x/y/z: Magnetômetro (para detectar vibrações residuais)
+- Dados de slip: Análise de frequência
+
+Análise de estados:
+- DESLIGADO: Temperatura ambiente + vibrações próximas de zero/residuais
+- LIGADO: Aumento de temperatura + vibrações significativas
 """
 
 import pandas as pd
@@ -89,8 +96,8 @@ def validar_timestamp(df):
         print("  - Aviso: timestamps não estão estritamente ordenados. Mantendo ordem original.")
 
 def carregar_dados(mpoint=None, intervalo_arquivo=None):
-    """Carrega e concatena todos os períodos finalizados"""
-    print("Carregando períodos finalizados...")
+    """Carrega e concatena todos os períodos finalizados (VERSÃO MECÂNICA)"""
+    print("Carregando períodos finalizados (equipamento mecânico)...")
 
     dir_uniao = BASE_DIR / 'data' / 'raw_preenchido'
     
@@ -104,7 +111,9 @@ def carregar_dados(mpoint=None, intervalo_arquivo=None):
 
     if len(arquivos_final) == 0:
         print(f"  - Nenhum arquivo final encontrado em {dir_uniao}")
-        print("Execute primeiro o script de união e sincronização: python scripts/unir_sincronizar_periodos.py --mpoint <mpoint>")
+        print("Execute primeiro:")
+        print(f"  1. python scripts/processar_dados_simples_mecanico.py --mpoint {mpoint}")
+        print(f"  2. python scripts/unir_sincronizar_periodos_mecanico.py --mpoint {mpoint}")
         return None, []
 
     dataframes = []
@@ -153,9 +162,9 @@ def carregar_dados(mpoint=None, intervalo_arquivo=None):
 
     return df, arquivos_origem
 
-def remover_colunas_m_point(df):
+def remover_colunas_auxiliares(df):
     """Remove colunas categóricas e auxiliares (m_point, interpolado, identificadores)"""
-    print("\nRemovendo colunas auxiliares (m_point, interpolado, identificadores)...")
+    print("\nRemovendo colunas auxiliares...")
 
     colunas_remover = []
     for col in df.columns:
@@ -183,9 +192,9 @@ def remover_colunas_m_point(df):
 
     return df_limpo
 
-def analisar_dados(df):
-    """Analisa características dos dados"""
-    print("\nAnalisando características dos dados...")
+def analisar_dados_mecanicos(df):
+    """Analisa características dos dados mecânicos"""
+    print("\nAnalisando características dos dados MECÂNICOS...")
     
     # Informações gerais
     print(f"  - Total de linhas: {len(df):,}")
@@ -197,6 +206,18 @@ def analisar_dados(df):
         colunas_numericas.remove('time')
     
     print(f"  - Colunas numéricas: {len(colunas_numericas)}")
+    
+    # Identificar colunas importantes para equipamentos mecânicos
+    colunas_temp = [col for col in colunas_numericas if 'temp' in col.lower()]
+    colunas_vibracao = [col for col in colunas_numericas if 'vel_' in col.lower()]
+    colunas_mag = [col for col in colunas_numericas if 'mag_' in col.lower()]
+    colunas_slip = [col for col in colunas_numericas if any(x in col.lower() for x in ['fe_', 'fr_', 'rms'])]
+    
+    print(f"\n  Colunas por tipo:")
+    print(f"  - Temperatura: {len(colunas_temp)} ({', '.join(colunas_temp[:3])}...)")
+    print(f"  - Vibração: {len(colunas_vibracao)} ({', '.join(colunas_vibracao[:3])}...)")
+    print(f"  - Magnetômetro: {len(colunas_mag)} ({', '.join(colunas_mag[:3])}...)")
+    print(f"  - Slip: {len(colunas_slip)}")
     
     # Análise de valores nulos
     print("\nAnálise de valores nulos:")
@@ -212,11 +233,15 @@ def analisar_dados(df):
         print("  - Nenhuma coluna com valores nulos!")
     
     # Análise de estatísticas básicas
-    print("\nEstatísticas básicas das colunas numéricas:")
-    stats = df[colunas_numericas].describe()
-    print(f"  - Média das médias: {stats.loc['mean'].mean():.3f}")
-    print(f"  - Desvio padrão médio: {stats.loc['std'].mean():.3f}")
-    print(f"  - Range médio: {(stats.loc['max'] - stats.loc['min']).mean():.3f}")
+    print("\nEstatísticas básicas - Temperatura:")
+    if colunas_temp:
+        for col in colunas_temp:
+            print(f"  - {col}: mean={df[col].mean():.2f}, std={df[col].std():.2f}, min={df[col].min():.2f}, max={df[col].max():.2f}")
+    
+    print("\nEstatísticas básicas - Vibração:")
+    if colunas_vibracao:
+        for col in colunas_vibracao[:5]:  # Primeiras 5
+            print(f"  - {col}: mean={df[col].mean():.4f}, std={df[col].std():.4f}, min={df[col].min():.4f}, max={df[col].max():.4f}")
     
     return colunas_numericas
 
@@ -247,7 +272,6 @@ def preparar_dados_para_normalizacao(df, colunas_numericas):
     # Criar dataset para normalização (incluindo timestamp)
     df_norm = df[['time'] + colunas_validas].copy()
     
-    # Não imputamos aqui; deixamos para o Pipeline do scikit-learn
     n_linhas_orig = len(df_norm)
     n_nulos_total = int(df_norm[colunas_validas].isnull().sum().sum())
     print(f"  - Valores nulos nas features (antes do pipeline): {n_nulos_total:,}")
@@ -293,23 +317,6 @@ def construir_pipeline_preprocessamento(
     pipeline = Pipeline(steps=steps)
     return pipeline
 
-def _aplicar_filtro_correlacao(df_features: pd.DataFrame, threshold: float) -> list:
-    """Remove colunas altamente correlacionadas (|corr| >= threshold) de forma gulosa e retorna a lista final de colunas."""
-    print(f"  - Aplicando filtro de correlação (|corr| >= {threshold:.2f})...")
-    corr = df_features.corr().abs()
-    upper = np.triu(np.ones(corr.shape), k=1).astype(bool)
-    to_drop = set()
-    cols = df_features.columns
-    for i in range(len(cols)):
-        if cols[i] in to_drop:
-            continue
-        for j in range(i+1, len(cols)):
-            if corr.iat[i, j] >= threshold and cols[j] not in to_drop:
-                to_drop.add(cols[j])
-    colunas_filtradas = [c for c in cols if c not in to_drop]
-    print(f"    - Colunas removidas por alta correlação: {len(to_drop)}")
-    return colunas_filtradas
-
 def clip_outliers(df_features, percentile=99.5):
     """Aplica clipping de outliers em TODAS as colunas usando percentis"""
     print(f"\nAplicando clipping de outliers em TODAS as colunas (percentil {percentile})...")
@@ -338,30 +345,11 @@ def clip_outliers(df_features, percentile=99.5):
             'outliers': total_outliers,
             'pct': (total_outliers / len(df_features)) * 100,
             'lower': lower,
-            'upper': upper,
-            'original_min': df_features[col].min(),
-            'original_max': df_features[col].max(),
-            'clipped_min': df_clipped[col].min(),
-            'clipped_max': df_clipped[col].max()
+            'upper': upper
         })
     
     print(f"  - Total de colunas processadas: {colunas_processadas}/{len(df_features.columns)}")
     print(f"  - Colunas com outliers detectados e removidos: {sum(1 for info in outliers_info if info['outliers'] > 0)}")
-    
-    # Mostrar as colunas com mais outliers
-    outliers_com_mudanca = [info for info in outliers_info if info['outliers'] > 0]
-    if outliers_com_mudanca:
-        print(f"\n  Top 10 colunas com mais outliers removidos:")
-        for info in sorted(outliers_com_mudanca, key=lambda x: x['outliers'], reverse=True)[:10]:
-            print(f"    - {info['coluna']}: {info['outliers']} outliers ({info['pct']:.2f}%)")
-            print(f"      Original: [{info['original_min']:.2f}, {info['original_max']:.2f}]")
-            print(f"      Clipped:  [{info['clipped_min']:.2f}, {info['clipped_max']:.2f}]")
-    
-    # Mostrar resumo de todas as colunas processadas
-    print(f"\n  Resumo do clipping aplicado em todas as colunas:")
-    for info in outliers_info:
-        status = f"{info['outliers']} outliers" if info['outliers'] > 0 else "sem outliers"
-        print(f"    - {info['coluna']:<30s}: {status:>15s} | Range: [{info['clipped_min']:.2f}, {info['clipped_max']:.2f}]")
     
     return df_clipped
 
@@ -417,17 +405,7 @@ def normalizar_dados_maxmin(df_norm, colunas_validas, args=None):
         print("\n[MODO TREINO] Criando e treinando novo pipeline...")
         
         # NOVO: Aplicar clipping de outliers ANTES da normalização
-        # Isso evita que valores extremos distorçam a escala
         df_features = clip_outliers(df_features, percentile=99.5)
-
-        # Opcional: filtro de correlação (aplica imputação temporária para cálculo de corr)
-        colunas_apos_corr = colunas_validas
-        if args and getattr(args, 'corr_threshold', None):
-            temp_imputer = SimpleImputer(strategy='median')
-            temp_imputed = temp_imputer.fit_transform(df_features)
-            temp_df = pd.DataFrame(temp_imputed, columns=colunas_validas)
-            colunas_apos_corr = _aplicar_filtro_correlacao(temp_df, float(args.corr_threshold))
-            df_features = df_features[colunas_apos_corr]
         
         # Construir e ajustar pipeline
         pipeline = construir_pipeline_preprocessamento(
@@ -444,7 +422,7 @@ def normalizar_dados_maxmin(df_norm, colunas_validas, args=None):
         # Identificar e manter nomes das colunas após remoção de variância zero
         var_selector = pipeline.named_steps['var']
         support_mask = var_selector.get_support()
-        colunas_pos_var = [c for c, keep in zip(colunas_apos_corr, support_mask) if keep]
+        colunas_pos_var = [c for c, keep in zip(colunas_validas, support_mask) if keep]
 
         # Se PCA estiver ativo, substitui nomes por pca_*
         colunas_finais = colunas_pos_var
@@ -457,7 +435,7 @@ def normalizar_dados_maxmin(df_norm, colunas_validas, args=None):
         print(f"  - Range: [{dados_normalizados.min():.6f}, {dados_normalizados.max():.6f}]")
         print(f"  - Média: {dados_normalizados.mean():.6f}")
         print(f"  - Desvio padrão: {dados_normalizados.std():.6f}")
-        print(f"  - Features removidas (variância zero): {len(colunas_apos_corr) - len(colunas_pos_var)}")
+        print(f"  - Features removidas (variância zero): {len(colunas_validas) - len(colunas_pos_var)}")
         print(f"  - Timestamp mantido separadamente: {len(timestamp)} registros")
     
     # Para compatibilidade, também expomos o scaler interno já ajustado
@@ -499,9 +477,6 @@ def preparar_dados_kmeans(dados_normalizados, colunas_validas, timestamp, mpoint
     
     return df_kmeans
 
-# Função removida - não é necessária para K-means
-# K-means é um algoritmo de aprendizado não supervisionado que não requer divisão treino/teste
-
 def criar_visualizacoes(dados_normalizados, colunas_validas, df_original, args):
     """Cria visualizações dos dados normalizados"""
     print("\nCriando visualizações...")
@@ -541,9 +516,9 @@ def criar_visualizacoes(dados_normalizados, colunas_validas, df_original, args):
     axes[1,1].set_ylabel('Frequência')
     
     plt.tight_layout()
-    caminho_plot = DIR_PLOTS / f'dados_normalizados_analise_{args.mpoint}.png'
+    caminho_plot = DIR_PLOTS / f'dados_normalizados_analise_{args.mpoint}_mecanico.png'
     plt.savefig(caminho_plot, dpi=300, bbox_inches='tight')
-    plt.show()
+    plt.close()
 
     print(f"  - Visualizações salvas em: {caminho_plot}")
     return caminho_plot
@@ -581,12 +556,13 @@ def salvar_dados_e_modelos(dados_normalizados, scaler, colunas_validas, X_kmeans
     # Salvar informações do processamento
     info_processamento = {
         'timestamp': datetime.now().isoformat(),
+        'equipment_type': 'MECHANICAL',
         'arquivos_origem': arquivos_origem or [],
         'arquivo_origem': f'periodo_*_final_{mpoint}.csv',
         'colunas_utilizadas_iniciais': colunas_validas,
         'colunas_utilizadas_finais': colunas_selecionadas,
         'numero_colunas': len(colunas_validas),
-        'numero_colunas_pos_variance_threshold': len(colunas_selecionadas) if 'var' in pipeline.named_steps else len(colunas_selecionadas),
+        'numero_colunas_pos_variance_threshold': len(colunas_selecionadas),
         'numero_amostras': len(dados_normalizados),
         'shape_dados_normalizados': list(dados_normalizados.shape),
         'shape_kmeans': list(X_kmeans.shape),
@@ -600,12 +576,11 @@ def salvar_dados_e_modelos(dados_normalizados, scaler, colunas_validas, X_kmeans
             'scaler': (args.scaler if args else 'minmax'),
             'feature_range': [0, 1],
             'variance_threshold': (args.variance_threshold if args else 0.0),
-            'corr_threshold': (args.corr_threshold if args else None),
             'pca_components': (args.pca_components if args else 0),
             'pca_variance': (args.pca_variance if args else 0.0)
         },
         'colunas_auxiliares_removidas': True,
-        'observacao': f'Dados combinados a partir de periodo_*_final_{mpoint}.csv'
+        'observacao': f'Equipamento MECÂNICO - Dados: temperatura + vibração (sem current, sem RPM)'
     }
     
     with open(info_path, 'w') as f:
@@ -615,25 +590,23 @@ def salvar_dados_e_modelos(dados_normalizados, scaler, colunas_validas, X_kmeans
 
 def main():
     """Função principal"""
-    print("=== NORMALIZAÇÃO DE DADOS PARA K-MEANS ===")
-    print("=" * 50)
-    print("Carregando dados unificados finais (20 colunas)")
-    print("K-means é um algoritmo não supervisionado - não requer divisão treino/teste")
-    print("=" * 50)
+    print("=== NORMALIZAÇÃO DE DADOS PARA K-MEANS - EQUIPAMENTO MECÂNICO ===")
+    print("=" * 70)
+    print("Análise: Temperatura + Vibração (sem current, sem RPM)")
+    print("=" * 70)
     
     try:
         # Parse de argumentos
-        parser = argparse.ArgumentParser(description='Normalização de dados para K-means com opções avançadas')
-        parser.add_argument('--mpoint', type=str, required=True, help='ID do mpoint (ex: c_636)')
+        parser = argparse.ArgumentParser(description='Normalização de dados para K-means - EQUIPAMENTO MECÂNICO')
+        parser.add_argument('--mpoint', type=str, required=True, help='ID do mpoint (ex: c_640)')
         parser.add_argument('--scaler', choices=['minmax', 'standard', 'robust'], default='minmax', help='Tipo de scaler a utilizar')
         parser.add_argument('--power', choices=['none', 'yeo-johnson'], default='none', help='Transformação de potência (antes do scaler)')
         parser.add_argument('--quantile', choices=['none', 'normal', 'uniform'], default='none', help='QuantileTransformer (incompatível com power)')
         parser.add_argument('--variance-threshold', type=float, default=0.0, help='Remover features com variância <= threshold')
-        parser.add_argument('--corr-threshold', type=float, default=None, help='Remover features altamente correlacionadas (|corr| >= threshold)')
         parser.add_argument('--pca-components', type=int, default=0, help='Número de componentes PCA (0 = desabilitado)')
         parser.add_argument('--pca-variance', type=float, default=0.0, help='Variância explicada alvo para PCA (0 = desabilitado)')
         parser.add_argument('--intervalo-arquivo', type=str, help='Intervalo formatado para incluir no nome dos arquivos')
-        args = parser.parse_args([]) if '__file__' not in globals() else parser.parse_args()
+        args = parser.parse_args()
 
         # 1. Criar diretórios
         criar_diretorios()
@@ -642,23 +615,16 @@ def main():
         df, arquivos_origem = carregar_dados(mpoint=args.mpoint, intervalo_arquivo=args.intervalo_arquivo)
         if df is None:
             print("[ERRO] Falha ao carregar dados unificados finais")
-            if args.mpoint:
-                print("Verifique se os scripts anteriores foram executados:")
-                print(f"  - python scripts/segmentar_preencher_dados.py --mpoint {args.mpoint}")
-                print(f"  - python scripts/processar_dados_simples.py --mpoint {args.mpoint}")
-                print(f"  - python scripts/unir_sincronizar_periodos.py --mpoint {args.mpoint}")
-            else:
-                print("Execute os scripts de processamento primeiro")
             return
         
-        # 3. Remover colunas m_point
-        df_sem_m_point = remover_colunas_m_point(df)
+        # 3. Remover colunas auxiliares
+        df_sem_aux = remover_colunas_auxiliares(df)
         
-        # 4. Analisar dados
-        colunas_numericas = analisar_dados(df_sem_m_point)
+        # 4. Analisar dados mecânicos
+        colunas_numericas = analisar_dados_mecanicos(df_sem_aux)
         
         # 5. Preparar dados para normalização
-        df_norm, colunas_validas = preparar_dados_para_normalizacao(df_sem_m_point, colunas_numericas)
+        df_norm, colunas_validas = preparar_dados_para_normalizacao(df_sem_aux, colunas_numericas)
         
         # 6. Normalizar dados
         dados_normalizados, scaler, timestamp, pipeline, colunas_selecionadas = normalizar_dados_maxmin(df_norm, colunas_validas, args=args)
@@ -667,7 +633,7 @@ def main():
         X_kmeans = preparar_dados_kmeans(dados_normalizados, colunas_selecionadas, timestamp, mpoint=args.mpoint, intervalo_arquivo=args.intervalo_arquivo)
         
         # 8. Criar visualizações
-        caminho_plot = criar_visualizacoes(dados_normalizados, colunas_selecionadas, df_sem_m_point, args)
+        caminho_plot = criar_visualizacoes(dados_normalizados, colunas_selecionadas, df_sem_aux, args)
         
         # 9. Salvar dados e modelos
         salvar_dados_e_modelos(
@@ -685,21 +651,18 @@ def main():
         
         print("\n=== PROCESSO CONCLUÍDO COM SUCESSO ===")
         print("\nDados preparados para K-means:")
+        print(f"  - Tipo: EQUIPAMENTO MECÂNICO (temperatura + vibração)")
         print(f"  - Arquivo principal: {normalized_csv_path(args.mpoint, args.intervalo_arquivo)}")
         print(f"  - Dados normalizados: {normalized_numpy_path(args.mpoint, args.intervalo_arquivo)}")
-        print(f"  - Scaler: {scaler_maxmin_path(args.mpoint)}")
-        print(f"  - Informações: {info_normalizacao_path(args.mpoint)}")
-        print(f"\nO arquivo {normalized_csv_path(args.mpoint, args.intervalo_arquivo).name} contém os dados normalizados prontos para K-means")
 
-        # Gerar logs detalhados para TCC
+        # Gerar logs
         import time
-        start_time = time.time()  # Nota: deveria ser definido no início, mas para compatibilidade vamos estimar
+        start_time = time.time()
 
-        # Log de processamento
         processing_log = create_processing_log(
-            script_name='normalizar_dados_kmeans',
+            script_name='normalizar_dados_kmeans_mecanico',
             mpoint=args.mpoint,
-            operation='data_normalization',
+            operation='mechanical_equipment_data_normalization',
             input_files=arquivos_origem,
             output_files=[
                 str(normalized_csv_path(args.mpoint, args.intervalo_arquivo)),
@@ -710,14 +673,11 @@ def main():
                 str(caminho_plot)
             ],
             parameters={
-                'scaler_type': args.scaler if args else 'minmax',
+                'equipment_type': 'MECHANICAL',
+                'data_focus': 'temperature_and_vibration',
+                'no_current_rpm': True,
+                'scaler_type': args.scaler,
                 'feature_range': [0, 1],
-                'power_transform': args.power if args else 'none',
-                'quantile_transform': args.quantile if args else 'none',
-                'variance_threshold': args.variance_threshold if args else 0.0,
-                'correlation_threshold': args.corr_threshold if args else None,
-                'pca_components': args.pca_components if args else 0,
-                'pca_variance': args.pca_variance if args else 0.0,
                 'outlier_clipping_percentile': 99.5
             },
             statistics={
@@ -725,68 +685,25 @@ def main():
                 'original_features': len(colunas_validas),
                 'final_features': len(colunas_selecionadas),
                 'normalization_range': [float(dados_normalizados.min()), float(dados_normalizados.max())],
-                'normalization_mean': float(dados_normalizados.mean()),
-                'normalization_std': float(dados_normalizados.std()),
-                'features_removed_variance': len(colunas_validas) - len(colunas_selecionadas),
-                'outliers_clipped': True,
-                'timestamp_range': {
-                    'start': str(df['time'].min()),
-                    'end': str(df['time'].max()),
-                    'duration_hours': (df['time'].max() - df['time'].min()).total_seconds() / 3600
-                }
             },
-            processing_time=time.time() - start_time,  # Estimativa
+            processing_time=time.time() - start_time,
             success=True,
             data_description={
+                'equipment_type': 'MECHANICAL',
                 'source_files': arquivos_origem,
                 'features_used': colunas_selecionadas,
-                'preprocessing_steps': [
-                    'timestamp_validation',
-                    'auxiliary_column_removal',
-                    'missing_value_filtering',
-                    'outlier_clipping',
-                    'correlation_filtering',
-                    'normalization',
-                    'variance_threshold',
-                    'pca_reduction'
-                ],
-                'normalization_method': 'MinMaxScaler with outlier clipping',
-                'target_range': [0, 1]
+                'normalization_method': 'MinMaxScaler with outlier clipping'
             }
         )
 
-        save_log(processing_log, 'normalizar_dados_kmeans', args.mpoint, 'normalization_complete')
+        save_log(processing_log, 'normalizar_dados_kmeans_mecanico', args.mpoint, 'normalization_complete')
 
-        # Log de visualização
-        viz_log = create_visualization_log(
-            script_name='normalizar_dados_kmeans',
-            mpoint=args.mpoint,
-            chart_type='normalization_analysis',
-            data_description={
-                'normalized_data_shape': list(dados_normalizados.shape),
-                'features_analyzed': colunas_selecionadas[:10],  # Primeiras 10 para exemplo
-                'normalization_method': 'MinMaxScaler',
-                'comparison_type': 'before_after_normalization'
-            },
-            chart_files=[str(caminho_plot)],
-            period_info={
-                'data_start': str(df['time'].min()),
-                'data_end': str(df['time'].max()),
-                'total_samples': len(df)
-            }
-        )
-
-        save_log(viz_log, 'normalizar_dados_kmeans', args.mpoint, 'visualization')
-
-        # Enriquecer arquivo results
         results_data = {
             'normalization_completed': True,
             'normalization_timestamp': datetime.now().isoformat(),
+            'equipment_type': 'MECHANICAL',
             'normalized_samples': len(dados_normalizados),
             'normalized_features': len(colunas_selecionadas),
-            'normalization_range': [float(dados_normalizados.min()), float(dados_normalizados.max())],
-            'normalization_charts': [str(caminho_plot)],
-            'preprocessing_parameters': processing_log['parameters']
         }
 
         enrich_results_file(args.mpoint, results_data)
@@ -798,3 +715,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

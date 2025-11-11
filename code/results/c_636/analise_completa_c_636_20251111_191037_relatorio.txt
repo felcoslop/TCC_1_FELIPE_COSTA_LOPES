@@ -1,0 +1,13 @@
+RELATRIO DE ANLISE - MPOINT c_636
+==================================================
+
+Perodo: 2025-11-03 00:00:00 at 2025-11-10 23:59:59
+
+ESTATSTICAS:
+- Tempo DESLIGADO: 0 days 00:00:00 (0.0%)
+- Tempo LIGADO: 7 days 23:59:59 (100.0%)
+
+ARQUIVOS:
+- Normalizado: analise_completa_c_636_20251111_191037_normalizado.csv
+- Resultados: analise_completa_c_636_20251111_191037_resultados.csv
+- Grfico: grafico_estados_c_636_20251111_191036.png

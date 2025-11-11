@@ -1,0 +1,63 @@
+# Sistema de Detecção de Estado Operacional para Motobomba Industrial
+# .gitignore - Exclusões do Version Control
+
+# ===== PASTA LATEX (TODA) =====
+latex/
+
+# ===== ARQUIVOS CSV (TODOS) =====
+*.csv
+
+# ===== MODELOS TREINADOS =====
+*.pkl
+*.h5
+*.joblib
+
+# ===== SCALERS =====
+*scaler*.pkl
+
+# ===== ARRAYS NUMPY =====
+*.npy
+
+# ===== DADOS (TODAS AS PASTAS) =====
+code/data/
+code/models/
+
+# ===== CACHE PYTHON =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# ===== LOGS (OPCIONAL - MANTER ESTRUTURA) =====
+code/logs/*.txt
+
+# ===== RESULTS COM CSV =====
+code/results/**/*.csv
+
+# ===== ARQUIVOS TEMPORÁRIOS DO SISTEMA =====
+.DS_Store
+Thumbs.db
+*.tmp
+*.temp
+*.swp
+*.bak
+
+# ===== AMBIENTES VIRTUAIS =====
+venv/
+env/
+ENV/
+.venv
+
+# ===== IDE =====
+.vscode/
+.idea/
+*.sublime-*
+
+# ===== JUPYTER NOTEBOOK =====
+.ipynb_checkpoints/
+*.ipynb
+
+# ===== OUTROS =====
+*.log
+.env
+

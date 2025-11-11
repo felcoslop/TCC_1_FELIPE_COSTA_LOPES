@@ -1,9 +1,0 @@
-{
-  "acuracia": "100.00%",
-  "dados_originais": "772,231",
-  "dados_treinamento": "93,910",
-  "percentual_selecionado": "12.2%",
-  "tempo_treinamento": "43.5 minutos",
-  "features": 19,
-  "janela_temporal": 30
-}

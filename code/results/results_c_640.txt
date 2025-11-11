@@ -1,0 +1,195 @@
+{
+  "segmentation_completed": true,
+  "segmentation_timestamp": "2025-11-11T18:43:49.645378",
+  "processing_version": "2.0",
+  "files_generated": 7,
+  "gap_limit_hours": 3,
+  "min_period_days": 1,
+  "interpolation_method": "advanced_KNN_multivariate",
+  "processing_parameters": {
+    "synchronization_method": "temporal_overlap_optimization",
+    "interpolation_method": "hybrid_spline_knn",
+    "outlier_removal": true,
+    "quality_control": true,
+    "minimum_overlap_hours": "not_specified"
+  },
+  "processing_statistics": {
+    "estimated_periods_found": 7,
+    "slip_periods_found": 7,
+    "c636_periods_found": 11,
+    "final_periods_synchronized": 7,
+    "synchronization_efficiency": 63.63636363636363,
+    "files_generated": 7
+  },
+  "_last_updated": "2025-11-11T19:01:23.979749",
+  "processing_completed": true,
+  "processing_timestamp": "2025-11-11T18:45:19.317078",
+  "periods_processed": 7,
+  "total_periods_identified": 13,
+  "processing_efficiency_percent": 53.84615384615385,
+  "unification_completed": true,
+  "unification_timestamp": "2025-11-11T18:47:04.164356",
+  "periods_synchronized": 7,
+  "input_periods": {
+    "estimated": 7,
+    "slip": 7,
+    "c636": 11
+  },
+  "synchronization_efficiency_percent": 63.63636363636363,
+  "normalization_completed": true,
+  "normalization_timestamp": "2025-11-11T18:52:17.726976",
+  "normalized_samples": 1389174,
+  "normalized_features": 19,
+  "normalization_range": [
+    0.0,
+    1.0000000000000002
+  ],
+  "normalization_charts": [
+    "G:\\Final TCC\\TCC\\code\\plots\\dados_normalizados_analise_c_640.png"
+  ],
+  "preprocessing_parameters": {
+    "scaler_type": "minmax",
+    "feature_range": [
+      0,
+      1
+    ],
+    "power_transform": "none",
+    "quantile_transform": "none",
+    "variance_threshold": 0.0,
+    "correlation_threshold": null,
+    "pca_components": 0,
+    "pca_variance": 0.0,
+    "outlier_clipping_percentile": 99.5
+  },
+  "kmeans_training_completed": true,
+  "kmeans_training_timestamp": "2025-11-11T18:56:58.102726",
+  "total_clusters": 6,
+  "total_samples_classified": 1389174,
+  "ligado_samples": 372183,
+  "desligado_samples": 1016991,
+  "classification_accuracy": 100.0,
+  "model_inertia": 127274.86951040677,
+  "cluster_analysis_charts": [
+    "G:\\Final TCC\\TCC\\code\\results\\analise_kmeans_clusters_moderado_c_640.png"
+  ],
+  "training_parameters": {
+    "mpoint": "c_640",
+    "training_mode": "complete_pipeline",
+    "data_quality_threshold": "30_days_minimum",
+    "kmeans_clusters": 6,
+    "normalization_method": "MinMax_with_outlier_clipping"
+  },
+  "cluster_statistics": {
+    "cluster_5": {
+      "size": 75483,
+      "percentage": 5.433660578156516,
+      "status": "LIGADO",
+      "features_mean": {
+        "mag_x": 0.6612452766166658,
+        "mag_y": 0.2728031871658871,
+        "mag_z": 0.20225781602759596,
+        "object_temp": 0.7919910423933261,
+        "vel_max_x": 0.6538001115347517
+      }
+    },
+    "cluster_3": {
+      "size": 190276,
+      "percentage": 13.697060267468295,
+      "status": "LIGADO",
+      "features_mean": {
+        "mag_x": 0.4249478430014413,
+        "mag_y": 0.5770162970285315,
+        "mag_z": 0.6040310227110286,
+        "object_temp": 0.8001817953996877,
+        "vel_max_x": 0.6658813260023025
+      }
+    },
+    "cluster_1": {
+      "size": 106424,
+      "percentage": 7.6609553590838875,
+      "status": "LIGADO",
+      "features_mean": {
+        "mag_x": 0.47055051793563235,
+        "mag_y": 0.5197777692010641,
+        "mag_z": 0.5215243094434786,
+        "object_temp": 0.7957125763561258,
+        "vel_max_x": 0.6628624617049093
+      }
+    },
+    "cluster_2": {
+      "size": 875857,
+      "percentage": 63.04876135027002,
+      "status": "DESLIGADO",
+      "features_mean": {
+        "mag_x": 0.49110659356535064,
+        "mag_y": 0.4884445638421206,
+        "mag_z": 0.5079484472003469,
+        "object_temp": 0.23254136907903256,
+        "vel_max_x": 0.18822051760393588
+      }
+    },
+    "cluster_4": {
+      "size": 88592,
+      "percentage": 6.3773148648045535,
+      "status": "DESLIGADO",
+      "features_mean": {
+        "mag_x": 0.4709215857238744,
+        "mag_y": 0.5805947784908119,
+        "mag_z": 0.5577524947128817,
+        "object_temp": 0.2749464071739659,
+        "vel_max_x": 0.7970845493757669
+      }
+    },
+    "cluster_0": {
+      "size": 52542,
+      "percentage": 3.7822475802167332,
+      "status": "DESLIGADO",
+      "features_mean": {
+        "mag_x": 0.45953577090816045,
+        "mag_y": 0.5849626084323025,
+        "mag_z": 0.5585546358921758,
+        "object_temp": 0.3713110258655714,
+        "vel_max_x": 0.9308445869472274
+      }
+    }
+  },
+  "visualization_3d_completed": true,
+  "visualization_3d_timestamp": "2025-11-11T19:01:23.948839",
+  "charts_generated": 3,
+  "visualization_type": "3d_states_scatter",
+  "data_samples_visualized": 1389174,
+  "time_window_days": 3,
+  "equipment_states_detected": [
+    "LIGADO",
+    "DESLIGADO"
+  ],
+  "visualization_charts": [
+    "G:\\Final TCC\\TCC\\code\\results\\analise_kmeans_clusters_moderado_c_640.png",
+    "G:\\Final TCC\\TCC\\code\\results\\estados_corrente_vibracao_tempo_3d_c_640.png",
+    "G:\\Final TCC\\TCC\\code\\results\\estados_rpm_vibracao_tempo_3d_c_640.png"
+  ],
+  "visualization_parameters": {
+    "plot_type": "3d_scatter_with_time",
+    "color_coding": "equipment_states",
+    "interactive_rotation": true,
+    "dpi_quality": 300,
+    "view_angles": "multiple_optimized"
+  },
+  "pipeline_training_completed": true,
+  "pipeline_training_timestamp": "2025-11-11T18:58:30.323045",
+  "mpoint": "c_640",
+  "stages_completed": [
+    "processing",
+    "validation",
+    "normalization",
+    "training",
+    "visualization"
+  ],
+  "artifacts_generated": 13,
+  "pipeline_performance": {
+    "pipeline_completion": true,
+    "stages_successful": 5,
+    "artifacts_generated": 13,
+    "charts_generated": 0
+  }
+}

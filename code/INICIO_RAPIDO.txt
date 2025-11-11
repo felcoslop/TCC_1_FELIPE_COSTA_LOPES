@@ -1,0 +1,200 @@
+================================================================================
+    SISTEMA DE PREDIÇÃO POR INTERVALO - INÍCIO RÁPIDO
+================================================================================
+
+COMO USAR (SUPER SIMPLES):
+
+1. Abra o terminal
+2. Vá para a pasta code:
+   cd code
+
+3. Execute o sistema (escolha uma opção):
+
+   # GUI (Interface Gráfica - Recomendado para iniciantes)
+   python gui_pipeline.py
+
+   # OU Terminal Interativo (ELÉTRICO)
+   python pipeline_deteccao_estados.py
+
+   # OU Terminal Interativo (MECÂNICO)
+   python pipeline_deteccao_estados_mecanico.py
+
+4. Siga as instruções na tela!
+
+================================================================================
+
+O QUE VOCÊ VAI PRECISAR:
+
+• Mpoint (ex: c_640) - Deve ter modelo treinado!
+• IP do InfluxDB (ex: 10.8.0.121)
+• Data início em GMT-3 (ex: 17/03/2025 10:00)
+• Data fim em GMT-3 (ex: 18/04/2025 18:00)
+
+ATENÇÃO: Você digita em GMT-3, o sistema converte para UTC automaticamente!
+
+================================================================================
+
+O QUE O SISTEMA FAZ:
+
+1. Baixa dados de 3 tabelas do InfluxDB:
+   - estimated (RPM, corrente, vibração)
+   - slip (frequências, magnitudes)
+   - validated_default (acelerômetro, temperatura)
+
+2. Processa os dados:
+   - Segmenta períodos
+   - Preenche gaps (até 3h)
+   - Interpola valores
+   - Normaliza dados
+
+3. Classifica estados:
+   - LIGADO (equipamento operando)
+   - DESLIGADO (equipamento parado)
+
+4. Calcula tempos:
+   - Quanto tempo ficou ligado
+   - Quanto tempo ficou desligado
+   - Percentuais
+
+5. Gera gráficos 3D lindos!
+
+6. Salva tudo em:
+   code/results/{seu_mpoint}/
+
+================================================================================
+
+IMPORTANTE - MODELO TREINADO:
+
+O sistema PRECISA que você tenha um modelo K-means já treinado para o mpoint.
+
+Verifique se existem estes arquivos:
+   code/models/{seu_mpoint}/kmeans_model_{seu_mpoint}.pkl
+   code/models/{seu_mpoint}/scaler_maxmin_{seu_mpoint}.pkl
+   code/models/{seu_mpoint}/info_normalizacao_{seu_mpoint}.json
+
+Se não tiver, você precisa treinar o modelo primeiro!
+
+================================================================================
+
+ONDE FICAM OS RESULTADOS:
+
+Tudo é salvo em: code/results/{seu_mpoint}/
+
+Você vai encontrar:
+• resultados_*.csv - Dados classificados
+• relatorio_*.txt - Resumo em texto
+• analise_3d_*.png - Gráficos 3D
+
+================================================================================
+
+PROBLEMAS COMUNS:
+
+"Modelo não encontrado"
+   → Você precisa treinar o modelo para esse mpoint primeiro
+
+"Nenhum dado encontrado"
+   → Verifique IP do InfluxDB
+   → Confirme se o mpoint existe
+   → Verifique se tem dados no período
+
+"Erro ao conectar"
+   → Verifique se consegue acessar o IP do InfluxDB
+   → Porta deve ser 8086
+
+"Gap > 3h detectado"
+   → Sistema rejeita períodos com muitos gaps
+   → Escolha um período com dados mais contínuos
+
+================================================================================
+
+QUER MAIS DETALHES?
+
+Veja a documentação completa no arquivo README.md na raiz do projeto.
+
+================================================================================
+
+EXEMPLO DE USO - GUI (Recomendado):
+
+$ python gui_pipeline.py
+
+[Interface gráfica abre]
+1. Clique na aba "Análise por Intervalo"
+2. Digite o mpoint: c_640
+3. Configure IP do InfluxDB: 10.8.0.121
+4. Escolha datas no calendário
+5. Clique "Executar Análise"
+
+EXEMPLO DE USO - Terminal Interativo:
+
+$ python pipeline_deteccao_estados.py
+
+[Menu aparece]
+Escolha uma opção: 2
+
+Digite o mpoint: c_640
+Digite o IP do InfluxDB: 10.8.0.121
+
+Data/hora INÍCIO (GMT-3)
+  Formato: DD/MM/YYYY HH:MM: 17/03/2025 10:00
+
+Data/hora FIM (GMT-3)
+  Formato: DD/MM/YYYY HH:MM: 18/04/2025 18:00
+
+Confirmar? (s/n): s
+
+[Sistema processa tudo automaticamente]
+[Gráficos 3D aparecem]
+[Resultados salvos]
+
+PRONTO!
+
+================================================================================
+
+DICA PRO:
+
+Se você vai analisar o mesmo período várias vezes, os arquivos baixados
+do InfluxDB ficam salvos com timestamp no nome. Você pode reaproveitá-los!
+
+Exemplo de arquivo:
+dados_estimated_c_640_17-03-2025_18-04-2025.csv
+
+================================================================================
+
+SOBRE TIMEZONE:
+
+• Você SEMPRE digita em GMT-3 (horário de Brasília)
+• Sistema converte automaticamente para UTC
+• InfluxDB usa UTC
+• Relatórios mostram ambos os formatos
+
+Exemplo:
+Você digita: 17/03/2025 10:00 (GMT-3)
+Sistema usa: 2025-03-17T13:00:00Z (UTC)
+
+================================================================================
+
+AJUDA:
+
+Se algo não funcionar:
+1. Verifique se tem o modelo treinado
+2. Confirme conectividade com InfluxDB
+3. Revise os arquivos de log/erro
+4. Consulte a documentação detalhada
+
+================================================================================
+
+PRONTO PARA COMEÇAR!
+
+cd code
+
+# Opção 1: Interface Gráfica (Mais fácil)
+python gui_pipeline.py
+
+# Opção 2: Terminal Interativo
+python pipeline_deteccao_estados.py  # Para equipamentos ELÉTRICOS
+python pipeline_deteccao_estados_mecanico.py  # Para equipamentos MECÂNICOS
+
+Boa análise!
+
+================================================================================
+

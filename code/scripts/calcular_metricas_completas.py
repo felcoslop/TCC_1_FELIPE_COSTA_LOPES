@@ -1,8 +1,7 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
-Script para calcular todas as métricas e dados necessários para a monografia
-Extrai dados reais dos modelos treinados, executa o modelo com dados reais e gera informações para LaTeX
+Script pra calcular todas as metricas e dados pro TCC.
+Pega os modelos treinados, roda com dados reais e gera as informacoes
+que vao pro LaTeX (tabelas, graficos, estatisticas).
 """
 
 import json

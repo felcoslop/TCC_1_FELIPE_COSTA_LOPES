@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import datetime, timedelta, timezone
 import time
 import os
+import sys
 from concurrent.futures import ThreadPoolExecutor, TimeoutError
 
 # -----------------------------
@@ -14,18 +15,22 @@ database = "aihub"
 measurement = "validated_slip"  # Alterado
 retention_policy = "autogen"
 
-print("🚀 Iniciando exportação de dados do InfluxDB (validated_slip)...")
+print("INICIANDO exportacao de dados do InfluxDB (validated_slip)...")
 
 # Cria cliente
 client = InfluxDBClient(host=host, port=port, database=database)
 
 # -----------------------------
-# Lê lista de m_points do txt
+# Carrega m_points - verifica se foi passado parâmetro específico
 # -----------------------------
-with open("lista_mpoints.txt", "r") as f:
-    mpoints = [line.strip() for line in f if line.strip()]
-
-print(f"📌 Total de m_points carregados do txt: {len(mpoints)}")
+if len(sys.argv) > 1:
+    mpoint_especifico = sys.argv[1]
+    mpoints = [mpoint_especifico]
+    print(f"[INFO] Modo ESPECIFICO: Processando apenas mpoint {mpoint_especifico}")
+else:
+    with open("lista_mpoints.txt", "r") as f:
+        mpoints = [line.strip() for line in f if line.strip()]
+    print(f"[INFO] Modo TODOS: Total de m_points carregados do txt: {len(mpoints)}")
 
 # -----------------------------
 # Define range de 1 ano (timezone-aware, UTC)
@@ -71,7 +76,7 @@ t0 = time.time()
 executor = ThreadPoolExecutor(max_workers=1)
 
 for i, mp in enumerate(mpoints, start=1):
-    filename = f"dados_slip_{mp}.csv"
+    filename = os.path.join("code", "data", "raw", f"dados_slip_{mp}.csv")
 
     if os.path.exists(filename):
         print(f"⏭️ {mp} já exportado, pulando...")

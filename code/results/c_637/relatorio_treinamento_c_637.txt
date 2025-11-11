@@ -1,0 +1,26 @@
+================================================================================
+RELATÓRIO DE TREINAMENTO K-MEANS - c_637
+================================================================================
+
+Data: 2025-11-11 17:40:20.743796
+
+ARQUIVOS GERADOS:
+  - Modelo K-means: G:\Final TCC\TCC\code\models\c_637\kmeans_model_moderado_c_637.pkl
+  - Scaler: G:\Final TCC\TCC\code\models\c_637\scaler_model_moderado_c_637.pkl
+  - Dados classificados: G:\Final TCC\TCC\code\data\processed\dados_classificados_kmeans_moderado_c_637.csv
+  - Dados rotulados: G:\Final TCC\TCC\code\data\processed\dados_kmeans_rotulados_conservador_c_637.csv
+  - Info JSON: G:\Final TCC\TCC\code\models\c_637\info_kmeans_model_moderado_c_637.json
+
+ESTATÍSTICAS:
+  - Total de amostras: 1,242,993
+  - Amostras LIGADO: 507,517 (40.8%)
+  - Amostras DESLIGADO: 735,476 (59.2%)
+  - Amostras rotuladas: 1,242,993
+  - Percentual usado: 100.0%
+
+ESTRATÉGIA:
+  - Método: Classificação dinâmica em 2 estados (DESLIGADO vs LIGADO)
+  - Número de clusters K-means: 6
+  - Lógica: Score combinado (vel_rms + current + rpm normalizados)
+  - Classificação: Baseada em desvio padrão e diferenças entre scores
+  - Clusters com menores scores → DESLIGADO (adaptativo por equipamento)

@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import datetime, timedelta, timezone
 import time
 import os
+import sys
 
 # -----------------------------
 # Configurações do InfluxDB
@@ -13,18 +14,22 @@ database = "aihub"
 measurement = "validated_default"
 retention_policy = "autogen"
 
-print("🚀 Iniciando exportação de dados do InfluxDB...")
+print("INICIANDO exportacao de dados do InfluxDB...")
 
 # Cria cliente
 client = InfluxDBClient(host=host, port=port, database=database)
 
 # -----------------------------
-# Lê lista de m_points do txt
+# Carrega m_points - verifica se foi passado parâmetro específico
 # -----------------------------
-with open("lista_mpoints.txt", "r") as f:
-    mpoints = [line.strip() for line in f if line.strip()]
-
-print(f"📌 Total de m_points carregados do txt: {len(mpoints)}")
+if len(sys.argv) > 1:
+    mpoint_especifico = sys.argv[1]
+    mpoints = [mpoint_especifico]
+    print(f"[INFO] Modo ESPECIFICO: Processando apenas mpoint {mpoint_especifico}")
+else:
+    with open("lista_mpoints.txt", "r") as f:
+        mpoints = [line.strip() for line in f if line.strip()]
+    print(f"[INFO] Modo TODOS: Total de m_points carregados do txt: {len(mpoints)}")
 
 # -----------------------------
 # Define range de 1 ano (timezone-aware, UTC)
@@ -41,7 +46,7 @@ total_sem_dados = 0
 t0 = time.time()
 
 for i, mp in enumerate(mpoints, start=1):
-    filename = f"dados_{mp}.csv"
+    filename = os.path.join("code", "data", "raw", f"dados_{mp}.csv")
 
     # Se já existir CSV desse m_point, pula
     if os.path.exists(filename):
