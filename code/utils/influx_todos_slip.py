@@ -5,17 +5,29 @@ import time
 import os
 import sys
 from concurrent.futures import ThreadPoolExecutor, TimeoutError
+from pathlib import Path
+from dotenv import load_dotenv
+
+# Carregar configurações do .env
+env_path = Path(__file__).parent.parent / 'config.env'
+if env_path.exists():
+    load_dotenv(env_path)
 
 # -----------------------------
 # Configurações do InfluxDB
 # -----------------------------
-host = "10.8.0.123"
-port = 8086
+host = os.getenv('INFLUXDB_IP')
+port = int(os.getenv('INFLUXDB_PORT', 8086))
 database = "aihub"
-measurement = "validated_slip"  # Alterado
+measurement = "validated_slip"
 retention_policy = "autogen"
 
+if not host:
+    print("[ERROR] INFLUXDB_IP não configurado no arquivo config.env!")
+    sys.exit(1)
+
 print("INICIANDO exportacao de dados do InfluxDB (validated_slip)...")
+print(f"[CONFIG] InfluxDB: {host}:{port}")
 
 # Cria cliente
 client = InfluxDBClient(host=host, port=port, database=database)

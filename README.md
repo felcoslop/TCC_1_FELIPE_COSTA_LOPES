@@ -188,8 +188,14 @@ code/
 │   ├── analise_intervalo_completa_mecanico.py
 │   └── visualizar_clusters_3d_mecanico.py
 ├── utils/
-│   ├── artifact_paths.py
-│   └── logging_utils.py
+│   ├── artifact_paths.py              # Gerenciamento de caminhos de arquivos
+│   ├── logging_utils.py                # Sistema de logs estruturado
+│   ├── influx_estimated_all.py         # Download tabela estimated (RPM, corrente)
+│   ├── influx_3_por_minuto_validated_default.py  # Download tabela validated_default (temp, vibração)
+│   ├── influx_todos_slip.py            # Download tabela validated_slip (análise espectral)
+│   ├── influx_todos_fft_mag.py         # Download FFT magnetômetro
+│   ├── influx_todos_fft_acc.py         # Download FFT acelerômetro
+│   └── lista_mpoints.txt               # Lista de equipamentos disponíveis
 ├── data/
 │   ├── raw/                    # Dados brutos do InfluxDB
 │   ├── raw_preenchido/         # Dados processados por período
