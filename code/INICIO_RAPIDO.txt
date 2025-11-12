@@ -26,7 +26,7 @@ COMO USAR (SUPER SIMPLES):
 O QUE VOCÊ VAI PRECISAR:
 
 • Mpoint (ex: c_640) - Deve ter modelo treinado!
-• IP do InfluxDB (ex: 10.8.0.121)
+• Configuração do InfluxDB (IP e porta definidos em code/config.env)
 • Data início em GMT-3 (ex: 17/03/2025 10:00)
 • Data fim em GMT-3 (ex: 18/04/2025 18:00)
 
@@ -98,8 +98,8 @@ PROBLEMAS COMUNS:
    → Verifique se tem dados no período
 
 "Erro ao conectar"
-   → Verifique se consegue acessar o IP do InfluxDB
-   → Porta deve ser 8086
+   → Verifique configurações em code/config.env
+   → Confirme conectividade com o servidor InfluxDB
 
 "Gap > 3h detectado"
    → Sistema rejeita períodos com muitos gaps
@@ -120,7 +120,7 @@ $ python gui_pipeline.py
 [Interface gráfica abre]
 1. Clique na aba "Análise por Intervalo"
 2. Digite o mpoint: c_640
-3. Configure IP do InfluxDB: 10.8.0.121
+3. Verifique IP e porta (carregados automaticamente de config.env)
 4. Escolha datas no calendário
 5. Clique "Executar Análise"
 
@@ -132,7 +132,7 @@ $ python pipeline_deteccao_estados.py
 Escolha uma opção: 2
 
 Digite o mpoint: c_640
-Digite o IP do InfluxDB: 10.8.0.121
+Digite o IP do InfluxDB: [pressione Enter para usar config.env]
 
 Data/hora INÍCIO (GMT-3)
   Formato: DD/MM/YYYY HH:MM: 17/03/2025 10:00

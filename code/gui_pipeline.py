@@ -15,6 +15,8 @@ import json
 import customtkinter as ctk
 from tkcalendar import DateEntry
 from PIL import Image
+import os
+from dotenv import load_dotenv
 
         # Deixa a interface com tema escuro e azul
 ctk.set_appearance_mode("dark")  # "dark", "light", "system"
@@ -25,6 +27,15 @@ class PipelineGUI:
         self.base_dir = Path(__file__).parent
         self.dir_raw = self.base_dir / 'data' / 'raw'
         self.dir_models = self.base_dir / 'models'
+
+        # Carregar variáveis de ambiente do arquivo config.env
+        env_path = self.base_dir / 'config.env'
+        if env_path.exists():
+            load_dotenv(env_path)
+        
+        # Obter configurações do InfluxDB do .env
+        self.influxdb_ip = os.getenv('INFLUXDB_IP', '')
+        self.influxdb_port = os.getenv('INFLUXDB_PORT', '')
 
         # Lista para controlar processos filhos
         self.processos_filhos = []
@@ -335,13 +346,13 @@ class PipelineGUI:
         # IP
         self.criar_label(config_frame, text="IP:", font=("Arial", 12)).grid(row=1, column=0, padx=(10, 5), pady=5, sticky="e")
         self.ip_entry = self.criar_entry(config_frame, width=150)
-        self.ip_entry.insert(0, "10.8.0.121")
+        self.ip_entry.insert(0, self.influxdb_ip)
         self.ip_entry.grid(row=1, column=1, padx=5, pady=5, sticky="w")
 
         # Porta
         self.criar_label(config_frame, text="Porta:", font=("Arial", 12)).grid(row=1, column=2, padx=(20, 5), pady=5, sticky="e")
         self.porta_entry = self.criar_entry(config_frame, width=80)
-        self.porta_entry.insert(0, "8086")
+        self.porta_entry.insert(0, self.influxdb_port)
         self.porta_entry.grid(row=1, column=3, padx=5, pady=5, sticky="w")
         
         # Seleção de Mpoint

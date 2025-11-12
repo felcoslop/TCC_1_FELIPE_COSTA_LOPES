@@ -363,9 +363,14 @@ mkdir -p code/plots
 ```
 
 2. **Configurar acesso ao InfluxDB**:
-   - IP do servidor InfluxDB (ex: 10.8.0.121)
-   - Porta: 8086 (API do InfluxDB)
+   - Edite o arquivo `code/config.env` com IP e porta do servidor
    - Banco de dados: aihub
+   
+   Exemplo do arquivo `config.env`:
+   ```
+   INFLUXDB_IP=seu_ip_aqui
+   INFLUXDB_PORT=8086
+   ```
 
 3. **Requisitos de Dados**:
 
@@ -413,8 +418,9 @@ python pipeline_deteccao_estados_mecanico.py --mpoint c_1518 --modo treino --aut
 **Análise**:
 ```bash
 python pipeline_deteccao_estados.py --mpoint c_636 --modo analise \
-  --ip 10.8.0.121 --inicio "2025-01-15 00:00:00" --fim "2025-01-16 00:00:00"
+  --ip SEU_IP_AQUI --inicio "2025-01-15 00:00:00" --fim "2025-01-16 00:00:00"
 ```
+(Ou deixe o IP vazio para usar o valor de `config.env`)
 
 ---
 
@@ -434,7 +440,7 @@ Interface moderna e intuitiva que **detecta automaticamente** o tipo de equipame
 - **Abertura Automática**: Abre PNG + TXT ao finalizar
 
 #### Aba Análise por Intervalo
-- **Configuração InfluxDB**: IP e porta (padrão: 10.8.0.121:8086)
+- **Configuração InfluxDB**: IP e porta carregados automaticamente de `config.env`
 - **Calendário Restrito**: Apenas datas entre 01/01/2025 e hoje
 - **Validações**: Data inicial < data final, não permite futuro
 - **Script Automático**: Chama analise_intervalo_completa.py ou _mecanico.py
