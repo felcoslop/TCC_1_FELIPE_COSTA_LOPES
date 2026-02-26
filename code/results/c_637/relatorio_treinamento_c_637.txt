@@ -2,20 +2,20 @@
 RELATÓRIO DE TREINAMENTO K-MEANS - c_637
 ================================================================================
 
-Data: 2025-11-11 17:40:20.743796
+Data: 2026-02-23 23:45:12.417550
 
 ARQUIVOS GERADOS:
-  - Modelo K-means: G:\Final TCC\TCC\code\models\c_637\kmeans_model_moderado_c_637.pkl
-  - Scaler: G:\Final TCC\TCC\code\models\c_637\scaler_model_moderado_c_637.pkl
-  - Dados classificados: G:\Final TCC\TCC\code\data\processed\dados_classificados_kmeans_moderado_c_637.csv
-  - Dados rotulados: G:\Final TCC\TCC\code\data\processed\dados_kmeans_rotulados_conservador_c_637.csv
-  - Info JSON: G:\Final TCC\TCC\code\models\c_637\info_kmeans_model_moderado_c_637.json
+  - Modelo K-means: C:\Users\manu_\Downloads\.tex TCC11\code\models\c_637\kmeans_model_moderado_c_637.pkl
+  - Scaler: C:\Users\manu_\Downloads\.tex TCC11\code\models\c_637\scaler_model_moderado_c_637.pkl
+  - Dados classificados: C:\Users\manu_\Downloads\.tex TCC11\code\data\processed\dados_classificados_kmeans_moderado_c_637.csv
+  - Dados rotulados: C:\Users\manu_\Downloads\.tex TCC11\code\data\processed\dados_kmeans_rotulados_conservador_c_637.csv
+  - Info JSON: C:\Users\manu_\Downloads\.tex TCC11\code\models\c_637\info_kmeans_model_moderado_c_637.json
 
 ESTATÍSTICAS:
-  - Total de amostras: 1,242,993
-  - Amostras LIGADO: 507,517 (40.8%)
-  - Amostras DESLIGADO: 735,476 (59.2%)
-  - Amostras rotuladas: 1,242,993
+  - Total de amostras: 939,349
+  - Amostras LIGADO: 203,909 (21.7%)
+  - Amostras DESLIGADO: 735,440 (78.3%)
+  - Amostras rotuladas: 939,349
   - Percentual usado: 100.0%
 
 ESTRATÉGIA:

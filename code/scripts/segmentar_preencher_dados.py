@@ -211,7 +211,30 @@ class SegmentadorPreenchedor:
             limite_inf = Q1 - 3.0 * IQR  # Mais conservador
             limite_sup = Q3 + 3.0 * IQR
             indices = serie.index
-            mask_outliers[indices] = (serie < limite_inf) | (serie > limite_sup)
+            mask_temp = (serie < limite_inf) | (serie > limite_sup)
+            # Preservar sequencias consecutivas (>=15 amostras) = estado operacional real
+            # Respeita lei da inercia: equipamento leva tempo pra desligar/ligar
+            # Usa posicao na serie (nao indice bruto) para detectar consecutividade
+            indices_outlier = serie.index[mask_temp].tolist()
+            if len(indices_outlier) > 0:
+                # Mapear indices para posicoes na serie dropna
+                serie_indices = serie.index.tolist()
+                pos_map = {idx: pos for pos, idx in enumerate(serie_indices)}
+                posicoes = [pos_map[idx] for idx in indices_outlier]
+                grupos = []
+                grupo_atual = [indices_outlier[0]]
+                for i in range(1, len(posicoes)):
+                    if posicoes[i] == posicoes[i-1] + 1:
+                        grupo_atual.append(indices_outlier[i])
+                    else:
+                        grupos.append(grupo_atual)
+                        grupo_atual = [indices_outlier[i]]
+                grupos.append(grupo_atual)
+                # Des-flagar grupos com >= 10 amostras (estado real, nao outlier)
+                for grupo in grupos:
+                    if len(grupo) >= 10:
+                        mask_temp.loc[grupo] = False
+            mask_outliers[indices] = mask_temp.values
         
         return mask_outliers
     

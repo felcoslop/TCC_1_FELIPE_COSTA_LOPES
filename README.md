@@ -53,7 +53,7 @@ python gui_pipeline.py
   - Gaps < 1h: Spline cúbica (qualidade 0.95)
   - Gaps 1-3h: KNN temporal (qualidade 0.75)
   - Gaps > 3h: Segmentação em períodos distintos
-- **Tratamento de Outliers**: Método IQR (multiplicador 3.0) + Clipping percentil 99.5%
+- **Tratamento de Outliers**: Método IQR (multiplicador 3.0) com proteção de sequências operacionais (>=10 amostras) + Clipping percentil 99.5%
 - **Normalização**: MinMaxScaler [0,1] unificado para todas as features
 
 ### 2. Classificação por Clustering K-Means Versátil
@@ -157,8 +157,8 @@ pipeline_deteccao_estados_mecanico.py (MECÂNICO)
 ### Pipeline de Processamento
 
 ```
-Dados Brutos → Detecção Tipo → Segmentação → Interpolação → União → 
-Normalização → K-means → Classificação → Visualização 3D
+Dados Brutos -> Detecção Tipo -> Segmentação -> Interpolação -> União -> 
+Normalização -> K-means -> Classificação -> Visualização 3D
 ```
 
 ### Estrutura de Diretórios
@@ -314,6 +314,10 @@ Cada dado interpolado recebe indicador de confiabilidade:
 - **1.00**: Dado original (100% confiável)
 - **0.95**: Interpolação simples (<1h)
 - **0.75**: Interpolação avançada (1-3h)
+
+#### Proteção de Sequências Operacionais
+- **Lógica**: Sequências consecutivas de outliers (>=10 amostras) são preservadas como estados operacionais legítimos.
+- **Objetivo**: Evitar que desligamentos ou estados de baixa energia sejam removidos como ruído estatístico, respeitando a inércia mecânica dos equipamentos.
 
 ### 5. Normalização MinMax com Outlier Clipping
 
@@ -681,9 +685,3 @@ Tempos médios por etapa (Intel i7, 16GB RAM):
 **Felipe Costa Lopes**  
 Matrícula: 2018019648  
 Engenharia de Sistemas - UFMG
-
----
-
-## Licença
-
-Este projeto é parte de um Trabalho de Conclusão de Curso (TCC) da UFMG.

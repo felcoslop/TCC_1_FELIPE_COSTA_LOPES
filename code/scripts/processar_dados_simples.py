@@ -56,8 +56,57 @@ def interpolar_avancada(t, v, t_novo):
     f = interp1d(t, v, kind='linear', bounds_error=False, fill_value=(v[0], v[-1]))
     return f(t_novo)
 
+def _remover_sequencias_consecutivas(mask_outlier, series_original, min_consecutivas=10):
+    """Remove sequencias de outliers consecutivos com >=min_consecutivas amostras.
+    Essas sequencias representam estados operacionais reais (ex: desligamento),
+    nao ruido pontual. Respeita a lei da inercia: equipamento leva tempo pra
+    desligar e ligar.
+    
+    IMPORTANTE: Detecta consecutividade entre valores validos (nao-NaN) da
+    serie original, nao entre indices brutos do DataFrame. Isso e necessario
+    porque sensores diferentes reportam em linhas diferentes (dados intercalados).
+    
+    Args:
+        mask_outlier: Serie booleana com True onde valor e outlier
+        series_original: Serie original com valores (inclui NaN)
+        min_consecutivas: Minimo de amostras consecutivas para preservar
+    """
+    mask = mask_outlier.copy()
+    flagged = mask[mask].index.tolist()
+    if len(flagged) == 0:
+        return mask
+    # Indices que tem valor real (nao-NaN) na serie original
+    valid_indices = series_original.dropna().index.tolist()
+    if len(valid_indices) == 0:
+        return mask
+    # Mapear indice do DataFrame -> posicao entre valores validos
+    pos_map = {idx: pos for pos, idx in enumerate(valid_indices)}
+    # Filtrar flagados que estao nos valores validos
+    flagged_valid = [(idx, pos_map[idx]) for idx in flagged if idx in pos_map]
+    if len(flagged_valid) == 0:
+        return mask
+    # Identificar blocos contiguos de posicoes entre valores validos
+    grupos_idx = []
+    grupo_atual = [flagged_valid[0][0]]
+    pos_anterior = flagged_valid[0][1]
+    for i in range(1, len(flagged_valid)):
+        idx, pos = flagged_valid[i]
+        if pos == pos_anterior + 1:
+            grupo_atual.append(idx)
+        else:
+            grupos_idx.append(grupo_atual)
+            grupo_atual = [idx]
+        pos_anterior = pos
+    grupos_idx.append(grupo_atual)
+    # Des-flagar grupos com >= min_consecutivas (estado real, nao outlier)
+    for grupo in grupos_idx:
+        if len(grupo) >= min_consecutivas:
+            mask.loc[grupo] = False
+    return mask
+
 def remover_outliers(series):
-    """Remove outliers usando IQR"""
+    """Remove outliers usando IQR, preservando sequencias consecutivas (>=15 amostras)
+    que indicam estados operacionais reais (ex: desligamento)"""
     valores = series.dropna()
     if len(valores) < 4:
         return series
@@ -65,7 +114,10 @@ def remover_outliers(series):
     IQR = Q3 - Q1
     limites = (Q1 - 3*IQR, Q3 + 3*IQR)
     s = series.copy()
-    s[(s < limites[0]) | (s > limites[1])] = np.nan
+    mask_outlier = (s < limites[0]) | (s > limites[1])
+    # Preservar sequencias de >=15 amostras consecutivas (estado real, nao ruido)
+    mask_outlier = _remover_sequencias_consecutivas(mask_outlier, series, min_consecutivas=10)
+    s[mask_outlier] = np.nan
     return s
 
 def gerar_timestamps(inicio, fim):

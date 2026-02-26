@@ -1,6 +1,6 @@
 {
   "processing_completed": true,
-  "processing_timestamp": "2025-11-11T17:30:45.107836",
+  "processing_timestamp": "2026-02-24T13:34:45.915644",
   "equipment_type": "MECHANICAL",
   "periods_processed": 7,
   "total_periods_identified": 22,
@@ -38,9 +38,9 @@
     "temperature",
     "vibration_only"
   ],
-  "_last_updated": "2025-11-11T17:33:09.431886",
+  "_last_updated": "2026-02-24T13:41:00.630435",
   "unification_completed": true,
-  "unification_timestamp": "2025-11-11T17:31:02.609726",
+  "unification_timestamp": "2026-02-24T13:34:56.464305",
   "periods_unified": 7,
   "total_records": 585367,
   "unification_parameters": {
@@ -54,16 +54,16 @@
     "equipment_type": "MECHANICAL"
   },
   "normalization_completed": true,
-  "normalization_timestamp": "2025-11-11T17:31:46.758023",
+  "normalization_timestamp": "2026-02-24T13:35:25.592366",
   "normalized_samples": 585367,
   "normalized_features": 16,
   "kmeans_training_completed": true,
-  "kmeans_training_timestamp": "2025-11-11T17:32:48.620613",
+  "kmeans_training_timestamp": "2026-02-24T13:35:59.322108",
   "total_clusters": 6,
   "total_samples_classified": 585367,
-  "ligado_samples": 555855,
-  "desligado_samples": 29512,
+  "ligado_samples": 557534,
+  "desligado_samples": 27833,
   "pipeline_training_completed": true,
-  "pipeline_training_timestamp": "2025-11-11T17:33:09.411653",
+  "pipeline_training_timestamp": "2026-02-24T13:41:00.602375",
   "mpoint": "c_1518"
 }

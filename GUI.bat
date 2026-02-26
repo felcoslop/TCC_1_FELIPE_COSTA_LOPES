@@ -1,4 +1,4 @@
 @echo off
-cd /d "g:\Final TCC\dsada\code"
+cd /d "%~dp0code"
 python gui_pipeline.py
 pause

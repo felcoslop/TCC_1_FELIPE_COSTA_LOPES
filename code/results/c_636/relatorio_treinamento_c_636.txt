@@ -2,14 +2,14 @@
 RELATÓRIO DE TREINAMENTO K-MEANS - c_636
 ================================================================================
 
-Data: 2025-11-11 17:20:22.790137
+Data: 2026-02-23 23:32:40.418713
 
 ARQUIVOS GERADOS:
-  - Modelo K-means: G:\Final TCC\TCC\code\models\c_636\kmeans_model_moderado_c_636.pkl
-  - Scaler: G:\Final TCC\TCC\code\models\c_636\scaler_model_moderado_c_636.pkl
-  - Dados classificados: G:\Final TCC\TCC\code\data\processed\dados_classificados_kmeans_moderado_c_636.csv
-  - Dados rotulados: G:\Final TCC\TCC\code\data\processed\dados_kmeans_rotulados_conservador_c_636.csv
-  - Info JSON: G:\Final TCC\TCC\code\models\c_636\info_kmeans_model_moderado_c_636.json
+  - Modelo K-means: C:\Users\manu_\Downloads\.tex TCC11\code\models\c_636\kmeans_model_moderado_c_636.pkl
+  - Scaler: C:\Users\manu_\Downloads\.tex TCC11\code\models\c_636\scaler_model_moderado_c_636.pkl
+  - Dados classificados: C:\Users\manu_\Downloads\.tex TCC11\code\data\processed\dados_classificados_kmeans_moderado_c_636.csv
+  - Dados rotulados: C:\Users\manu_\Downloads\.tex TCC11\code\data\processed\dados_kmeans_rotulados_conservador_c_636.csv
+  - Info JSON: C:\Users\manu_\Downloads\.tex TCC11\code\models\c_636\info_kmeans_model_moderado_c_636.json
 
 ESTATÍSTICAS:
   - Total de amostras: 863,450

@@ -25,7 +25,8 @@ import pickle
 from scipy.stats import iqr
 
 def remover_outliers_iqr(series, factor=3.0):
-    """Remove outliers usando IQR (Interquartile Range)"""
+    """Remove outliers usando IQR (Interquartile Range), preservando sequencias
+    consecutivas (>=10 amostras) que indicam estados operacionais reais"""
     if len(series) < 4:
         return series
     Q1 = series.quantile(0.25)
@@ -33,7 +34,32 @@ def remover_outliers_iqr(series, factor=3.0):
     IQR = Q3 - Q1
     lower = Q1 - factor * IQR
     upper = Q3 + factor * IQR
-    return series.clip(lower=lower, upper=upper)
+    # Identificar outliers
+    mask_outlier = (series < lower) | (series > upper)
+    indices_outlier = series.index[mask_outlier].tolist()
+    if len(indices_outlier) > 0:
+        # Preservar sequencias consecutivas (>=10) = estado real
+        pos_map = {idx: pos for pos, idx in enumerate(series.index.tolist())}
+        posicoes = [pos_map[idx] for idx in indices_outlier]
+        grupos = []
+        grupo_atual = [indices_outlier[0]]
+        pos_anterior = posicoes[0]
+        for i in range(1, len(posicoes)):
+            if posicoes[i] == pos_anterior + 1:
+                grupo_atual.append(indices_outlier[i])
+            else:
+                grupos.append(grupo_atual)
+                grupo_atual = [indices_outlier[i]]
+            pos_anterior = posicoes[i]
+        grupos.append(grupo_atual)
+        for grupo in grupos:
+            if len(grupo) >= 10:
+                mask_outlier.loc[grupo] = False
+    # Clipar apenas outliers pontuais
+    result = series.copy()
+    result[mask_outlier & (series < lower)] = lower
+    result[mask_outlier & (series > upper)] = upper
+    return result
 
 def criar_visualizacao_3d_intervalo_mecanico(mpoint, dias=3):
     """Cria visualização 3D de intervalo para equipamento MECÂNICO com DADOS REAIS"""

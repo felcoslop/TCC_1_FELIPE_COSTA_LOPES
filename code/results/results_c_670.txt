@@ -1,11 +1,11 @@
 {
   "processing_completed": true,
-  "processing_timestamp": "2025-11-11T17:25:19.293420",
+  "processing_timestamp": "2026-02-24T13:24:21.269585",
   "equipment_type": "MECHANICAL",
-  "periods_processed": 31,
-  "total_periods_identified": 53,
-  "files_generated": 62,
-  "processing_efficiency_percent": 58.490566037735846,
+  "periods_processed": 1,
+  "total_periods_identified": 1,
+  "files_generated": 80,
+  "processing_efficiency_percent": 100.0,
   "processing_parameters": {
     "gap_detection_threshold": "3_hours",
     "interpolation_methods": [
@@ -15,7 +15,7 @@
     ],
     "outlier_removal": "IQR_method_3sigma",
     "period_segmentation": true,
-    "minimum_period_duration": "24.0_hours",
+    "minimum_period_duration": "1.0_hours",
     "equipment_type": "MECHANICAL",
     "data_sources": [
       "temperature",
@@ -27,22 +27,22 @@
     "no_current_rpm": true
   },
   "processing_statistics": {
-    "total_periods_identified": 53,
-    "valid_periods_processed": 31,
-    "invalid_periods_discarded": 22,
-    "files_generated": 62,
-    "processing_efficiency": 58.490566037735846,
+    "total_periods_identified": 1,
+    "valid_periods_processed": 1,
+    "invalid_periods_discarded": 0,
+    "files_generated": 80,
+    "processing_efficiency": 100.0,
     "equipment_type": "MECHANICAL"
   },
   "data_sources": [
     "temperature",
     "vibration_only"
   ],
-  "_last_updated": "2025-11-11T17:30:10.892311",
+  "_last_updated": "2026-02-24T13:24:27.489400",
   "unification_completed": true,
-  "unification_timestamp": "2025-11-11T17:25:58.016701",
-  "periods_unified": 31,
-  "total_records": 1377884,
+  "unification_timestamp": "2026-02-24T13:24:22.532181",
+  "periods_unified": 1,
+  "total_records": 12961,
   "unification_parameters": {
     "merge_method": "merge_asof",
     "merge_tolerance": "2_minutes",
@@ -54,16 +54,16 @@
     "equipment_type": "MECHANICAL"
   },
   "normalization_completed": true,
-  "normalization_timestamp": "2025-11-11T17:28:02.985376",
-  "normalized_samples": 1377884,
+  "normalization_timestamp": "2026-02-24T13:24:27.461747",
+  "normalized_samples": 12961,
   "normalized_features": 16,
   "kmeans_training_completed": true,
-  "kmeans_training_timestamp": "2025-11-11T17:29:53.517847",
+  "kmeans_training_timestamp": "2026-02-24T13:12:46.698905",
   "total_clusters": 6,
-  "total_samples_classified": 1377884,
-  "ligado_samples": 1059149,
-  "desligado_samples": 318735,
+  "total_samples_classified": 871365,
+  "ligado_samples": 737108,
+  "desligado_samples": 134257,
   "pipeline_training_completed": true,
-  "pipeline_training_timestamp": "2025-11-11T17:30:10.868408",
+  "pipeline_training_timestamp": "2026-02-24T13:14:41.056827",
   "mpoint": "c_670"
 }

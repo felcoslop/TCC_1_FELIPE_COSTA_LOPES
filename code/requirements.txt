@@ -32,9 +32,6 @@ tkcalendar>=1.6.0
 Pillow>=10.0.0
 python-dotenv>=1.0.0
 
-# Standard Library Extensions
-typing-extensions>=4.0.0
-
 # Optional: Jupyter for development and interactive analysis
 # jupyter==1.0.0
 # notebook==7.4.7
@@ -48,6 +45,5 @@ typing-extensions>=4.0.0
 # mypy==1.18.2
 # ruff==0.14.4
 
-# Optional: Additional utilities for advanced analysis
-plotly==6.4.0
+# Optional: Additional utilities
 # tqdm>=4.0.0

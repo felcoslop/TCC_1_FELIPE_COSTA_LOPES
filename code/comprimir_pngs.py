@@ -49,12 +49,12 @@ def main():
     """
     Função principal que encontra e comprime todos os PNGs na pasta latex.
     """
-    # Caminho para a pasta latex (um nível acima de code/)
-    pasta_latex = os.path.join(os.path.dirname(__file__), '..', 'latex')
+    # Caminho para a pasta .tex (um nível acima de code/)
+    pasta_latex = os.path.join(os.path.dirname(__file__), '..', '.tex')
 
     # Verificar se a pasta existe
     if not os.path.exists(pasta_latex):
-        logging.error(f"Pasta latex não encontrada: {pasta_latex}")
+        logging.error(f"Pasta .tex não encontrada: {pasta_latex}")
         return
 
     # Encontrar todos os arquivos PNG recursivamente

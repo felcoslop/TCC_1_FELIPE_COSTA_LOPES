@@ -1,8 +1,8 @@
 {
   "segmentation_completed": true,
-  "segmentation_timestamp": "2025-11-11T18:43:49.645378",
+  "segmentation_timestamp": "2026-02-23T23:58:28.827271",
   "processing_version": "2.0",
-  "files_generated": 7,
+  "files_generated": 4,
   "gap_limit_hours": 3,
   "min_period_days": 1,
   "interpolation_method": "advanced_KNN_multivariate",
@@ -14,38 +14,38 @@
     "minimum_overlap_hours": "not_specified"
   },
   "processing_statistics": {
-    "estimated_periods_found": 7,
-    "slip_periods_found": 7,
+    "estimated_periods_found": 4,
+    "slip_periods_found": 4,
     "c636_periods_found": 11,
-    "final_periods_synchronized": 7,
-    "synchronization_efficiency": 63.63636363636363,
-    "files_generated": 7
+    "final_periods_synchronized": 4,
+    "synchronization_efficiency": 36.36363636363637,
+    "files_generated": 4
   },
-  "_last_updated": "2025-11-11T19:01:23.979749",
+  "_last_updated": "2026-02-24T00:14:15.160991",
   "processing_completed": true,
-  "processing_timestamp": "2025-11-11T18:45:19.317078",
-  "periods_processed": 7,
-  "total_periods_identified": 13,
-  "processing_efficiency_percent": 53.84615384615385,
+  "processing_timestamp": "2026-02-23T23:59:17.294237",
+  "periods_processed": 4,
+  "total_periods_identified": 7,
+  "processing_efficiency_percent": 57.14285714285714,
   "unification_completed": true,
-  "unification_timestamp": "2025-11-11T18:47:04.164356",
-  "periods_synchronized": 7,
+  "unification_timestamp": "2026-02-24T00:00:49.313729",
+  "periods_synchronized": 4,
   "input_periods": {
-    "estimated": 7,
-    "slip": 7,
+    "estimated": 4,
+    "slip": 4,
     "c636": 11
   },
-  "synchronization_efficiency_percent": 63.63636363636363,
+  "synchronization_efficiency_percent": 36.36363636363637,
   "normalization_completed": true,
-  "normalization_timestamp": "2025-11-11T18:52:17.726976",
-  "normalized_samples": 1389174,
+  "normalization_timestamp": "2026-02-24T00:08:33.605257",
+  "normalized_samples": 939334,
   "normalized_features": 19,
   "normalization_range": [
     0.0,
     1.0000000000000002
   ],
   "normalization_charts": [
-    "G:\\Final TCC\\TCC\\code\\plots\\dados_normalizados_analise_c_640.png"
+    "C:\\Users\\manu_\\Downloads\\.tex TCC11\\code\\plots\\dados_normalizados_analise_c_640.png"
   ],
   "preprocessing_parameters": {
     "scaler_type": "minmax",
@@ -62,15 +62,15 @@
     "outlier_clipping_percentile": 99.5
   },
   "kmeans_training_completed": true,
-  "kmeans_training_timestamp": "2025-11-11T18:56:58.102726",
+  "kmeans_training_timestamp": "2026-02-24T00:09:57.043467",
   "total_clusters": 6,
-  "total_samples_classified": 1389174,
-  "ligado_samples": 372183,
-  "desligado_samples": 1016991,
+  "total_samples_classified": 939334,
+  "ligado_samples": 118460,
+  "desligado_samples": 820874,
   "classification_accuracy": 100.0,
-  "model_inertia": 127274.86951040677,
+  "model_inertia": 54801.87956185749,
   "cluster_analysis_charts": [
-    "G:\\Final TCC\\TCC\\code\\results\\analise_kmeans_clusters_moderado_c_640.png"
+    "C:\\Users\\manu_\\Downloads\\.tex TCC11\\code\\results\\analise_kmeans_clusters_moderado_c_640.png"
   ],
   "training_parameters": {
     "mpoint": "c_640",
@@ -80,93 +80,93 @@
     "normalization_method": "MinMax_with_outlier_clipping"
   },
   "cluster_statistics": {
-    "cluster_5": {
-      "size": 75483,
-      "percentage": 5.433660578156516,
-      "status": "LIGADO",
+    "cluster_0": {
+      "size": 136241,
+      "percentage": 14.503999642299755,
+      "status": "DESLIGADO",
       "features_mean": {
-        "mag_x": 0.6612452766166658,
-        "mag_y": 0.2728031871658871,
-        "mag_z": 0.20225781602759596,
-        "object_temp": 0.7919910423933261,
-        "vel_max_x": 0.6538001115347517
-      }
-    },
-    "cluster_3": {
-      "size": 190276,
-      "percentage": 13.697060267468295,
-      "status": "LIGADO",
-      "features_mean": {
-        "mag_x": 0.4249478430014413,
-        "mag_y": 0.5770162970285315,
-        "mag_z": 0.6040310227110286,
-        "object_temp": 0.8001817953996877,
-        "vel_max_x": 0.6658813260023025
+        "mag_x": 0.9228346068116229,
+        "mag_y": 0.1965174110824818,
+        "mag_z": 0.6300485958335779,
+        "object_temp": 0.4204722161419383,
+        "vel_max_x": 0.22560308920682962
       }
     },
     "cluster_1": {
-      "size": 106424,
-      "percentage": 7.6609553590838875,
+      "size": 359767,
+      "percentage": 38.30022122056691,
+      "status": "DESLIGADO",
+      "features_mean": {
+        "mag_x": 0.6275222854969041,
+        "mag_y": 0.5558094817633416,
+        "mag_z": 0.5815294388930287,
+        "object_temp": 0.25891190489625404,
+        "vel_max_x": 0.24496564162684867
+      }
+    },
+    "cluster_5": {
+      "size": 7185,
+      "percentage": 0.7649036444970585,
+      "status": "DESLIGADO",
+      "features_mean": {
+        "mag_x": 0.7173763446483402,
+        "mag_y": 0.5183921900371785,
+        "mag_z": 0.5606512335509323,
+        "object_temp": 0.5101858370417991,
+        "vel_max_x": 0.0008326809015701209
+      }
+    },
+    "cluster_3": {
+      "size": 65923,
+      "percentage": 7.018057474764035,
       "status": "LIGADO",
       "features_mean": {
-        "mag_x": 0.47055051793563235,
-        "mag_y": 0.5197777692010641,
-        "mag_z": 0.5215243094434786,
-        "object_temp": 0.7957125763561258,
-        "vel_max_x": 0.6628624617049093
+        "mag_x": 0.6047364107998153,
+        "mag_y": 0.5323003674613452,
+        "mag_z": 0.5770437813850625,
+        "object_temp": 0.8363818303653286,
+        "vel_max_x": 0.861428189136782
       }
     },
     "cluster_2": {
-      "size": 875857,
-      "percentage": 63.04876135027002,
-      "status": "DESLIGADO",
+      "size": 52537,
+      "percentage": 5.59300525691607,
+      "status": "LIGADO",
       "features_mean": {
-        "mag_x": 0.49110659356535064,
-        "mag_y": 0.4884445638421206,
-        "mag_z": 0.5079484472003469,
-        "object_temp": 0.23254136907903256,
-        "vel_max_x": 0.18822051760393588
+        "mag_x": 0.5997831548248406,
+        "mag_y": 0.5668990353366508,
+        "mag_z": 0.5546953838779802,
+        "object_temp": 0.8337367455877729,
+        "vel_max_x": 0.8624082753736318
       }
     },
     "cluster_4": {
-      "size": 88592,
-      "percentage": 6.3773148648045535,
+      "size": 317681,
+      "percentage": 33.81981276095617,
       "status": "DESLIGADO",
       "features_mean": {
-        "mag_x": 0.4709215857238744,
-        "mag_y": 0.5805947784908119,
-        "mag_z": 0.5577524947128817,
-        "object_temp": 0.2749464071739659,
-        "vel_max_x": 0.7970845493757669
-      }
-    },
-    "cluster_0": {
-      "size": 52542,
-      "percentage": 3.7822475802167332,
-      "status": "DESLIGADO",
-      "features_mean": {
-        "mag_x": 0.45953577090816045,
-        "mag_y": 0.5849626084323025,
-        "mag_z": 0.5585546358921758,
-        "object_temp": 0.3713110258655714,
-        "vel_max_x": 0.9308445869472274
+        "mag_x": 0.6386173733534338,
+        "mag_y": 0.5091979911809014,
+        "mag_z": 0.5517723529984684,
+        "object_temp": 0.1320541899876004,
+        "vel_max_x": 0.2193652977023372
       }
     }
   },
   "visualization_3d_completed": true,
-  "visualization_3d_timestamp": "2025-11-11T19:01:23.948839",
-  "charts_generated": 3,
+  "visualization_3d_timestamp": "2026-02-24T00:14:13.724264",
+  "charts_generated": 0,
   "visualization_type": "3d_states_scatter",
-  "data_samples_visualized": 1389174,
+  "data_samples_visualized": 939334,
   "time_window_days": 3,
   "equipment_states_detected": [
     "LIGADO",
     "DESLIGADO"
   ],
   "visualization_charts": [
-    "G:\\Final TCC\\TCC\\code\\results\\analise_kmeans_clusters_moderado_c_640.png",
-    "G:\\Final TCC\\TCC\\code\\results\\estados_corrente_vibracao_tempo_3d_c_640.png",
-    "G:\\Final TCC\\TCC\\code\\results\\estados_rpm_vibracao_tempo_3d_c_640.png"
+    "C:\\Users\\manu_\\Downloads\\.tex TCC11\\code\\results\\analise_kmeans_clusters_moderado_c_640.png",
+    "C:\\Users\\manu_\\Downloads\\.tex TCC11\\code\\results\\estados_corrente_vibracao_tempo_3d_c_640.png",
+    "C:\\Users\\manu_\\Downloads\\.tex TCC11\\code\\results\\estados_rpm_vibracao_tempo_3d_c_640.png"
   ],
   "visualization_parameters": {
     "plot_type": "3d_scatter_with_time",
@@ -176,7 +176,7 @@
     "view_angles": "multiple_optimized"
   },
   "pipeline_training_completed": true,
-  "pipeline_training_timestamp": "2025-11-11T18:58:30.323045",
+  "pipeline_training_timestamp": "2026-02-24T00:14:15.116364",
   "mpoint": "c_640",
   "stages_completed": [
     "processing",

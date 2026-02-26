@@ -1,0 +1,13 @@
+RELATRIO DE ANLISE - MPOINT c_637
+==================================================
+
+Perodo: 2026-02-22 00:05:00 at 2026-02-23 00:05:00
+
+ESTATSTICAS:
+- Tempo DESLIGADO: 0 days 00:23:00 (1.6%)
+- Tempo LIGADO: 0 days 23:37:00 (98.4%)
+
+ARQUIVOS:
+- Normalizado: analise_completa_c_637_20260224_113433_normalizado.csv
+- Resultados: analise_completa_c_637_20260224_113433_resultados.csv
+- Grfico: grafico_estados_c_637_20260224_113432.png

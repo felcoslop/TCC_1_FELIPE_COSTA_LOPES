@@ -219,7 +219,8 @@ def selecionar_intervalo_3_dias_mecanico(df_dados, horas_desejadas=72):
     return df_selecionado
 
 def remover_outliers_mecanico(df_dados, colunas=['object_temp', 'vel_rms_x', 'vel_rms_y', 'vel_rms_z']):
-    """Remove outliers usando método IQR (adaptado para equipamentos mecânicos)"""
+    """Remove outliers usando método IQR (adaptado para equipamentos mecânicos),
+    preservando sequencias consecutivas (>=10 amostras) = estados reais"""
     print("\nRemovendo outliers...")
     
     df_limpo = df_dados.copy()
@@ -244,9 +245,31 @@ def remover_outliers_mecanico(df_dados, colunas=['object_temp', 'vel_rms_x', 've
             limite_inferior = Q1 - 3 * IQR
             limite_superior = Q3 + 3 * IQR
             
-            # Filtrar outliers
-            mask = (df_limpo[col] >= limite_inferior) & (df_limpo[col] <= limite_superior)
-            df_limpo = df_limpo[mask]
+            # Identificar outliers
+            mask_outlier = (df_limpo[col] < limite_inferior) | (df_limpo[col] > limite_superior)
+            
+            # Preservar sequencias consecutivas (>=10) = estado real
+            indices_outlier = df_limpo.index[mask_outlier].tolist()
+            if len(indices_outlier) > 0:
+                pos_map = {idx: pos for pos, idx in enumerate(df_limpo.index.tolist())}
+                posicoes = [pos_map[idx] for idx in indices_outlier]
+                grupos = []
+                grupo_atual = [indices_outlier[0]]
+                pos_anterior = posicoes[0]
+                for i in range(1, len(posicoes)):
+                    if posicoes[i] == pos_anterior + 1:
+                        grupo_atual.append(indices_outlier[i])
+                    else:
+                        grupos.append(grupo_atual)
+                        grupo_atual = [indices_outlier[i]]
+                    pos_anterior = posicoes[i]
+                grupos.append(grupo_atual)
+                for grupo in grupos:
+                    if len(grupo) >= 10:
+                        mask_outlier.loc[grupo] = False
+            
+            # Filtrar apenas outliers pontuais
+            df_limpo = df_limpo[~mask_outlier]
     
     n_final = len(df_limpo)
     removidos = n_inicial - n_final

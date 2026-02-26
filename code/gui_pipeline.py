@@ -43,7 +43,7 @@ class PipelineGUI:
         # Cria a janela principal da aplicacao
         self.root = ctk.CTk()
 
-        self.root.title("Pipeline de Detecção de Estados - Sistema Versátil de ML")
+        self.root.title("TCC - FELIPE C. LOPES - PIPELINE DETECÇÃO DE ESTADOS")
 
         # Configurar para fullscreen
         self.root.attributes('-fullscreen', True)
@@ -103,7 +103,7 @@ class PipelineGUI:
 
         # Logo UFMG
         try:
-            logo_path = self.base_dir.parent / 'latex' / 'logo-ufmg.png'
+            logo_path = self.base_dir.parent / '.tex' / 'logo-ufmg.png'
             if logo_path.exists():
                 logo_image = Image.open(logo_path)
                 
@@ -155,6 +155,13 @@ class PipelineGUI:
                 )
                 logo_label.pack(padx=10, pady=10)
                 
+                # Definir favicon da janela (usando a imagem com fundo branco)
+                from PIL import ImageTk
+                icon_img = ImageTk.PhotoImage(logo_image)
+                self.root.after(200, lambda: self.root.iconphoto(False, icon_img))
+                # Manter referência para evitar garbage collection
+                self.root._icon_img = icon_img
+
                 print(f"[OK] Logo UFMG carregada e exibida: {new_width}x{new_height}px")
             else:
                 print(f"[AVISO] Logo não encontrada: {logo_path}")

@@ -1,0 +1,19 @@
+ANÁLISE DE INTERVALO - MPOINT c_637
+============================================================
+
+Período analisado: 2026-02-22 00:05:00 até 2026-02-23 00:05:00
+InfluxDB: 10.8.0.121
+
+ESTATÍSTICAS DE TEMPO:
+- Tempo DESLIGADO: 0 days 00:23:00 (1.6%)
+- Tempo LIGADO: 0 days 23:37:00 (98.4%)
+- Total de registros: 19319
+
+TRANSIÇÕES DE ESTADO DETECTADAS:
+- Ligações (DESLIGADO → LIGADO): 1
+- Desligações (LIGADO → DESLIGADO): 1
+
+ARQUIVOS GERADOS:
+- analise_completa_c_637_20260224_113433_normalizado.csv
+- analise_completa_c_637_20260224_113433_resultados.csv
+- grafico_estados_c_637_20260224_113432.png

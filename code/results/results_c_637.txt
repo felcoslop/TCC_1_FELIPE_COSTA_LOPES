@@ -1,51 +1,65 @@
 {
   "segmentation_completed": true,
-  "segmentation_timestamp": "2025-11-11T17:35:02.643095",
+  "segmentation_timestamp": "2026-02-24T11:34:01.400966",
   "processing_version": "2.0",
-  "files_generated": 5,
+  "files_generated": [
+    "C:\\Users\\manu_\\Downloads\\.tex TCC11\\code\\results\\c_637\\analise_completa_c_637_20260224_001747_normalizado.csv",
+    "C:\\Users\\manu_\\Downloads\\.tex TCC11\\code\\results\\c_637\\analise_completa_c_637_20260224_001747_relatorio.txt",
+    "C:\\Users\\manu_\\Downloads\\.tex TCC11\\code\\results\\c_637\\analise_completa_c_637_20260224_001747_resultados.csv",
+    "C:\\Users\\manu_\\Downloads\\.tex TCC11\\code\\results\\c_637\\analise_completa_c_637_20260224_113433_normalizado.csv",
+    "C:\\Users\\manu_\\Downloads\\.tex TCC11\\code\\results\\c_637\\analise_completa_c_637_20260224_113433_relatorio.txt",
+    "C:\\Users\\manu_\\Downloads\\.tex TCC11\\code\\results\\c_637\\analise_completa_c_637_20260224_113433_resultados.csv",
+    "C:\\Users\\manu_\\Downloads\\.tex TCC11\\code\\results\\c_637\\estados_intervalo_c_637.txt",
+    "C:\\Users\\manu_\\Downloads\\.tex TCC11\\code\\results\\c_637\\grafico_estados_c_637_20260224_001746.png",
+    "C:\\Users\\manu_\\Downloads\\.tex TCC11\\code\\results\\c_637\\grafico_estados_c_637_20260224_113432.png",
+    "C:\\Users\\manu_\\Downloads\\.tex TCC11\\code\\results\\c_637\\relatorio_treinamento_c_637.txt"
+  ],
   "gap_limit_hours": 3,
   "min_period_days": 1,
   "interpolation_method": "advanced_KNN_multivariate",
   "processing_parameters": {
-    "synchronization_method": "temporal_overlap_optimization",
-    "interpolation_method": "hybrid_spline_knn",
-    "outlier_removal": true,
-    "quality_control": true,
-    "minimum_overlap_hours": "not_specified"
+    "gap_detection_threshold": "3_hours",
+    "interpolation_methods": [
+      "simple_spline",
+      "advanced_knn",
+      "linear_fallback"
+    ],
+    "outlier_removal": "IQR_method_3sigma",
+    "period_segmentation": true,
+    "minimum_period_duration": "not_specified"
   },
   "processing_statistics": {
-    "estimated_periods_found": 5,
-    "slip_periods_found": 5,
-    "c636_periods_found": 9,
-    "final_periods_synchronized": 5,
-    "synchronization_efficiency": 55.55555555555556,
-    "files_generated": 5
+    "total_periods_identified": 1,
+    "valid_periods_processed": 1,
+    "invalid_periods_discarded": 0,
+    "files_generated": 30,
+    "processing_efficiency": 100.0
   },
-  "_last_updated": "2025-11-11T17:42:29.539972",
+  "_last_updated": "2026-02-24T16:15:08.303425",
   "processing_completed": true,
-  "processing_timestamp": "2025-11-11T17:35:38.604618",
-  "periods_processed": 5,
-  "total_periods_identified": 11,
-  "processing_efficiency_percent": 45.45454545454545,
+  "processing_timestamp": "2026-02-24T11:34:06.377383",
+  "periods_processed": 1,
+  "total_periods_identified": 1,
+  "processing_efficiency_percent": 100.0,
   "unification_completed": true,
-  "unification_timestamp": "2025-11-11T17:36:43.264526",
-  "periods_synchronized": 5,
+  "unification_timestamp": "2026-02-23T23:40:30.855206",
+  "periods_synchronized": 4,
   "input_periods": {
-    "estimated": 5,
-    "slip": 5,
+    "estimated": 4,
+    "slip": 4,
     "c636": 9
   },
-  "synchronization_efficiency_percent": 55.55555555555556,
+  "synchronization_efficiency_percent": 44.44444444444444,
   "normalization_completed": true,
-  "normalization_timestamp": "2025-11-11T17:38:46.215266",
-  "normalized_samples": 1242993,
+  "normalization_timestamp": "2026-02-24T11:34:29.421699",
+  "normalized_samples": 19319,
   "normalized_features": 19,
   "normalization_range": [
-    0.0,
-    1.0000000000000002
+    -6.450830227873603,
+    1.3903351800974175
   ],
   "normalization_charts": [
-    "G:\\Final TCC\\TCC\\code\\plots\\dados_normalizados_analise_c_637.png"
+    "C:\\Users\\manu_\\Downloads\\.tex TCC11\\code\\plots\\dados_normalizados_analise_c_637.png"
   ],
   "preprocessing_parameters": {
     "scaler_type": "minmax",
@@ -62,15 +76,15 @@
     "outlier_clipping_percentile": 99.5
   },
   "kmeans_training_completed": true,
-  "kmeans_training_timestamp": "2025-11-11T17:40:21.291998",
+  "kmeans_training_timestamp": "2026-02-23T23:45:12.966179",
   "total_clusters": 6,
-  "total_samples_classified": 1242993,
-  "ligado_samples": 507517,
-  "desligado_samples": 735476,
+  "total_samples_classified": 939349,
+  "ligado_samples": 203909,
+  "desligado_samples": 735440,
   "classification_accuracy": 100.0,
-  "model_inertia": 168739.54614146787,
+  "model_inertia": 114714.85259783745,
   "cluster_analysis_charts": [
-    "G:\\Final TCC\\TCC\\code\\results\\analise_kmeans_clusters_moderado_c_637.png"
+    "C:\\Users\\manu_\\Downloads\\.tex TCC11\\code\\results\\analise_kmeans_clusters_moderado_c_637.png"
   ],
   "training_parameters": {
     "mpoint": "c_637",
@@ -80,103 +94,81 @@
     "normalization_method": "MinMax_with_outlier_clipping"
   },
   "cluster_statistics": {
-    "cluster_2": {
-      "size": 206549,
-      "percentage": 16.617068639968206,
-      "status": "LIGADO",
-      "features_mean": {
-        "mag_x": 0.4741823690755618,
-        "mag_y": 0.8396307320200206,
-        "mag_z": 0.21027688186783733,
-        "object_temp": 0.8132635440009505,
-        "vel_max_x": 0.3393103790356741
-      }
-    },
     "cluster_0": {
-      "size": 97067,
-      "percentage": 7.809134886519876,
-      "status": "LIGADO",
-      "features_mean": {
-        "mag_x": 0.4631927816572673,
-        "mag_y": 0.8482974914763907,
-        "mag_z": 0.20876174389748636,
-        "object_temp": 0.8237314753556182,
-        "vel_max_x": 0.344939453434079
-      }
-    },
-    "cluster_1": {
-      "size": 538038,
-      "percentage": 43.285682220253854,
+      "size": 397346,
+      "percentage": 42.30014616505686,
       "status": "DESLIGADO",
       "features_mean": {
-        "mag_x": 0.6737554199729,
-        "mag_y": 0.16886910133102503,
-        "mag_z": 0.8000362464085777,
-        "object_temp": 0.3182186705097473,
-        "vel_max_x": 0.23259107459094178
+        "mag_x": 0.4556040249668635,
+        "mag_y": 0.37533156979840904,
+        "mag_z": 0.4227460845279092,
+        "object_temp": 0.44100243437509934,
+        "vel_max_x": 0.23716090765304004
       }
     },
     "cluster_5": {
-      "size": 104800,
-      "percentage": 8.431262283858397,
-      "status": "LIGADO",
-      "features_mean": {
-        "mag_x": 0.6760756951023226,
-        "mag_y": 0.33305537169389227,
-        "mag_z": 0.7522179771820785,
-        "object_temp": 0.6847645435624895,
-        "vel_max_x": 0.20494121240827037
-      }
-    },
-    "cluster_4": {
-      "size": 197438,
-      "percentage": 15.884079797714065,
+      "size": 33466,
+      "percentage": 3.5626801114388797,
       "status": "DESLIGADO",
       "features_mean": {
-        "mag_x": 0.6531125114821432,
-        "mag_y": 0.17242919086176325,
-        "mag_z": 0.7044650226449882,
-        "object_temp": 0.19351197993542615,
-        "vel_max_x": 0.4552408646827867
+        "mag_x": 0.4566165025954459,
+        "mag_y": 0.2781065130350444,
+        "mag_z": 0.3747260918211977,
+        "object_temp": 0.1306932473015124,
+        "vel_max_x": 0.002007870143655049
+      }
+    },
+    "cluster_1": {
+      "size": 104804,
+      "percentage": 11.157088579431074,
+      "status": "LIGADO",
+      "features_mean": {
+        "mag_x": 0.4851207806225334,
+        "mag_y": 0.7623428376507511,
+        "mag_z": 0.40696502747125,
+        "object_temp": 0.8200429576223041,
+        "vel_max_x": 0.2009802828642237
+      }
+    },
+    "cluster_2": {
+      "size": 198283,
+      "percentage": 21.108554967323116,
+      "status": "DESLIGADO",
+      "features_mean": {
+        "mag_x": 0.44851937818059834,
+        "mag_y": 0.40371994449433735,
+        "mag_z": 0.29007224103875767,
+        "object_temp": 0.23400797422745453,
+        "vel_max_x": 0.4455718969300293
       }
     },
     "cluster_3": {
-      "size": 99101,
-      "percentage": 7.972772171685601,
+      "size": 99105,
+      "percentage": 10.550391813905161,
       "status": "LIGADO",
       "features_mean": {
-        "mag_x": 0.699421136357905,
-        "mag_y": 0.11924071753783089,
-        "mag_z": 0.8040198265336602,
-        "object_temp": 0.6802282551901178,
-        "vel_max_x": 0.8883131496467762
+        "mag_x": 0.521422030190607,
+        "mag_y": 0.2835260485665135,
+        "mag_z": 0.5277018417954338,
+        "object_temp": 0.814869444200414,
+        "vel_max_x": 0.8713481106062541
+      }
+    },
+    "cluster_4": {
+      "size": 106345,
+      "percentage": 11.321138362844907,
+      "status": "DESLIGADO",
+      "features_mean": {
+        "mag_x": 0.5819487651798916,
+        "mag_y": 0.5094371601553134,
+        "mag_z": 0.9218618856696212,
+        "object_temp": 0.24812973643025021,
+        "vel_max_x": 0.26450521047952086
       }
     }
   },
-  "visualization_3d_completed": true,
-  "visualization_3d_timestamp": "2025-11-11T17:42:27.622164",
-  "charts_generated": 0,
-  "visualization_type": "3d_states_scatter",
-  "data_samples_visualized": 1242993,
-  "time_window_days": 3,
-  "equipment_states_detected": [
-    "LIGADO",
-    "DESLIGADO"
-  ],
-  "visualization_charts": [
-    "G:\\Final TCC\\TCC\\code\\results\\analise_kmeans_clusters_moderado_c_637.png",
-    "G:\\Final TCC\\TCC\\code\\results\\estados_corrente_vibracao_tempo_3d_c_637.png",
-    "G:\\Final TCC\\TCC\\code\\results\\estados_rpm_vibracao_tempo_3d_c_637.png"
-  ],
-  "visualization_parameters": {
-    "plot_type": "3d_scatter_with_time",
-    "color_coding": "equipment_states",
-    "interactive_rotation": true,
-    "dpi_quality": 300,
-    "view_angles": "multiple_optimized"
-  },
   "pipeline_training_completed": true,
-  "pipeline_training_timestamp": "2025-11-11T17:42:29.517045",
+  "pipeline_training_timestamp": "2026-02-23T23:50:14.957288",
   "mpoint": "c_637",
   "stages_completed": [
     "processing",
@@ -186,10 +178,57 @@
     "visualization"
   ],
   "artifacts_generated": 13,
+  "charts_generated": 7,
   "pipeline_performance": {
     "pipeline_completion": true,
     "stages_successful": 5,
     "artifacts_generated": 13,
     "charts_generated": 0
+  },
+  "visualization_3d_completed": true,
+  "visualization_3d_timestamp": "2026-02-24T16:15:08.221542",
+  "visualization_type": "3d_states_scatter",
+  "data_samples_visualized": 939349,
+  "time_window_days": 3,
+  "equipment_states_detected": [
+    "LIGADO",
+    "DESLIGADO"
+  ],
+  "visualization_charts": [
+    "C:\\Users\\manu_\\Downloads\\.tex TCC11\\code\\results\\analise_kmeans_clusters_moderado_c_637.png",
+    "C:\\Users\\manu_\\Downloads\\.tex TCC11\\code\\results\\estados_corrente_vibracao_tempo_3d_c_637.png",
+    "C:\\Users\\manu_\\Downloads\\.tex TCC11\\code\\results\\estados_corrente_vibracao_tempo_3d_c_637_20260222_000500_to_20260223_000500.png",
+    "C:\\Users\\manu_\\Downloads\\.tex TCC11\\code\\results\\estados_corrente_vibracao_tempo_3d_c_637_20260222_050000_to_20260223_110000.png",
+    "C:\\Users\\manu_\\Downloads\\.tex TCC11\\code\\results\\estados_rpm_vibracao_tempo_3d_c_637.png",
+    "C:\\Users\\manu_\\Downloads\\.tex TCC11\\code\\results\\estados_rpm_vibracao_tempo_3d_c_637_20260222_000500_to_20260223_000500.png",
+    "C:\\Users\\manu_\\Downloads\\.tex TCC11\\code\\results\\estados_temperatura_vibracao_tempo_3d_c_637_20260222_050000_to_20260223_110000.png"
+  ],
+  "visualization_parameters": {
+    "plot_type": "3d_scatter_with_time",
+    "color_coding": "equipment_states",
+    "interactive_rotation": true,
+    "dpi_quality": 300,
+    "view_angles": "multiple_optimized"
+  },
+  "interval_analysis_completed": true,
+  "interval_analysis_timestamp": "2026-02-24T11:35:58.459697",
+  "influxdb_ip": "10.8.0.121",
+  "analysis_period": {
+    "start": "2026-02-22 00:05:00",
+    "end": "2026-02-23 00:05:00",
+    "timezone": "GMT-3"
+  },
+  "analysis_parameters": {
+    "data_source": "InfluxDB_validated_default",
+    "processing_steps": [
+      "data_download_from_influx",
+      "data_preprocessing",
+      "feature_engineering",
+      "model_prediction",
+      "state_classification",
+      "visualization_generation"
+    ],
+    "model_used": "K-means_trained_model",
+    "output_format": "charts_and_reports"
   }
 }

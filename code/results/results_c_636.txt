@@ -1,48 +1,34 @@
 {
   "segmentation_completed": true,
-  "segmentation_timestamp": "2025-11-11T19:11:53.164952",
+  "segmentation_timestamp": "2026-02-23T23:27:54.945327",
   "processing_version": "2.0",
-  "files_generated": [
-    "G:\\Final TCC\\TCC\\code\\results\\c_636\\relatorio_treinamento_c_636.txt",
-    "G:\\Final TCC\\TCC\\code\\results\\c_636\\grafico_estados_c_636_20251111_191036.png",
-    "G:\\Final TCC\\TCC\\code\\results\\c_636\\analise_completa_c_636_20251111_191037_normalizado.csv",
-    "G:\\Final TCC\\TCC\\code\\results\\c_636\\analise_completa_c_636_20251111_191037_resultados.csv",
-    "G:\\Final TCC\\TCC\\code\\results\\c_636\\analise_completa_c_636_20251111_191037_relatorio.txt",
-    "G:\\Final TCC\\TCC\\code\\results\\c_636\\estados_intervalo_c_636.txt",
-    "G:\\Final TCC\\TCC\\code\\results\\c_636\\grafico_estados_c_636_20251111_191226.png",
-    "G:\\Final TCC\\TCC\\code\\results\\c_636\\analise_completa_c_636_20251111_191227_normalizado.csv",
-    "G:\\Final TCC\\TCC\\code\\results\\c_636\\analise_completa_c_636_20251111_191227_resultados.csv",
-    "G:\\Final TCC\\TCC\\code\\results\\c_636\\analise_completa_c_636_20251111_191227_relatorio.txt"
-  ],
+  "files_generated": 5,
   "gap_limit_hours": 3,
   "min_period_days": 1,
   "interpolation_method": "advanced_KNN_multivariate",
   "processing_parameters": {
-    "gap_detection_threshold": "3_hours",
-    "interpolation_methods": [
-      "simple_spline",
-      "advanced_knn",
-      "linear_fallback"
-    ],
-    "outlier_removal": "IQR_method_3sigma",
-    "period_segmentation": true,
-    "minimum_period_duration": "not_specified"
+    "synchronization_method": "temporal_overlap_optimization",
+    "interpolation_method": "hybrid_spline_knn",
+    "outlier_removal": true,
+    "quality_control": true,
+    "minimum_overlap_hours": "not_specified"
   },
   "processing_statistics": {
-    "total_periods_identified": 1,
-    "valid_periods_processed": 1,
-    "invalid_periods_discarded": 0,
-    "files_generated": 30,
-    "processing_efficiency": 100.0
+    "estimated_periods_found": 5,
+    "slip_periods_found": 5,
+    "c636_periods_found": 6,
+    "final_periods_synchronized": 5,
+    "synchronization_efficiency": 83.33333333333334,
+    "files_generated": 5
   },
-  "_last_updated": "2025-11-11T19:12:48.855078",
+  "_last_updated": "2026-02-23T23:34:07.647655",
   "processing_completed": true,
-  "processing_timestamp": "2025-11-11T19:11:57.936424",
-  "periods_processed": 1,
-  "total_periods_identified": 1,
-  "processing_efficiency_percent": 100.0,
+  "processing_timestamp": "2026-02-23T23:28:33.969382",
+  "periods_processed": 5,
+  "total_periods_identified": 9,
+  "processing_efficiency_percent": 55.55555555555556,
   "unification_completed": true,
-  "unification_timestamp": "2025-11-11T17:16:32.789626",
+  "unification_timestamp": "2026-02-23T23:29:46.113940",
   "periods_synchronized": 5,
   "input_periods": {
     "estimated": 5,
@@ -51,15 +37,15 @@
   },
   "synchronization_efficiency_percent": 83.33333333333334,
   "normalization_completed": true,
-  "normalization_timestamp": "2025-11-11T19:12:17.607830",
-  "normalized_samples": 62508,
+  "normalization_timestamp": "2026-02-23T23:31:25.564485",
+  "normalized_samples": 863450,
   "normalized_features": 19,
   "normalization_range": [
-    -0.30973597187566493,
-    1.2906706918079325
+    0.0,
+    1.0000000000000002
   ],
   "normalization_charts": [
-    "G:\\Final TCC\\TCC\\code\\plots\\dados_normalizados_analise_c_636.png"
+    "C:\\Users\\manu_\\Downloads\\.tex TCC11\\code\\plots\\dados_normalizados_analise_c_636.png"
   ],
   "preprocessing_parameters": {
     "scaler_type": "minmax",
@@ -76,7 +62,7 @@
     "outlier_clipping_percentile": 99.5
   },
   "kmeans_training_completed": true,
-  "kmeans_training_timestamp": "2025-11-11T17:20:23.154966",
+  "kmeans_training_timestamp": "2026-02-23T23:32:41.035380",
   "total_clusters": 6,
   "total_samples_classified": 863450,
   "ligado_samples": 706530,
@@ -84,7 +70,7 @@
   "classification_accuracy": 100.0,
   "model_inertia": 177613.4134286799,
   "cluster_analysis_charts": [
-    "G:\\Final TCC\\TCC\\code\\results\\analise_kmeans_clusters_moderado_c_636.png"
+    "C:\\Users\\manu_\\Downloads\\.tex TCC11\\code\\results\\analise_kmeans_clusters_moderado_c_636.png"
   ],
   "training_parameters": {
     "mpoint": "c_636",
@@ -168,26 +154,22 @@
     }
   },
   "visualization_3d_completed": true,
-  "visualization_3d_timestamp": "2025-11-11T19:12:48.455201",
-  "charts_generated": [
-    "G:\\Final TCC\\TCC\\code\\results\\c_636\\grafico_estados_c_636_20251111_191036.png",
-    "G:\\Final TCC\\TCC\\code\\results\\c_636\\grafico_estados_c_636_20251111_191226.png"
-  ],
+  "visualization_3d_timestamp": "2026-02-23T23:34:04.235057",
+  "charts_generated": 2,
   "visualization_type": "3d_states_scatter",
-  "data_samples_visualized": 46980,
+  "data_samples_visualized": 863450,
   "time_window_days": 3,
   "equipment_states_detected": [
     "LIGADO",
     "DESLIGADO"
   ],
   "visualization_charts": [
-    "G:\\Final TCC\\TCC\\code\\results\\analise_kmeans_clusters_moderado_c_636.png",
-    "G:\\Final TCC\\TCC\\code\\results\\estados_corrente_vibracao_tempo_3d_c_636.png",
-    "G:\\Final TCC\\TCC\\code\\results\\estados_rpm_vibracao_tempo_3d_c_636.png",
-    "G:\\Final TCC\\TCC\\code\\results\\estados_corrente_vibracao_tempo_3d_c_636_20251103_000000_to_20251110_235959.png",
-    "G:\\Final TCC\\TCC\\code\\results\\estados_temperatura_vibracao_tempo_3d_c_636_20251103_000000_to_20251110_235959.png",
-    "G:\\Final TCC\\TCC\\code\\results\\estados_corrente_vibracao_tempo_3d_c_636_20250711_000000_to_20250721_235959.png",
-    "G:\\Final TCC\\TCC\\code\\results\\estados_rpm_vibracao_tempo_3d_c_636_20250711_000000_to_20250721_235959.png"
+    "C:\\Users\\manu_\\Downloads\\.tex TCC11\\code\\results\\analise_kmeans_clusters_moderado_c_636.png",
+    "C:\\Users\\manu_\\Downloads\\.tex TCC11\\code\\results\\estados_corrente_vibracao_tempo_3d_c_636.png",
+    "C:\\Users\\manu_\\Downloads\\.tex TCC11\\code\\results\\estados_corrente_vibracao_tempo_3d_c_636_20250711_000000_to_20250721_235959.png",
+    "C:\\Users\\manu_\\Downloads\\.tex TCC11\\code\\results\\estados_corrente_vibracao_tempo_3d_c_636_20251103_000000_to_20251110_235959.png",
+    "C:\\Users\\manu_\\Downloads\\.tex TCC11\\code\\results\\estados_rpm_vibracao_tempo_3d_c_636.png",
+    "C:\\Users\\manu_\\Downloads\\.tex TCC11\\code\\results\\estados_rpm_vibracao_tempo_3d_c_636_20250711_000000_to_20250721_235959.png"
   ],
   "visualization_parameters": {
     "plot_type": "3d_scatter_with_time",
@@ -197,7 +179,7 @@
     "view_angles": "multiple_optimized"
   },
   "pipeline_training_completed": true,
-  "pipeline_training_timestamp": "2025-11-11T17:22:57.244148",
+  "pipeline_training_timestamp": "2026-02-23T23:34:07.616746",
   "mpoint": "c_636",
   "stages_completed": [
     "processing",
@@ -206,12 +188,12 @@
     "training",
     "visualization"
   ],
-  "artifacts_generated": 13,
+  "artifacts_generated": 18,
   "pipeline_performance": {
     "pipeline_completion": true,
     "stages_successful": 5,
-    "artifacts_generated": 13,
-    "charts_generated": 0
+    "artifacts_generated": 18,
+    "charts_generated": 2
   },
   "interval_analysis_completed": true,
   "interval_analysis_timestamp": "2025-11-11T19:12:48.831932",
