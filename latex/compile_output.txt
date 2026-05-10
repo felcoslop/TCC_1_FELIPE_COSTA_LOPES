@@ -1,0 +1,77 @@
+﻿This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex.fmt)
+ restricted \write18 enabled.
+entering extended mode
+(Monografia.tex
+LaTeX2e <2025-06-01> patch level 1
+L3 programming layer <2025-09-02>
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/base\book.cls
+Document Class: book 2025/01/22 v1.4n Standard LaTeX document class
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/base\bk12.clo))
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\times.sty)
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty)
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty)
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics.c
+fg)
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
+))) (C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty)
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/generic/babel\babel.sty
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/generic/babel\txtbabel.def)
+*************************************
+* Local config file bblopts.cfg used
+*
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/arabi\bblopts.cfg)
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/babel-portuges\brazil.l
+df)) (C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\t1ptm.fd))
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
+For additional information on amsmath, use the `?' option.
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty))
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty)
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty))
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/amscls\amsthm.sty)
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfonts.sty)
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/graphics\color.sty
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg)
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx)
+) (C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty)
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/csquotes\csquotes.sty
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty)
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/csquotes\csquotes.def)
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/csquotes\csquotes.cfg))
+ (C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/float\float.sty)
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/abntex2\abntex2abrev.st
+y (C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/base\ifthen.sty))
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty))
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg))
+Writing index file Monografia.idx
+
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
+tex.def) (Monografia.aux (capa.aux) (Resumo.aux) (Agradecimentos.aux)
+(ListaFiguras.aux) (ListaTabelas.aux) (TabelaConteudo.aux) (Introducao.aux)
+(DescricaoProcesso.aux) (Metodologia.aux) (Resultados.aux) (Conclusao.aux))
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
+ii
+[Loading MPS to PDF converter (version 2006.09.02).]
+)
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-b
+ase.sty
+(C:\Users\manu_\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.c
+fg))
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+(capa.tex
+! I can't write on file `Monografia.pdf'.
+(Press Enter to retry, or Control-C to exit; default file extension is `.pdf')
+Please type another file name for output
+! Emergency stop.
+<argument> \pdfximage 
+                      \ifnum 0\ifx \Gin@decode \@empty \else 1\fi \ifGin@int...
+l.7 \includegraphics[width=4cm]{logo-ufmg.png}
+                                              \par
+!  ==> Fatal error occurred, no output PDF file produced!
+Transcript written on Monografia.log.

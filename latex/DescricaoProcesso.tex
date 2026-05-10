@@ -1,0 +1,46 @@
+\chapter{Revisão Bibliográfica}
+\label{chap:revisao}
+
+Este capítulo apresenta uma revisão da literatura sobre os conceitos fundamentais que sustentam este trabalho. A abordagem explora três pilares principais: o desafio da aquisição e preparação de dados em ambientes industriais com foco na sincronização de fontes heterogêneas, estratégias de aprendizado não supervisionado através de algoritmos de clusterização, e a importância da detecção de \textit{outliers} para qualidade dos dados.
+
+\section{Manutenção Baseada em Condição na Indústria 4.0}
+
+A. K. S. Jardine, D. Lin e D. Banjevic~\cite{jardine2006review} apresentam uma revisão abrangente sobre diagnóstico e prognóstico de máquinas implementando manutenção baseada em condição. Os autores destacam que a abordagem tradicional de manutenção preventiva baseada em tempo fixo frequentemente resulta em intervenções desnecessárias ou insuficientes. A manutenção preditiva baseia-se no monitoramento contínuo de indicadores de condição da máquina, permitindo identificação precoce de degradação, otimização de intervalos de manutenção, redução de paradas não programadas e aumento da vida útil de componentes. O conceito de horímetro (tempo acumulado de operação) é fundamental neste contexto, pois permite calcular a utilização real do equipamento, diferente de estimativas baseadas apenas em calendário.
+
+\section{Fusão de Dados de Múltiplos Sensores}
+
+A. Tsanousa, E. Bektsis, G. Kyriakopoulos, A. G. González, M. Voutyras e M. Vlachopoulou~\cite{tsanousa2022review} apresentam uma revisão detalhada sobre soluções de fusão de dados multissensor em manufatura inteligente. Os autores identificam três níveis principais de fusão: fusão de baixo nível (combinação de dados brutos de sensores), fusão de nível médio (fusão de atributos extraídos) e fusão de alto nível (combinação de decisões de múltiplos classificadores). No contexto deste trabalho, implementa-se fusão de baixo nível, combinando dados brutos de sensores magnéticos, vibração, corrente e análise de escorregamento em uma linha temporal unificada.
+
+V. Gulisano, B. Havers, M. Papatriantafilou e P. Valduriez~\cite{gulisano2020ananke} abordam o desafio do processamento de fluxos de dados com proveniência, destacando a importância do alinhamento temporal em sistemas distribuídos. Em ambientes industriais IoT, sensores operam com frequências de amostragem distintas, exigindo técnicas robustas de sincronização. Nesse sentido, N. Tyagi, A. Singh e S. M. P. Gangadharan~\cite{tyagi2024comprehensive} realizam uma revisão abrangente sobre técnicas de fusão de sensores em IoT Industrial (IIoT), enfatizando que o processamento em tempo real requer métodos eficientes de alinhamento temporal antes de qualquer análise ou treinamento de modelo.
+
+R. A. Osornio-Rios, I. Zamudio-Ramírez, A. Y. Jaen-Cuellar, J. Antonino-Daviu e L. Dunai~\cite{osornio2023data} apresentam um sistema inovador de fusão de dados para monitoramento de condição de motores elétricos. Os autores demonstram que a combinação de múltiplas fontes de dados (vibração, corrente, temperatura) resulta em diagnósticos mais precisos e confiáveis do que análises baseadas em sensor único.
+
+\section{Aprendizado Não Supervisionado e Semi-Supervisionado}
+
+Em cenários industriais reais, a obtenção de dados rotulados manualmente é frequentemente impraticável devido ao custo elevado de anotação manual, necessidade de \textit{expertise} específica, volume massivo de dados históricos não rotulados e variabilidade de condições operacionais. Esta realidade motivou o desenvolvimento de estratégias de aprendizado não supervisionado, onde padrões são identificados automaticamente nos dados sem necessidade de rotulação prévia.
+
+P. Cascante-Bonilla, L. Munoz-Gonzalez, J. M. Perez-Rua, R. Al-Rfou e T. Ropinski~\cite{cascante2021revisiting} revisitam o conceito de pseudo-rotulagem para aprendizado semi-supervisionado, demonstrando que a qualidade dos pseudo-rótulos é crucial para o desempenho final do sistema. Os autores propõem estratégias de seleção baseadas em limiar de confiança.
+
+B. Zhao, C. Cheng, S. Zhao e Z. Peng~\cite{zhao2023hybrid} aplicam aprendizado semi-supervisionado híbrido especificamente para diagnóstico de falhas em máquinas rotativas, utilizando pseudo-rotulagem agrupada, regularização por consistência e seleção inteligente de amostras de alta confiança. Este trabalho demonstra que selecionar apenas os pseudo-rótulos mais confiáveis resulta em modelos mais robustos, mesmo descartando grande parte dos dados disponíveis.
+
+\section{Detecção de \textit{Outliers} em Dados de Sensores}
+
+U. Habib, G. Zucker, M. Blochle, F. Judex e M. Stifter~\cite{habib2015outliers} apresentam métodos de detecção de \textit{outliers} usando clusterização em dados de edificações. Os autores demonstram que \textit{outliers} podem comprometer significativamente o desempenho de modelos de aprendizado de máquina, sendo essencial detectá-los e tratá-los antes do treinamento. Em dados de sensores industriais, \textit{outliers} podem originar-se de interferências eletromagnéticas, falhas temporárias de sensores, erros de transmissão de dados e condições transitórias extremas.
+
+O método IQR (\textit{Interquartile Range})~\cite{tukey1977iqr} é amplamente utilizado por ser robusto e eficiente. Neste trabalho, optou-se pelo multiplicador conservador 3,0 (em vez do 1,5 padrão) para evitar a remoção de variações operacionais legítimas que apresentam alta variabilidade, mas que não são erros de leitura.
+
+\section{Interpolação e Preenchimento de Dados}
+
+Dados de sensores industriais frequentemente apresentam lacunas temporais devido a falhas de comunicação, manutenções ou problemas nos sensores. A escolha da estratégia de interpolação depende do tamanho da lacuna, natureza da variável (lenta ou rápida), disponibilidade de contexto temporal e requisitos de confiabilidade. A interpolação PCHIP (\textit{Piecewise Cubic Hermite Interpolating Polynomial})~\cite{fritsch1980pchip} é adequada para lacunas curtas de até 30 minutos, preservando suavidade e monotonicidade da série temporal. O K-Nearest Neighbors (KNN) temporal é utilizado para lacunas entre 30 minutos e 3 horas, aproveitando padrões de pontos temporalmente próximos. Para lacunas maiores que 3 horas, é preferível dividir em períodos separados do que interpolar com baixa confiabilidade.
+
+O algoritmo K-Means é amplamente utilizado em aplicações industriais por sua simplicidade e interpretabilidade, escalabilidade para grandes volumes de dados, não exigir dados rotulados e possuir convergência garantida~\cite{macqueen1967some}. Para identificação de estados operacionais, o K-Means permite descobrir naturalmente padrões nos dados correspondentes a diferentes regimes de operação (desligado, baixa carga, alta carga, etc.).
+
+O K-Means apresenta limitações conhecidas como sensibilidade à inicialização (mitigado por \textit{k-means++}~\cite{arthur2007k}), necessidade de definir o número de \textit{clusters} a priori, assumir \textit{clusters} esféricos e sensibilidade a \textit{outliers}. Entretanto, para o problema de classificação de estado operacional, estas limitações são aceitáveis, pois os estados formam naturalmente agrupamentos bem definidos no espaço de atributos.
+
+\section{Generalização para Múltiplos Equipamentos}
+
+J. Hang, S. Zhang, M. Xia, R. Yan, Y. Ding e X. Li~\cite{hang2022personalized} exploram aprendizado federado personalizado para diagnóstico de falhas em IoT industrial. Embora este trabalho não implemente aprendizado federado, os conceitos de personalização por equipamento são relevantes. Cada equipamento pode ter características operacionais distintas, modelos específicos por equipamento capturam nuances individuais e transferência de conhecimento entre equipamentos similares é possível. A arquitetura modular desenvolvida facilita a adaptação para novos equipamentos, mantendo a estrutura do \textit{pipeline} mas permitindo calibração específica.
+
+\section{Síntese da Revisão}
+
+Esta revisão estabeleceu os fundamentos teóricos que sustentam a metodologia proposta. A importância do horímetro para gestão de ativos foi estabelecida por Jardine et al.~\cite{jardine2006review}. Técnicas de sincronização multissensor foram fundamentadas pelos trabalhos de Tsanousa et al.~\cite{tsanousa2022review}, Gulisano et al.~\cite{gulisano2020ananke}, Tyagi et al.~\cite{tyagi2024comprehensive} e Osornio-Rios et al.~\cite{osornio2023data}. O uso de pseudo-rótulos com seleção inteligente foi explorado por Cascante-Bonilla et al.~\cite{cascante2021revisiting} e Zhao et al.~\cite{zhao2023hybrid}. A detecção de \textit{outliers} foi fundamentada por Habib et al.~\cite{habib2015outliers}, e a personalização por equipamento por Hang et al.~\cite{hang2022personalized}. Estes fundamentos guiaram as decisões metodológicas, resultando em um sistema robusto baseado em evidências científicas consolidadas.

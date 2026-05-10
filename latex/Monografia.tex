@@ -1,0 +1,60 @@
+\documentclass[12pt,a4paper,oneside]{book}
+
+%---------------Pacotes essenciais--------------------------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+
+\usepackage{times}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{multicol}
+\usepackage{amsmath,amsfonts,amsthm}
+\usepackage{color}
+\usepackage{csquotes}
+\usepackage{abntex2abrev}
+\usepackage{url}
+\usepackage{hyperref}
+
+%---------------Ajuste de margens---------------------------
+\usepackage[a4paper,
+    top=30mm,
+    bottom=30mm,
+    left=30mm,
+    right=25mm
+]{geometry}
+
+%---------------Desabilitar justificação vertical------------
+\raggedbottom
+
+%---------------Configurações gerais-------------------------
+\makeindex
+
+%---------------Início do documento--------------------------
+\begin{document}
+
+\include{capa}
+
+\pagenumbering{roman}
+\include{Resumo}
+\include{Agradecimentos}
+\include{ListaFiguras}
+\include{ListaTabelas}
+\include{TabelaConteudo}
+
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\include{Introducao}
+\include{DescricaoProcesso}
+\include{Metodologia}
+\include{Resultados}
+\include{Conclusao}
+
+%---------------Referências----------------------------------
+\addcontentsline{toc}{chapter}{Referências Bibliográficas}
+\bibliographystyle{plain}
+\begin{small}
+    \bibliography{telefonia}
+\end{small}
+
+\end{document}

@@ -1,0 +1,30 @@
+% ==================================================================
+% ARQUIVO: TabelaConteudo.tex
+% DESCRIÇÃO: Gera o sumário, a lista de figuras e a lista de tabelas.
+% COMO USAR: Inclua este arquivo no seu documento.tex principal
+%            (logo após a folha de rosto e o resumo) com o comando:
+%            \input{TabelaConteudo.tex}
+% ==================================================================
+
+% Gera o Sumário (Índice) principal do trabalho.
+% O LaTeX irá preenchê-lo automaticamente com base nos seus
+% comandos \section, \subsection, etc.
+\tableofcontents
+
+\newpage % Garante que o conteúdo seguinte comece em uma nova página.
+
+% --- SEÇÕES OPCIONAIS PARA UM TCC ---
+% Para um trabalho acadêmico completo, é comum incluir a lista de
+% figuras e tabelas. Descomente as seções abaixo se desejar incluí-las.
+
+% % Gera a Lista de Figuras
+% \listoffigures
+% % Adiciona a "Lista de Figuras" como um item no próprio sumário
+% \addcontentsline{toc}{section}{Lista de Figuras}
+% \newpage
+
+% % Gera a Lista de Tabelas
+% \listoftables
+% % Adiciona a "Lista de Tabelas" como um item no próprio sumário
+% \addcontentsline{toc}{section}{Lista de Tabelas}
+% \newpage

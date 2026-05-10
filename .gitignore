@@ -2,7 +2,21 @@
 # .gitignore - Exclusões do Version Control
 
 # ===== PASTA LATEX (TODA) =====
-latex/
+# latex/
+latex/*.aux
+latex/*.log
+latex/*.out
+latex/*.toc
+latex/*.pdf
+latex/*.fdb_latexmk
+latex/*.fls
+latex/*.synctex.gz
+latex/*.blg
+latex/*.bbl
+latex/*.idx
+latex/*.lof
+latex/*.lot
+latex/*.zip
 
 # ===== ARQUIVOS CSV (TODOS) =====
 *.csv

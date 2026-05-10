@@ -1,0 +1,45 @@
+\chapter{Conclusão}
+\label{chap:conclusao}
+
+Este trabalho apresentou um sistema completo para detecção automática de estados operacionais de equipamentos industriais elétricos e mecânicos utilizando dados de sensores IoT e algoritmos de aprendizado não supervisionado. O sistema identifica automaticamente o tipo de equipamento e adapta seu processamento, demonstrando versatilidade para diferentes aplicações industriais.
+
+Foi desenvolvido um \textit{pipeline} completo que inclui coleta inteligente de dados com \textit{cache} evitando \textit{timeouts}, segmentação temporal identificando automaticamente períodos contínuos, interpolação adaptativa com três estratégias baseadas no tamanho da lacuna, fusão multifonte sincronizando dados de frequências distintas em linha temporal unificada, normalização consistente aplicando MinMaxScaler em 19 atributos para equipamentos elétricos e 16 para mecânicos, e classificação robusta através de K-Means com classificação automática de \textit{clusters} baseada em análise de centróides.
+
+Uma contribuição importante é a demonstração prática de que problemas simples requerem soluções simples. A tentativa inicial com Redes Neurais Convolucionais (CNN) e \textit{Autoencoders} Convolucionais (ConvAE), apesar de tecnologias avançadas, falhou devido a \textit{overfitting} severo onde modelos complexos memorizavam padrões específicos, falta de interpretabilidade dificultando o diagnóstico de erros e complexidade desnecessária para o problema de classificação LIGADO/DESLIGADO que é essencialmente baseado em limiares simples. A solução K-Means pura demonstrou ser mais robusta generalizando naturalmente para dados novos, mais interpretável com \textit{clusters} inspecionáveis visualmente, mais eficiente treinando em minutos versus horas da CNN, e mais confiável não apresentando classificações incorretas observadas nas redes neurais.
+
+Um experimento revelador foi conduzido em resposta aos cenários práticos onde equipamentos elétricos apresentam falha na estimativa de corrente e RPM devido à ausência ou incorreção de parâmetros de placa e quantidade de polos na base relacional~\cite{romary2022airgap, doe2014motor, garcia2025estimation}. Demonstrou-se que, nestes casos, os equipamentos obtêm resultados até superiores quando reclassificados e processados pelo \textit{pipeline} mecânico simplificado (usando apenas temperatura, vibração e os dados brutos do magnetômetro) em comparação ao \textit{pipeline} elétrico completo. O equipamento $c_{636}$, processado como mecânico devido à ausência destas calibrações de fluxo magnético, apresentou separação mais clara entre estados LIGADO e DESLIGADO, processando 790.726 amostras com 16 atributos \textit{versus} 863.450 amostras com 19 atributos da tentativa no \textit{pipeline} elétrico. Esta descoberta reforça o princípio de que atributos dependentes de parâmetros cadastrais rigorosos (corrente e RPM) podem adicionar ruído, valores nulos e complexidade desnecessária ao sistema quando mal configurados, e que o \textit{pipeline} mecânico de redundância mostrou-se mais eficiente, mais tolerante a falhas de configuração e com resultados mais robustos.
+
+\section{Aspectos Econômicos e Trabalhos Futuros}
+
+O sistema desenvolvido apresenta impactos positivos em múltiplas dimensões além da técnica. No aspecto econômico, a detecção precisa de estados operacionais permite planejamento energético otimizado através da identificação de períodos ociosos e cálculo preciso de consumo real, programação eficiente de manutenções preventivas baseada em horas efetivas de operação reduzindo custos com intervenções desnecessárias. Estudos indicam que manutenção baseada em condição pode reduzir custos de manutenção em até 30\% comparada a abordagens preventivas baseadas em tempo fixo~\cite{jardine2006review}.
+
+Diversas direções promissoras emergem para extensão e aprimoramento deste trabalho. A implementação do \textit{pipeline} em tempo real permitiria monitoramento contínuo com classificação instantânea de estados, possibilitando suporte a decisões operacionais em tempo real. Um sistema de retreinamento diário automático adaptaria continuamente o modelo K-Means a mudanças graduais nos padrões operacionais causadas por desgaste natural, mantendo acurácia ao longo do tempo e detectando mudanças nos padrões de operação como indicadores precoces de degradação. Uma boa atualização futura seria a utilização de previsão de séries temporais para preencher lacunas sem dados, com aplicação de modelos estatísticos como ARIMA~\cite{box1970arima} ou arquiteturas de redes neurais como LSTM~\cite{hochreiter1997lstm} e \textit{Transformers}~\cite{vaswani2017attention} para estimar valores faltantes, reduzindo a taxa de descarte de períodos.
+
+
+\section{Considerações Finais}
+
+Este trabalho demonstrou que a escolha adequada de algoritmos de aprendizado de máquina deve ser guiada pela natureza do problema, não pela popularidade ou sofisticação da técnica. A tentativa inicial com Redes Neurais Convolucionais, apesar de bem fundamentada teoricamente, mostrou-se inadequada para um problema de classificação binária com atributos bem definidos. A solução final baseada em K-Means puro provou ser adequada e perfeitamente alinhada com a natureza do problema, robusta generalizando para dados novos sem \textit{overfitting}, interpretável com resultados validáveis e explicáveis, eficiente sendo rápida para treinar e inferir, e escalável sendo facilmente adaptável para novos equipamentos.
+
+O desenvolvimento do \textit{pipeline} de processamento, incluindo interpolação KNN temporal e fusão de múltiplas fontes, representa uma contribuição significativa que pode ser aplicada em outros contextos de análise de dados industriais. Os resultados obtidos com dados reais de cinco equipamentos ao longo de aproximadamente 7 meses, totalizando mais de 5 milhões de registros processados, validam a aplicabilidade prática do sistema, abrindo caminho para sua implantação em ambientes industriais de produção.
+
+A lição principal aprendida é que nem sempre o algoritmo mais sofisticado é o mais adequado. A elegância da solução está na sua adequação ao problema, não na sua complexidade. Este trabalho serve como exemplo de que, na era de \textit{Deep Learning} e modelos cada vez mais complexos, é fundamental manter o pensamento crítico sobre quando essa complexidade é realmente necessária. Para o problema de detecção de estado operacional LIGADO/DESLIGADO, a simplicidade do K-Means não é uma limitação, mas sim uma virtude.
+
+O sistema desenvolvido tem potencial para impactar positivamente a gestão de ativos através de horímetros precisos melhorando planejamento de manutenção, a eficiência energética identificando desperdícios e otimizando consumo, os custos operacionais reduzindo manutenções desnecessárias, a confiabilidade melhorando compreensão de padrões operacionais, e a sustentabilidade promovendo uso mais eficiente de recursos energéticos. A interface gráfica desenvolvida democratiza o acesso à tecnologia, permitindo que operadores sem conhecimento técnico especializado possam treinar modelos, analisar períodos específicos e gerar visualizações com poucos cliques.
+
+\section{Disponibilização do Código}
+
+Todo o código desenvolvido está disponível em repositório público no GitHub:
+
+\href{https://github.com/felcoslop/TCC_1_FELIPE_COSTA_LOPES}{\textbf{Acessar repositório no GitHub}}
+\vspace{0.4cm}
+
+Os arquivos brutos necessários para o treinamento, incluindo os arquivos CSV e o arquivo .env com as credenciais do InfluxDB, estão disponíveis no seguinte link do OneDrive:
+
+\href{https://1drv.ms/f/c/5f1c3aa3f12af1a2/IgAXz-STR6zmRrccv2fN6JW9Aa4Qy9Yz6RLAjaxAfnqGuj8?e=ydZVsX}{\textbf{Acessar pasta com dados brutos}}
+\vspace{0.4cm}
+
+O repositório inclui \textit{scripts} de processamento modulares, sistema interativo de análise, documentação completa, exemplos de uso e dados de exemplo anonimizados. Esta disponibilização visa facilitar reprodução dos resultados e extensão para novos casos de uso.
+
+O desenvolvimento deste sistema demonstra que soluções práticas e robustas para problemas industriais reais podem ser alcançadas combinando conhecimento teórico sólido com pragmatismo na escolha de ferramentas. A jornada de tentativa e erro que levou da CNN ao K-Means é tão valiosa quanto o resultado final, pois ensina lições fundamentais sobre aprendizado de máquina aplicado.
+
+\clearpage

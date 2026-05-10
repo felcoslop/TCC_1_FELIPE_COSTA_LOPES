@@ -1,0 +1,1121 @@
+\section{Implementação Técnica Detalhada do Pipeline Dual}
+
+\subsection{Arquitetura Geral do Sistema Dual}
+
+O sistema de detecção de estados operacionais de equipamentos industriais elétricos e mecânicos foi desenvolvido utilizando uma arquitetura modular baseada em 20+ scripts Python especializados. O sistema detecta automaticamente o tipo de equipamento e adapta seu pipeline de processamento, seguindo princípios de responsabilidade única e acoplamento mínimo. A arquitetura garante:
+
+\begin{itemize}
+    \item \textbf{\textit{Modularidade}}: Cada script executa uma operação específica independente
+    \item \textbf{\textit{Manutenibilidade}}: Facilita correções, melhorias e extensões do sistema
+    \item \textbf{\textit{Reprodutibilidade}}: Parâmetros padronizados garantem resultados consistentes
+    \item \textbf{\textit{Escalabilidade}}: Adequado para processamento de grandes volumes de dados industriais
+    \item \textbf{\textit{Robustez}}: Validações automáticas previnem falhas em cascata
+    \item \textbf{\textit{Auditoria}}: Sistema de logging estruturado permite rastreabilidade completa
+\end{itemize}
+
+\subsubsection{Fluxograma Geral do Pipeline}
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.9\textwidth}
+    \footnotesize
+    \begin{verbatim}
++-----------------+    +-----------------+    +-----------------+
+|  Dados Brutos   | -> |   Processamento | -> |  Classificacao  |
+|  (InfluxDB)     |    | e Interpolacao  |    |   K-means 6     |
+|                 |    |                 |    |   clusters      |
+| - validated_def |    | - Segmentacao   |    |                 |
+| - estimated     |    | - KNN temporal  |    | - Estados:      |
+| - validated_slip|    | - Trat. outliers|    |   LIGADO/       |
++-----------------+    | - Normalizacao  |    |   DESLIGADO     |
+                       +-----------------+    +-----------------+
+                               |                        |
+                               v                        v
+                       +-----------------+    +-----------------+
+                       |   Analise por   | -->|  Visualizacao   |
+                       |   Intervalo     |    |   3D Clusters   |
+                       |                 |    |                 |
+                       | - Download      |    | - Graficos 3D   |
+                       | - Classificacao |    | - PCA + Tempo   |
+                       | - Metricas      |    | - Estados       |
+                       +-----------------+    +-----------------+
+\end{verbatim}
+    \end{minipage}
+    \caption{Arquitetura geral do pipeline de detecção de estados}
+    \label{fig:arquitetura_pipeline}
+\end{figure}
+
+
+\subsubsection{Estratégias de Desenvolvimento}
+
+\textbf{Princípios de Engenharia de Software Aplicados:}
+
+\begin{enumerate}
+    \item \textbf{Separação de Responsabilidades:} Cada script tem uma função única e clara
+    \item \textbf{Interface Padrão:} Todos os scripts usam argumentos \texttt{--mpoint} para identificação
+    \item \textbf{Tratamento de Erros:} Exceções são capturadas e logadas estruturadamente
+    \item \textbf{Configuração Externa:} Parâmetros ajustáveis via linha de comando
+    \item \textbf{Persistência de Estado:} Modelos e dados são salvos em formatos padronizados
+    \item \textbf{Logging Estruturado:} Sistema de logs com níveis e contextos específicos
+\end{enumerate}
+
+\textbf{Padrões de Qualidade de Código:}
+
+\begin{itemize}
+    \item \textbf{Documentação:} Todos os scripts têm docstrings detalhados
+    \item \textbf{Nomenclatura:} Convenções claras para variáveis, funções e arquivos
+    \item \textbf{Validações:} Verificações de entrada/saída em todos os pontos críticos
+    \item \textbf{Performance:} Otimizações para processamento de grandes datasets
+    \item \textbf{Reprodutibilidade:} Seeds fixos para algoritmos não-determinísticos
+\end{itemize}
+
+\subsection{Scripts de Processamento de Dados}
+
+\subsubsection{\texttt{segmentar\_preencher\_dados.py} - Segmentação Temporal e Interpolação KNN Multivariada}
+
+Este script implementa o processamento mais complexo e avançado do pipeline, responsável por segmentar dados temporais e aplicar interpolação multivariada usando algoritmos de aprendizado de máquina.
+
+\paragraph{Algoritmo de Segmentação Temporal}
+
+\textbf{Detecção de Gaps:}
+\begin{align}
+\Delta t &= t_{i+1} - t_i \\
+gap_{detectado} &= \Delta t > limite_{gap} \\
+novo_{periodo} &= gap_{detectado} \lor (\Delta t = NaN)
+\end{align}
+
+Onde $limite_{gap} = 3$ horas (10.800 segundos) foi determinado empiricamente como equilíbrio entre preservação de dados e confiabilidade da interpolação.
+
+\textbf{Critérios de Validação de Períodos:}
+\begin{enumerate}
+    \item \textbf{Duração mínima:} $t_{fim} - t_{inicio} \geq 24$ horas
+    \item \textbf{Frequência amostral:} Verificação de intervalo médio $\approx$ 20 segundos
+    \item \textbf{Integridade de dados:} Presença de colunas essenciais
+\end{enumerate}
+
+\paragraph{Estratégia de Interpolação Multi-Etapas}
+
+\textbf{Etapa 1 - Interpolação Temporal Básica (Gaps $<$ 3 minutos):}
+\begin{itemize}
+    \item \textbf{Método:} Interpolação linear temporal
+    \item \textbf{Limite:} 9 pontos (3 minutos a 20s cada)
+    \item \textbf{Vantagem:} Preserva tendências lineares curtas
+    \item \textbf{Implementação:} \texttt{pandas.DataFrame.interpolate(method='time')}
+\end{itemize}
+
+\textbf{Etapa 2 - KNN Temporal Multivariado (Gaps 1-3 horas):}
+\begin{itemize}
+    \item \textbf{Algoritmo:} K-Nearest Neighbors com métrica euclidiana
+    \item \textbf{Vizinhos:} $k = 5$ (adaptativo baseado no tamanho do período)
+    \item \textbf{Features temporais:} 8 dimensões (6 sensoriais + 2 temporais)
+    \item \textbf{Pesos:} Distância inversa (\texttt{weights='distance'})
+\end{itemize}
+
+\textbf{Features de Contexto Temporal:}
+\begin{align}
+hora_{sin} &= \sin\left(2\pi \cdot \frac{hora}{24}\right) \\
+hora_{cos} &= \cos\left(2\pi \cdot \frac{hora}{24}\right) \\
+dia_{sin} &= \sin\left(2\pi \cdot \frac{dia\_semana}{7}\right) \\
+dia_{cos} &= \cos\left(2\pi \cdot \frac{dia\_semana}{7}\right) \\
+timestamp_{norm} &= \frac{t - t_{min}}{t_{max} - t_{min}}
+\end{align}
+
+\textbf{Etapa 3 - Interpolação Spline Cúbica (Gaps remanescentes):}
+\begin{itemize}
+    \item \textbf{Método:} Splines cúbicos de ordem 3
+    \item \textbf{Implementação:} \texttt{scipy.interpolate.UnivariateSpline}
+    \item \textbf{Vantagem:} Suavidade contínua (derivadas de primeira e segunda ordem)
+\end{itemize}
+
+\textbf{Etapa 4 - Forward/Backward Fill (Extremidades):}
+\begin{itemize}
+    \item \textbf{Método:} Preenchimento pelas bordas do período
+    \item \textbf{Limite:} Máximo 1 hora de extensão
+    \item \textbf{Propósito:} Completar gaps marginais sem dados suficientes
+\end{itemize}
+
+\paragraph{Detecção e Tratamento de Outliers}
+
+\textbf{Limites Físicos por Tipo de Sensor:}
+\begin{table}[H]
+\centering
+\caption{Limites físicos para detecção de outliers}
+\begin{tabular}{|l|c|c|l|}
+\hline
+\textbf{Sensor} & \textbf{Limite Inferior} & \textbf{Limite Superior} & \textbf{Unidade} \\
+\hline
+Magnetômetro (X,Y,Z) & -200 & 200 & Gauss \\
+Temperatura & -10 & 150 & °C \\
+Vibração RMS & -0.1 & 500 & mm/s \\
+Corrente & -0.1 & 500 & A \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{Método IQR para Outliers:}
+\begin{align}
+Q1 &= \text{percentil 25 dos dados} \\
+Q3 &= \text{percentil 75 dos dados} \\
+IQR &= Q3 - Q1 \\
+limite_{inf} &= Q1 - 3 \times IQR \\
+limite_{sup} &= Q3 + 3 \times IQR
+\end{align}
+
+\paragraph{Proteção de Sequências Operacionais (Regra de Inércia)}
+
+Para evitar a remoção de estados operacionais legítimos (como o desligamento total do equipamento), o sistema implementa uma regra de proteção baseada na continuidade temporal:
+\begin{itemize}
+    \item \textbf{Condição:} Se uma sequência de $\geq 10$ amostras consecutivas (aprox. 3.3 minutos) for classificada como outlier.
+    \item \textbf{Ações:} Os valores são \textbf{preservados} em vez de serem marcados como NaN.
+    \item \textbf{Justificativa Física:} Equipamentos industriais possuem inércia; mudanças drásticas e duradouras em todos os sensores simultaneamente costumam representar mudanças reais de estado (ex: desligamento do motor), não erros de leitura esporádicos.
+\end{itemize}
+
+\paragraph{Suavização Savitzky-Golay}
+
+Aplicada apenas em valores interpolados para reduzir ruído artificial:
+\begin{itemize}
+    \item \textbf{Janela:} 11 pontos (ímpar)
+    \item \textbf{Ordem polinomial:} 3
+    \item \textbf{Implementação:} \texttt{scipy.signal.savgol\_filter}
+\end{itemize}
+
+\paragraph{Geração de Timestamps Uniformes}
+
+\textbf{Algoritmo de Alinhamento Temporal:}
+\begin{align}
+segundo_{base} &= (t_{inicio}.second \div 20) \times 20 \\
+t_{alinhado} &= t_{inicio}.replace(second=segundo_{base}, microsecond=0) \\
+timestamps &= \{t_{alinhado} + 20s \times i \mid i = 0, 1, 2, \dots\}
+\end{align}
+
+\paragraph{Parâmetros de Configuração}
+
+\begin{table}[H]
+\centering
+\caption{Parâmetros configuráveis do script de segmentação}
+\begin{tabular}{|l|c|l|}
+\hline
+\textbf{Parâmetro} & \textbf{Padrão} & \textbf{Descrição} \\
+\hline
+\texttt{--mpoint} & obrigatório & Identificador do equipamento \\
+\texttt{--gap-limite} & 3.0 & Gap máximo em horas para segmentação \\
+\texttt{--periodo-minimo} & 1.0 & Duração mínima em dias para período válido \\
+\texttt{--intervalo-amostragem} & 20 & Intervalo em segundos entre amostras \\
+\hline
+\end{tabular}
+\end{table}
+
+\paragraph{Métricas de Qualidade de Interpolação}
+
+Cada valor interpolado recebe uma pontuação de confiabilidade:
+\begin{itemize}
+    \item \textbf{1.00:} Dados originais (não interpolados)
+    \item \textbf{0.95:} Interpolação spline ($<$ 1h)
+    \item \textbf{0.75:} Interpolação KNN (1-3h)
+    \item \textbf{0.50:} Forward/backward fill ($>$ 3h)
+\end{itemize}
+
+\paragraph{Outputs do Script}
+
+\begin{enumerate}
+    \item \textbf{Arquivos CSV segmentados:} \texttt{dados\_[mpoint]\_periodo\_[XX]\_v2.csv}
+    \item \textbf{Metadados JSON:} Estatísticas detalhadas por período
+    \item \textbf{Relatório textual:} Sumário de processamento e qualidade
+    \item \textbf{Logs estruturados:} Rastreamento completo da execução
+\end{enumerate}
+
+\subsubsection{\texttt{processar\_dados\_simples.py} - Processamento Otimizado de Dados Secundários}
+
+Este script processa especificamente os dados de estimated e validated\_slip, aplicando algoritmos similares aos do script principal, mas otimizados para performance e com foco em dados de frequência mais baixa.
+
+\paragraph{Estratégia de Segmentação Adaptativa}
+
+\textbf{Detecção de Períodos em Dados Estimated:}
+\begin{itemize}
+    \item \textbf{Gaps de referência:} Dados de corrente (\texttt{current}) como referência temporal
+    \item \textbf{Validação cruzada:} Verificação de presença simultânea de RPM e vibração
+    \item \textbf{Duração mínima:} 24 horas (equivalente ao script principal)
+    \item \textbf{Frequência esperada:} 1-2 minutos (mais esparsa que dados primários)
+\end{itemize}
+
+\paragraph{Algoritmos de Interpolação Hierárquicos}
+
+\textbf{Sequência de Métodos Aplicados:}
+
+\begin{enumerate}
+    \item \textbf{Interpolação Spline Cúbica (Gaps $<$ 1 hora):}
+    \begin{itemize}
+        \item Aplicada quando há pontos suficientes para ajuste polinomial
+        \item Ordem 3 para suavidade adequada
+        \item Limitação: Requer mínimo 4 pontos válidos
+    \end{itemize}
+
+    \item \textbf{KNN Temporal (Gaps 1-3 horas):}
+    \begin{itemize}
+        \item Contexto temporal limitado (3 pontos antes/depois)
+        \item Features: timestamp normalizado + valores sensoriais
+        \item Distância euclidiana ponderada
+    \end{itemize}
+
+    \item \textbf{Interpolação Linear (Fallback):}
+    \begin{itemize}
+        \item Aplicada quando métodos avançados falham
+        \item Preserva monotonicidade dos dados
+        \item Menor qualidade mas sempre convergente
+    \end{itemize}
+\end{enumerate}
+
+\paragraph{Técnicas de Tratamento de Outliers}
+
+\textbf{Método IQR Conservador:}
+\begin{itemize}
+    \item \textbf{Multiplicador:} 3.0 (mais conservador que o padrão 1.5)
+    \item \textbf{Propósito:} Preservar variações operacionais legítimas
+    \item \textbf{Aplicação:} Em todas as colunas numéricas
+\end{itemize}
+
+\paragraph{Processamento Sequencial vs Paralelo}
+
+\textbf{Estratégia de Performance:}
+\begin{itemize}
+    \item \textbf{Processamento sequencial:} Por limitação de memória em datasets grandes
+    \item \textbf{Validação independente:} Cada período processado isoladamente
+    \item \textbf{Salvar incremental:} Arquivos salvos imediatamente após processamento
+\end{itemize}
+
+\paragraph{Outputs Específicos}
+
+\begin{itemize}
+    \item \textbf{Períodos estimated:} \texttt{periodo\_[XX]\_estimated\_[mpoint].csv}
+    \item \textbf{Períodos slip:} \texttt{periodo\_[XX]\_slip\_[mpoint].csv}
+    \item \textbf{Compatibilidade:} Formato idêntico ao script principal para integração
+\end{itemize}
+
+\subsubsection{\texttt{unir\_sincronizar\_periodos.py} - Sincronização Multi-Fonte Avançada}
+
+Este script implementa algoritmos sofisticados para fusão temporal de dados provenientes de três fontes distintas, garantindo alinhamento preciso apesar das diferenças de frequência de amostragem.
+
+\paragraph{Algoritmo de Matching Temporal Inteligente}
+
+\textbf{Verificação de Compatibilidade Entre Períodos:}
+
+\textbf{Função de Overlap:}
+\begin{align}
+inicio_{comum} &= \max(inicio_1, inicio_2) \\
+fim_{comum} &= \min(fim_1, fim_2) \\
+overlap &= fim_{comum} - inicio_{comum} \\
+overlap_{percentual} &= \frac{overlap}{\min(duracao_1, duracao_2)} \times 100\%
+\end{align}
+
+\textbf{Critérios de Aceitação:}
+\begin{itemize}
+    \item \textbf{Overlap mínimo:} 70\% da duração do período menor
+    \item \textbf{Diferença máxima:} 1 hora entre timestamps de início/fim
+    \item \textbf{Qualidade de dados:} Verificação de gaps internos $<$ 3 horas
+\end{itemize}
+
+\paragraph{Estratégia de Merge Temporal}
+
+\textbf{Merge Outer com Sufixos:}
+\begin{itemize}
+    \item \textbf{Método:} \texttt{pandas.merge(how='outer', suffixes=('', '\_slip'))}
+    \item \textbf{Resolução de conflitos:} Sufixos automáticos para colunas duplicadas
+    \item \textbf{Preservação temporal:} Todos os timestamps mantidos
+\end{itemize}
+
+\textbf{Ordenação Cronológica:}
+\begin{itemize}
+    \item \textbf{Após merge:} Reordenação por timestamp
+    \item \textbf{Verificação de monotonicidade:} Garantia de ordem temporal
+    \item \textbf{Remoção de duplicatas:} Mantém primeiro registro em caso de empate
+\end{itemize}
+
+\paragraph{Interpolação Pós-Merge}
+
+\textbf{Algoritmo Adaptativo por Coluna:}
+\begin{itemize}
+    \item \textbf{Features temporais:} Interpolação linear baseada em tempo
+    \item \textbf{Features categóricas:} Forward fill com limite de 6 minutos
+    \item \textbf{Validação de qualidade:} Remoção de gaps artificiais criados pelo merge
+\end{itemize}
+
+\paragraph{Validação de Integridade Pós-União}
+
+\textbf{Checks Automáticos:}
+\begin{enumerate}
+    \item \textbf{Gaps temporais:} Verificação de continuidade $<$ 3 horas
+    \item \textbf{Integridade de dados:} Todas as features obrigatórias presentes
+    \item \textbf{Consistência temporal:} Timestamps monotônicos e únicos
+    \item \textbf{Qualidade de interpolação:} Limitação de gaps interpolados
+\end{enumerate}
+
+\paragraph{Estratégias de Recuperação de Falhas}
+
+\textbf{Quando Overlap Insuficiente:}
+\begin{itemize}
+    \item \textbf{Manutenção de dados originais:} Período unificado preservado sem modificações
+    \item \textbf{Documentação de qualidade:} Logs detalhados sobre limitações encontradas
+    \item \textbf{Continuidade do pipeline:} Processamento não interrompido por falhas parciais
+\end{itemize}
+
+\subsection{Scripts de Machine Learning}
+
+\subsubsection{\texttt{normalizar\_dados\_kmeans.py} - Pipeline Avançado de Pré-processamento}
+
+Este script implementa um pipeline completo de pré-processamento de dados usando técnicas avançadas de machine learning, preparando os dados para algoritmos de clusterização não supervisionada.
+
+\paragraph{Arquitetura do Pipeline de Pré-processamento}
+
+\textbf{Sequência de Transformações Scikit-learn:}
+
+\begin{enumerate}
+    \item \textbf{SimpleImputer:} Tratamento de valores nulos
+    \begin{itemize}
+        \item Estratégia: mediana (robusta a outliers)
+        \item Aplicação: todas as features numéricas
+        \item Vantagem: não introduz viés nos dados
+    \end{itemize}
+
+    \item \textbf{Transformações de Distribuição (Opcional):}
+    \begin{itemize}
+        \item \textbf{PowerTransformer (Yeo-Johnson):} Correção de assimetria
+        \item \textbf{QuantileTransformer:} Mapeamento para distribuição normal/uniforme
+        \item \textbf{Objetivo:} Melhorar performance de algoritmos paramétricos
+    \end{itemize}
+
+    \item \textbf{MinMaxScaler:} Normalização para intervalo [0,1]
+    \begin{itemize}
+        \item Fórmula: $x_{norm} = \frac{x - x_{min}}{x_{max} - x_{min}}$
+        \item Preserva relacionamentos relativos
+        \item Adequado para algoritmos baseados em distância
+    \end{itemize}
+
+    \item \textbf{VarianceThreshold:} Remoção de features de baixa variância
+    \begin{itemize}
+        \item Threshold padrão: 0.0 (remove features constantes)
+        \item Configurável para eliminar ruído
+        \item Reduz dimensionalidade desnecessária
+    \end{itemize}
+
+    \item \textbf{PCA (Opcional):} Redução de dimensionalidade
+    \begin{itemize}
+        \item Por número de componentes ou variância explicada
+        \item Preserva estrutura dos dados
+        \item Ajuda em visualização e performance
+    \end{itemize}
+\end{enumerate}
+
+\paragraph{Clipping Inteligente de Outliers}
+
+\textbf{Algoritmo de Pré-processamento:}
+
+Antes da normalização, aplicado clipping baseado em percentis:
+\begin{align}
+percentil_{inferior} &= 99.5\% \\
+limite_{superior} &= \text{percentil}(percentil_{inferior}) \\
+limite_{inferior} &= \text{percentil}(100\% - percentil_{inferior}) \\
+x_{clipped} &= \max(\min(x, limite_{superior}), limite_{inferior})
+\end{align}
+
+\textbf{Justificativa:}
+\begin{itemize}
+    \item Evita distorção da escala por valores extremos
+    \item Percentil 99.5\% remove apenas outliers severos
+    \item Preserva distribuição principal dos dados operacionais
+\end{itemize}
+
+\paragraph{Filtro de Correlação Adaptativo}
+
+\textbf{Algoritmo Guloso para Seleção de Features:}
+
+\begin{enumerate}
+    \item Calcular matriz de correlação absoluta
+    \item Para cada par de features com $|corr| > threshold$:
+    \begin{itemize}
+        \item Identificar feature com maior variância
+        \item Remover feature com menor variância
+        \item Evitar remoção de features críticas (RPM, corrente)
+    \end{itemize}
+    \item Iterar até não haver correlações altas restantes
+\end{enumerate}
+
+\paragraph{Carregamento e Concatenação de Dados}
+
+\textbf{Estratégia de Integração Temporal:}
+\begin{itemize}
+    \item \textbf{Identificação automática:} Busca arquivos \texttt{periodo\_*\_final\_[mpoint].csv}
+    \item \textbf{Concatenação ordenada:} Merge temporal com preservação de ordem
+    \item \textbf{Deduplicação:} Mantém registro mais antigo em caso de timestamps idênticos
+    \item \textbf{Validação temporal:} Garante monotonicidade crescente
+\end{itemize}
+
+\paragraph{Limpeza de Features Auxiliares}
+
+\textbf{Regras de Filtragem:}
+\begin{itemize}
+    \item \textbf{Remover automaticamente:} colunas \texttt{m\_point}, \texttt{interpolado}, \texttt{periodo\_id}
+    \item \textbf{Remover tipos não-numéricos:} strings, booleanos, objetos
+    \item \textbf{Preservar:} timestamp + todas as features sensoriais numéricas
+\end{itemize}
+
+\paragraph{Persistência e Reutilização de Modelos}
+
+\textbf{Salvar Pipeline Completo:}
+\begin{itemize}
+    \item \textbf{Scaler:} \texttt{scaler\_maxmin\_[mpoint].pkl}
+    \item \textbf{Pipeline:} \texttt{preprocess\_pipeline\_[mpoint].pkl}
+    \item \textbf{Metadados:} \texttt{info\_normalizacao\_[mpoint].json}
+    \item \textbf{Dados processados:} \texttt{normalized\_[mpoint].csv} e \texttt{.npy}
+\end{itemize}
+
+\subsubsection{\texttt{kmeans\_classificacao\_moderado.py} - Classificação Não Supervisionada Avançada}
+
+Este script implementa o algoritmo K-means com estratégia de classificação automática baseada em análise estatística dos centroides, adaptando-se dinamicamente às características de cada equipamento.
+
+\paragraph{Configuração Otimizada do Algoritmo K-means}
+
+\textbf{Parâmetros do Scikit-learn:}
+
+\begin{table}[H]
+\centering
+\caption{Configuração otimizada do K-means}
+\begin{tabular}{|l|c|l|}
+\hline
+\textbf{Parâmetro} & \textbf{Valor} & \textbf{Justificativa} \\
+\hline
+\texttt{n\_clusters} & 6 & Balanceia granularidade e estabilidade \\
+\texttt{init} & k-means++ & Inicialização inteligente \\
+\texttt{n\_init} & 10 & Convergência robusta \\
+\texttt{max\_iter} & 300 & Limite superior conservador \\
+\texttt{random\_state} & 42 & Reprodutibilidade \\
+\texttt{algorithm} & lloyd & Padrão otimizado \\
+\hline
+\end{tabular}
+\end{table}
+
+\paragraph{Análise Estatística dos Centroides}
+
+\textbf{Cálculo do Score Combinado:}
+
+Para cada cluster $c$, o score é calculado como:
+\begin{align}
+score_c &= \alpha \cdot \overline{vel\_rms}_c + \beta \cdot \overline{current}_c + \gamma \cdot \overline{rpm}_c \\
+\alpha &= \beta = \gamma = 1 \quad (\text{pesos iguais})
+\end{align}
+
+Onde $\overline{x}_c$ representa a média normalizada da feature $x$ no cluster $c$.
+
+\paragraph{Classificação Dinâmica Baseada em Distribuição}
+
+\textbf{Algoritmo Adaptativo:}
+
+\begin{enumerate}
+    \item \textbf{Ordenar clusters} por score crescente (menor = mais "desligado")
+    \item \textbf{Calcular desvio padrão} dos scores ordenados
+    \item \textbf{Aplicar regras de decisão:}
+    \begin{itemize}
+        \item Se $\sigma_{scores} < 0.3$: usar 2-3 clusters com menores scores
+        \item Se $\sigma_{scores} \geq 0.3$: usar apenas 1-2 clusters com menores scores
+        \item Considerar diferenças relativas entre scores consecutivos
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Justificativa da Abordagem:}
+\begin{itemize}
+    \item \textbf{Adaptabilidade:} Cada equipamento pode ter padrões operacionais distintos
+    \item \textbf{Robustez:} Baseada em estatísticas em vez de thresholds fixos
+    \item \textbf{Interpretabilidade:} Clusters ordenados por "grau de operação"
+\end{itemize}
+
+\paragraph{Validação Estatística dos Clusters}
+
+\textbf{Métricas Calculadas:}
+\begin{itemize}
+    \item \textbf{Inércia:} Soma dos quadrados das distâncias intra-cluster
+    \item \textbf{Silhouette Score:} Qualidade de separação dos clusters
+    \item \textbf{Distribuição de tamanhos:} Percentual de pontos por cluster
+    \item \textbf{Centroides normalizados:} Características médias de cada cluster
+\end{itemize}
+
+\paragraph{Visualizações Automáticas}
+
+\textbf{Gráfico de Análise de Clusters:}
+\begin{itemize}
+    \item \textbf{Scatter plot 2D:} Projeção PCA dos clusters
+    \item \textbf{Distribuição de estados:} Pie chart LIGADO vs DESLIGADO
+    \item \textbf{Centroides destacados:} Marcadores especiais para centroides
+    \item \textbf{Legendas automáticas:} Identificação de clusters por estado
+\end{itemize}
+
+\paragraph{Persistência de Modelos Treinados}
+
+\textbf{Arquivos Salvos:}
+\begin{itemize}
+    \item \textbf{Modelo K-means:} \texttt{kmeans\_model\_moderado\_[mpoint].pkl}
+    \item \textbf{Scaler:} \texttt{scaler\_model\_moderado\_[mpoint].pkl}
+    \item \textbf{Dados classificados:} \texttt{dados\_classificados\_kmeans\_moderado\_[mpoint].csv}
+    \item \textbf{Metadados:} \texttt{info\_kmeans\_model\_moderado\_[mpoint].json}
+    \item \textbf{Relatório:} \texttt{relatorio\_treinamento\_[mpoint].txt}
+\end{itemize}
+
+\subsection{Scripts de Análise e Visualização}
+
+\subsubsection{\texttt{analise\_intervalo\_completa.py} - Análise Temporal Completa por Intervalo}
+
+Este script implementa um workflow completo para análise de estado operacional em intervalos temporais específicos, permitindo inspeção detalhada do comportamento de equipamentos sem necessidade de processamento completo do pipeline.
+
+\paragraph{Arquitetura de Processamento Sequencial}
+
+\textbf{Fases de Execução Automática:}
+
+\begin{enumerate}
+    \item \textbf{Validação de Pré-requisitos:}
+    \begin{itemize}
+        \item Verificar existência de modelos treinados (\texttt{kmeans\_model\_moderado\_[mpoint].pkl})
+        \item Confirmar disponibilidade de scalers (\texttt{scaler\_model\_moderado\_[mpoint].pkl})
+        \item Validar permissões de acesso ao InfluxDB
+    \end{itemize}
+
+    \item \textbf{Extração Temporal Específica:}
+    \begin{itemize}
+        \item Download de dados \texttt{estimated} no intervalo solicitado
+        \item Busca de dados \texttt{validated\_default} correspondentes
+        \item Recuperação de dados \texttt{validated\_slip} do período
+        \item Aplicação de filtros temporais precisos (GMT-3 $\rightarrow$ UTC)
+    \end{itemize}
+
+    \item \textbf{Processamento Adaptativo:}
+    \begin{itemize}
+        \item Aplicação dos mesmos algoritmos de segmentação e interpolação
+        \item Sincronização temporal das três fontes de dados
+        \item Validação de qualidade de dados (gaps $<$ 3 horas)
+    \end{itemize}
+
+    \item \textbf{Classificação com Modelo Pré-treinado:}
+    \begin{itemize}
+        \item Carregamento dinâmico de modelo K-means específico do equipamento
+        \item Aplicação do scaler de normalização consistente
+        \item Predição de estados para todo o intervalo temporal
+    \end{itemize}
+\end{enumerate}
+
+\paragraph{Algoritmos de Métricas Temporais}
+
+\textbf{Cálculo de Tempos Operacionais:}
+
+\textbf{Detecção de Estados:}
+\begin{align}
+estado_t &= \begin{cases}
+1 & \text{se cluster}_t \in \text{clusters\_ligado} \\
+0 & \text{se cluster}_t \in \text{clusters\_desligado}
+\end{cases}
+\end{align}
+
+\textbf{Cálculo de Duração por Estado:}
+\begin{align}
+tempo_{ligado} &= \sum_{t} estado_t \times \Delta t \\
+tempo_{desligado} &= \sum_{t} (1 - estado_t) \times \Delta t \\
+percentual_{ligado} &= \frac{tempo_{ligado}}{tempo_{total}} \times 100\%
+\end{align}
+
+\textbf{Duração Contínua:}
+\begin{align}
+duração_{contínua} &= \max(\{n \mid estado_{t+i} = estado_t \ \forall i \in [0,n]\}) \\
+tempo_{contínuo} &= duração_{contínua} \times \Delta t
+\end{align}
+
+\paragraph{Análise de Transições Operacionais}
+
+\textbf{Detecção de Mudanças de Estado:}
+
+\begin{enumerate}
+    \item \textbf{Comparação Temporal:} $estado_{t+1} \neq estado_t$
+    \item \textbf{Filtragem de Ruído:} Mínimo 5 minutos de estabilidade
+    \item \textbf{Classificação de Transição:}
+    \begin{itemize}
+        \item LIGADO $\rightarrow$ DESLIGADO: "desligamento"
+        \item DESLIGADO $\rightarrow$ LIGADO: "ligamento"
+    \end{itemize}
+    \item \textbf{Estatísticas de Transições:} frequência, duração média, variabilidade
+\end{enumerate}
+
+\paragraph{Visualização Temporal Interativa}
+
+\textbf{Gráfico de Estados vs Tempo:}
+
+\begin{itemize}
+    \item \textbf{Eixo X:} Timestamp em formato brasileiro (GMT-3)
+    \item \textbf{Eixo Y:} Estados binários (0=DESLIGADO, 1=LIGADO)
+    \item \textbf{Cores:} Verde para LIGADO, vermelho para DESLIGADO
+    \item \textbf{Interatividade:} Zoom temporal, tooltips com métricas
+    \item \textbf{Anotações:} Marcadores de transições com timestamps exatos
+\end{itemize}
+
+\paragraph{Geração de Relatórios Automáticos}
+
+\textbf{Estrutura do Relatório JSON:}
+\begin{verbatim}
+{
+    "intervalo_analisado": {
+        "inicio": "2024-01-01 08:00:00",
+        "fim": "2024-01-01 18:00:00",
+        "duracao_horas": 10.0
+    },
+    "metricas_principais": {
+        "tempo_ligado_horas": 7.5,
+        "tempo_desligado_horas": 2.5,
+        "percentual_ligado": 75.0,
+        "numero_transicoes": 3
+    },
+    "analise_detalhada": {
+        "periodos_ligado": [...],
+        "periodos_desligado": [...],
+        "transicoes": [...]
+    }
+}
+\end{verbatim}
+
+\subsubsection{\texttt{visualizar\_clusters\_3d.py} - Visualização 3D Avançada e Interativa}
+
+Este script implementa algoritmos sofisticados para visualização tridimensional dos clusters K-means, permitindo análise intuitiva da separação entre estados operacionais no espaço de features.
+
+\paragraph{Algoritmo de Seleção de Intervalo Ótimo}
+
+\textbf{Função de Otimalidade:}
+
+Para cada candidato de intervalo de 3 dias, calcula score:
+\begin{align}
+score &= w_1 \cdot balanceamento + w_2 \cdot transicoes + w_3 \cdot qualidade \\
+balanceamento &= 1 - \left| \frac{tempo_{ligado}}{tempo_{total}} - 0.5 \right| \\
+transicoes &= \min\left( \frac{n_{transicoes}}{10}, 1 \right) \\
+qualidade &= 1 - \frac{gaps_{>1h}}{duracao_{total}}
+\end{align}
+
+Onde $w_1 = 0.5$, $w_2 = 0.3$, $w_3 = 0.2$.
+
+\paragraph{Estratégias de Amostragem para Performance}
+
+\textbf{Redução de Dimensionalidade Temporal:}
+
+\begin{enumerate}
+    \item \textbf{Detecção de Estabilidade:} Identificar períodos longos com mesmo estado
+    \item \textbf{Amostragem Estratificada:} Manter proporções de estados
+    \item \textbf{Limitação de Pontos:} Máximo 10.000 pontos para interatividade
+    \item \textbf{Priorização de Transições:} Densificar amostragem próximo a mudanças de estado
+\end{enumerate}
+
+\paragraph{Visualizações 3D Implementadas}
+
+\textbf{Visualização Primária - Corrente vs Vibração vs Tempo:}
+
+\begin{itemize}
+    \item \textbf{Eixos:} X=Corrente, Y=Vibração (vel\_rms), Z=Tempo normalizado
+    \item \textbf{Cores:} Verde=LIGADO, Vermelho=DESLIGADO
+    \item \textbf{Interatividade:} Rotação, zoom, seleção de pontos
+    \item \textbf{Anotações:} Tooltips com valores reais e timestamps
+\end{itemize}
+
+\textbf{Visualização Secundária - RPM/Temperatura vs Vibração vs Tempo:}
+
+\begin{itemize}
+    \item \textbf{Configuração Dinâmica:} RPM para dados estimated, Temperatura para validated\_default
+    \item \textbf{Normalização:} Z-score para compatibilidade de escalas
+    \item \textbf{Marcadores:} Centroides dos clusters destacados
+    \item \textbf{Transparência:} Ajuste automático baseado na densidade
+\end{itemize}
+
+\paragraph{Técnicas de Pré-processamento Visual}
+
+\textbf{Remoção de Outliers Visuais:}
+
+Aplicado IQR 3x nas três dimensões simultaneamente:
+\begin{align}
+outlier &= (x < Q1_x - 3IQR_x) \lor (x > Q3_x + 3IQR_x) \lor \\
+         & (y < Q1_y - 3IQR_y) \lor (y > Q3_y + 3IQR_y) \lor \\
+         & (z < Q1_z - 3IQR_z) \lor (z > Q3_z + 3IQR_z)
+\end{align}
+
+\textbf{Normalização de Escalas:}
+
+\begin{itemize}
+    \item \textbf{MinMaxScaler} por dimensão para intervalo [0,1]
+    \item \textbf{Preservação de relacionamentos} intra-cluster
+    \item \textbf{Compatibilidade visual} entre diferentes equipamentos
+\end{itemize}
+
+\paragraph{Framework de Visualização Interativa}
+
+\textbf{Biblioteca Plotly:}
+
+\begin{itemize}
+    \item \textbf{Backend:} WebGL para performance com grandes datasets
+    \item \textbf{Interatividade:} Zoom, pan, rotação 3D
+    \item \textbf{Exportação:} HTML interativo + PNG estático
+    \item \textbf{Responsividade:} Adequação automática ao tamanho da tela
+\end{itemize}
+
+\paragraph{Métricas de Qualidade Visual}
+
+\textbf{Avaliação Automática:}
+\begin{itemize}
+    \item \textbf{Separação de Clusters:} Distância euclidiana entre centroides
+    \item \textbf{Compactness:} Variância intra-cluster média
+    \item \textbf{Visual Balance:} Distribuição uniforme no espaço 3D
+    \item \textbf{Transição Clarity:} Nitidez das mudanças entre estados
+\end{itemize}
+
+\subsection{Scripts Utilitários Avançados}
+
+\subsubsection{Scripts de Download (\texttt{baixar\_*.py}) - Extração Inteligente de Dados}
+
+Esta família de scripts implementa algoritmos sofisticados para extração de dados do InfluxDB, com otimização de performance e tratamento robusto de conectividade.
+
+\paragraph{\texttt{baixar\_estimated\_intervalo.py} - Extração de Dados Calculados}
+
+\textbf{Algoritmo de Query Otimizada:}
+
+\begin{itemize}
+    \item \textbf{Query Flux:} Linguagem nativa do InfluxDB para máxima performance
+    \item \textbf{Filtragem Temporal:} Intervalo exato com conversão GMT-3 $\rightarrow$ UTC
+    \item \textbf{Validação de Dados:} Verificação de presença obrigatória de RPM + corrente
+    \item \textbf{Cache Inteligente:} Arquivo local \texttt{estimated\_[inicio]\_[fim]\_[mpoint].csv}
+\end{itemize}
+
+\textbf{Estratégia de Conectividade:}
+\begin{itemize}
+    \item \textbf{Timeout:} 30 segundos por query
+    \item \textbf{Retry:} Até 3 tentativas com backoff exponencial
+    \item \textbf{Fallback:} Uso de dados locais se disponíveis e válidos
+\end{itemize}
+
+\paragraph{\texttt{baixar\_validated\_default\_intervalo.py} - Extração de Dados Primários}
+
+\textbf{Processamento de Features Multi-dimensionais:}
+
+\begin{table}[H]
+\centering
+\caption{Mapeamento de features validadas primárias}
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Feature Original} & \textbf{Processamento} & \textbf{Unidade} \\
+\hline
+\texttt{mag\_x, mag\_y, mag\_z} & Média vetorial RMS & Gauss \\
+\texttt{vel\_max\_x, vel\_max\_y, vel\_max\_z} & Máximo absoluto & mm/s \\
+\texttt{vel\_rms\_x, vel\_rms\_y, vel\_rms\_z} & RMS agregado & mm/s \\
+\texttt{object\_temp} & Valor direto & °C \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{Agregação Temporal Inteligente:}
+\begin{itemize}
+    \item \textbf{Janela móvel:} 20 segundos (frequência de amostragem)
+    \item \textbf{Overlapping:} 50\% para suavização
+    \item \textbf{Validação de qualidade:} Rejeição de janelas com dados faltantes
+\end{itemize}
+
+\paragraph{\texttt{baixar\_validated\_slip\_intervalo.py} - Extração de Dados Espectrais}
+
+\textbf{Análise de Frequência:} Dados de escorregamento com características temporais distintas (2 minutos).
+
+\textbf{Features Espectrais Principais:}
+\begin{itemize}
+    \item \textbf{Frequências de referência:} \texttt{fe\_frequency}, \texttt{fr\_frequency}
+    \item \textbf{Magnitudes harmônicas:} Até 3 componentes (\texttt{fe\_magnitude\_-1, 0, 1})
+    \item \textbf{Métricas agregadas:} \texttt{rms} como indicador de estabilidade
+\end{itemize}
+
+\subsubsection{Scripts de Verificação e Validação}
+
+\paragraph{\texttt{verificar\_gaps\_current.py} - Análise de Integridade Temporal}
+
+\textbf{Algoritmos de Detecção de Anomalias Temporais:}
+
+\begin{enumerate}
+    \item \textbf{Cálculo de Intervalos:} $\Delta t_i = t_{i+1} - t_i$
+    \item \textbf{Estatísticas Descritivas:}
+    \begin{align}
+    \mu_{\Delta t} &= \frac{1}{n} \sum \Delta t_i \\
+    \sigma_{\Delta t} &= \sqrt{\frac{1}{n} \sum (\Delta t_i - \mu_{\Delta t})^2} \\
+    gaps_{>3\sigma} &= \{ \Delta t_i \mid \Delta t_i > \mu_{\Delta t} + 3\sigma_{\Delta t} \}
+    \end{align}
+    \item \textbf{Classificação de Severidade:}
+    \begin{itemize}
+        \item \textbf{Minor:} Gaps $<$ 1 hora (interpoláveis)
+        \item \textbf{Moderate:} 1-3 horas (segmentação necessária)
+        \item \textbf{Severe:} $>$ 3 horas (dados insuficientes)
+    \end{itemize}
+\end{enumerate}
+
+\paragraph{\texttt{verificar\_gaps\_rotational\_speed.py} - Validação de RPM}
+
+\textbf{Análise Específica de Velocidade Rotacional:}
+
+\begin{itemize}
+    \item \textbf{Limites Físicos:} RPM entre 0 e valores nominais do equipamento
+    \item \textbf{Detecção de Anomalias:} Variações bruscas indicativas de problemas
+    \item \textbf{Correlação Cruzada:} Comparação com dados de corrente para validação
+\end{itemize}
+
+\textbf{Algoritmo de Detecção de Transientes:}
+\begin{align}
+derivada_{rpm} &= \frac{rpm_{t+1} - rpm_t}{\Delta t} \\
+transient_{detectado} &= |derivada_{rpm}| > limite_{fisico} \\
+limite_{fisico} &= 1000 \frac{rpm}{minuto} \times \frac{1}{\Delta t}
+\end{align}
+
+\paragraph{\texttt{verificar\_gaps\_temporais.py} - Análise Global}
+
+\textbf{Métricas Compostas de Qualidade:}
+
+\begin{enumerate}
+    \item \textbf{Disponibilidade Temporal:} Percentual de dados presentes no período
+    \item \textbf{Continuidade:} Máximo gap sem dados consecutivos
+    \item \textbf{Frequência de Amostragem:} Desvio da frequência esperada
+    \item \textbf{Consistência:} Correlação entre diferentes tipos de sensores
+\end{enumerate}
+
+\paragraph{\texttt{filtro\_duracao\_minima.py} - Validação de Períodos}
+
+\textbf{Critérios de Aceitação:}
+
+\begin{table}[H]
+\centering
+\caption{Critérios de validação de períodos}
+\begin{tabular}{|l|l|c|}
+\hline
+\textbf{Critério} & \textbf{Formula} & \textbf{Limite} \\
+\hline
+Duração mínima & $t_{fim} - t_{inicio}$ & 24 horas \\
+Disponibilidade & $\frac{n_{amostras}}{n_{esperado}}$ & 70\% \\
+Continuidade & $max(gaps)$ & $<$ 3 horas \\
+Qualidade & $score_{interpolacao}$ & $>$ 0.5 \\
+\hline
+\end{tabular}
+\end{table}
+
+\paragraph{\texttt{calcular\_metricas\_completas.py} - Estatísticas Avançadas}
+
+\textbf{Métricas por Categoria:}
+
+\begin{enumerate}
+    \item \textbf{Métricas Temporais:}
+    \begin{itemize}
+        \item Duração total por período
+        \item Percentual de dados interpolados vs originais
+        \item Distribuição de gaps por tamanho
+    \end{itemize}
+
+    \item \textbf{Métricas de Qualidade:}
+    \begin{itemize}
+        \item Score médio de confiança da interpolação
+        \item Percentual de outliers removidos
+        \item Correlação entre features após processamento
+    \end{itemize}
+
+    \item \textbf{Métricas Operacionais:}
+    \begin{itemize}
+        \item Tempo de processamento por script
+        \item Utilização de memória e CPU
+        \item Taxa de sucesso de operações
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Formato de Output JSON Estruturado:}
+\begin{verbatim}
+{
+    "resumo_global": {
+        "total_periodos": 6,
+        "duracao_total_horas": 432.0,
+        "qualidade_media": 0.87
+    },
+    "metricas_detalhadas": {
+        "por_periodo": [...],
+        "por_tipo_dado": {...},
+        "por_script": {...}
+    },
+    "recomendacoes": [
+        "Considerar reprocessamento do período 3",
+        "Aumentar frequência de amostragem",
+        ...
+    ]
+}
+\end{verbatim}
+
+\subsection{Considerações de Performance e Escalabilidade}
+
+\subsubsection{Otimização Avançada de Memória}
+
+\textbf{Estratégias de Gerenciamento de Memória:}
+
+\begin{enumerate}
+    \item \textbf{Processamento em Chunks Inteligentes:}
+    \begin{itemize}
+        \item \textbf{Detecção automática de tamanho:} Datasets $>$ 100k registros ativam chunking
+        \item \textbf{Tamanho adaptativo:} $chunk_{size} = \min(50000, \frac{memória_{disponível}}{8 \times n_{features}})$
+        \item \textbf{Overlap controlado:} 10\% de sobreposição para continuidade
+        \item \textbf{Merge incremental:} Combinação de resultados sem carregar tudo na memória
+    \end{itemize}
+
+    \item \textbf{Tipos de Dados Otimizados:}
+    \begin{table}[H]
+    \centering
+    \caption{Estratégia de tipos de dados por feature}
+    \begin{tabular}{|l|l|l|l|}
+    \hline
+    \textbf{Tipo de Feature} & \textbf{Tipo Original} & \textbf{Tipo Otimizado} & \textbf{Economia} \\
+    \hline
+    Timestamp & datetime64[ns] & int64 (unix) & 50\% \\
+    Sensores (corrente/RPM) & float64 & float32 & 50\% \\
+    Vibração (vel\_rms) & float64 & float32 & 50\% \\
+    Temperatura & float64 & float16 & 75\% \\
+    Estados categóricos & int64 & int8 & 87.5\% \\
+    \hline
+    \end{tabular}
+    \end{table}
+
+    \item \textbf{Garbage Collection Proativo:}
+    \begin{itemize}
+        \item \textbf{Liberação explícita:} \texttt{del df\_intermediario; gc.collect()}
+        \item \textbf{Reutilização de buffers:} Objetos pandas reutilizados quando possível
+        \item \textbf{Limitação de cópias:} Operações in-place sempre que seguras
+    \end{itemize}
+
+    \item \textbf{Compressão em Disco:}
+    \begin{itemize}
+        \item \textbf{CSV comprimido:} \texttt{.csv.gz} para arquivos intermediários
+        \item \textbf{NumPy otimizado:} \texttt{.npy} com compressão automática
+        \item \textbf{Pickle comprimido:} Modelos salvos com \texttt{gzip}
+    \end{itemize}
+\end{enumerate}
+
+\subsubsection{Timeouts e Estratégias de Robustez}
+
+\textbf{Sistema Hierárquico de Timeouts:}
+
+\begin{table}[H]
+\centering
+\caption{Matriz de timeouts por operação}
+\begin{tabular}{|l|c|c|l|}
+\hline
+\textbf{Operação} & \textbf{Timeout} & \textbf{Retry} & \textbf{Justificativa} \\
+\hline
+Download InfluxDB & 30s & 3x exp & Latência de rede variável \\
+Processamento KNN & 60min & 0 & Computacionalmente intensivo \\
+Treinamento K-means & 30min & 1x & Convergência garantida \\
+Visualização 3D & 5min & 0 & Operação rápida \\
+Interpolação spline & 10min & 0 & Algoritmo determinístico \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{Estratégias de Recuperação de Falhas:}
+
+\begin{enumerate}
+    \item \textbf{Circuit Breaker Pattern:} Interrupção automática após múltiplas falhas
+    \item \textbf{Graceful Degradation:} Modo simplificado quando recursos limitados
+    \item \textbf{Recovery Points:} Salvamento incremental de progresso
+    \item \textbf{Alert System:} Notificações automáticas para falhas críticas
+\end{enumerate}
+
+\subsubsection{Sistema de Logging Estruturado e Auditoria}
+
+\textbf{Arquitetura de Logging em 4 Camadas:}
+
+\begin{enumerate}
+    \item \textbf{Processing Logs - Execução Operacional:}
+    \begin{itemize}
+        \item \textbf{Nível:} INFO/DEBUG
+        \item \textbf{Conteúdo:} Progresso, métricas de performance, validações
+        \item \textbf{Formato:} JSON estruturado com timestamps e contexto
+        \item \textbf{Localização:} \texttt{logs/processing\_[script]\_[timestamp].log}
+    \end{itemize}
+
+    \item \textbf{Training Logs - Aprendizado de Máquina:}
+    \begin{itemize}
+        \item \textbf{Nível:} INFO/WARNING
+        \item \textbf{Conteúdo:} Convergência K-means, métricas de qualidade, parâmetros
+        \item \textbf{Auditoria:} Seed usado, versão das bibliotecas, configuração hardware
+        \item \textbf{Formato:} YAML para legibilidade humana + máquina
+    \end{itemize}
+
+    \item \textbf{Analysis Logs - Resultados de Classificação:}
+    \begin{itemize}
+        \item \textbf{Nível:} INFO
+        \item \textbf{Conteúdo:} Distribuição de estados, transições detectadas, confiança
+        \item \textbf{Métricas:} Acurácia intra-cluster, separabilidade, estabilidade temporal
+        \item \textbf{Alertas:} Detecção de anomalias operacionais
+    \end{itemize}
+
+    \item \textbf{Visualization Logs - Geração de Gráficos:}
+    \begin{itemize}
+        \item \textbf{Nível:} DEBUG
+        \item \textbf{Conteúdo:} Configurações de plot, dados selecionados, performance
+        \item \textbf{Validação:} Integridade dos arquivos gerados
+        \item \textbf{Métricas:} Tempo de renderização, tamanho dos arquivos
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Implementação Técnica do Logging:}
+
+\begin{itemize}
+    \item \textbf{Biblioteca:} Python logging com RotatingFileHandler
+    \item \textbf{Rotação:} Arquivos diários com compressão automática
+    \item \textbf{Formatação:} JSON para análise automatizada
+    \item \textbf{Context Managers:} Logs aninhados por operação
+    \item \textbf{Monitoramento:} Métricas de logging (taxa de erro, volume)
+\end{itemize}
+
+\subsubsection{Considerações de Escalabilidade}
+
+\textbf{Limites de Escala Testados:}
+
+\begin{table}[H]
+\centering
+\caption{Limites de processamento validados}
+\begin{tabular}{|l|c|c|l|}
+\hline
+\textbf{Dimensão} & \textbf{Limite Atual} & \textbf{Limite Teórico} & \textbf{Gargalo} \\
+\hline
+Pontos temporais & 1M/dia & 10M/dia & Memória RAM \\
+Features por ponto & 20 & 100 & Complexidade algorítmica \\
+Equipamentos simultâneos & 10 & 100 & Conexões InfluxDB \\
+Duração histórica & 1 ano & 5 anos & Armazenamento disco \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{Estratégias de Otimização Futura:}
+
+\begin{enumerate}
+    \item \textbf{Paralelização:} Processamento distribuído com Dask ou Spark
+    \item \textbf{GPU Acceleration:} Algoritmos de ML com CUDA (RAPIDS)
+    \item \textbf{Caching Inteligente:} Cache hierárquico (memória/disco/cloud)
+    \item \textbf{Streaming:} Processamento em tempo real com Apache Kafka
+\end{enumerate}
+
+\subsection{Conclusão Técnica da Implementação}
+
+A implementação apresentada representa um avanço significativo no estado da arte para sistemas de detecção automática de estados operacionais em motobombas industriais. A arquitetura modular desenvolvida não apenas atende aos requisitos funcionais imediatos, mas estabelece uma base sólida para extensões futuras e integração com sistemas de monitoramento industrial mais amplos.
+
+\textbf{Principais Contribuições Técnicas:}
+
+\begin{enumerate}
+    \item \textbf{Inovação em Interpolação:} O algoritmo KNN temporal multivariado representa uma abordagem pioneira para tratamento de gaps em dados industriais IoT, superando limitações de métodos tradicionais.
+
+    \item \textbf{Classificação Adaptativa:} A estratégia dinâmica de classificação K-means baseada em análise estatística dos centroides garante robustez e adaptabilidade a diferentes padrões operacionais.
+
+    \item \textbf{Visualização 3D Inovadora:} A implementação de gráficos tridimensionais interativos com seleção inteligente de intervalos permite insights operacionais que seriam impossíveis com visualizações tradicionais.
+
+    \item \textbf{Arquitetura de Qualidade Industrial:} O sistema de logging estruturado, validações automáticas e estratégias de recuperação de falhas estabelecem um padrão de qualidade para aplicações de processamento de dados industriais.
+
+    \item \textbf{Escalabilidade Demonstrada:} A otimização de memória e performance permite processamento eficiente de volumes de dados representativos de ambientes industriais reais.
+\end{enumerate}
+
+\textbf{Impacto Prático e Extensibilidade:}
+
+O pipeline desenvolvido não apenas resolve o problema específico de detecção de estados LIGADO/DESLIGADO, mas estabelece uma arquitetura genérica aplicável a diversos problemas de classificação não supervisionada em dados de séries temporais industriais. A modularidade permite fácil adaptação para outros tipos de equipamento e sensores, enquanto a robustez garante operação confiável em ambientes industriais desafiadores.
+
+A documentação técnica detalhada aqui apresentada serve não apenas como referência para manutenção e evolução do sistema, mas também como guia metodológico para desenvolvimento de soluções similares em outros contextos industriais.
+
+

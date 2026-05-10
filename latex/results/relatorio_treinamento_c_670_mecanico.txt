@@ -1,0 +1,21 @@
+================================================================================
+RELATÓRIO DE TREINAMENTO K-MEANS - c_670 - EQUIPAMENTO MECÂNICO
+================================================================================
+
+Data: 2026-05-10 00:55:02.656700
+Tempo de execução: 0 minutos e 48 segundos
+
+TIPO DE EQUIPAMENTO:
+  - Equipamento MECÂNICO (sem current, sem RPM)
+  - Análise baseada em: Temperatura + Vibração
+
+ESTATÍSTICAS:
+  - Total de amostras: 1,377,884
+  - Amostras LIGADO: 1,088,660 (79.0%)
+  - Amostras DESLIGADO: 289,224 (21.0%)
+
+ESTRATÉGIA:
+  - Método: Classificação dinâmica MECÂNICA (DESLIGADO vs LIGADO)
+  - Número de clusters K-means: 6
+  - Score: temperatura (1.5x) + vibração (1.0x) + magnetômetro (0.5x)
+  - Thresholds dinâmicos calculados automaticamente
