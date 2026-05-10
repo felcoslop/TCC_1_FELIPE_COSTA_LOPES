@@ -147,7 +147,10 @@ pipeline_deteccao_estados_mecanico.py (MECÂNICO)
 └── visualizar_clusters_3d_mecanico.py
 ```
 
-**Critério DESLIGADO**:
+---
+
+## Estrutura do Código
+```
 code/
 ├── gui_pipeline.py                        # Interface gráfica unificada
 ├── pipeline_deteccao_estados.py           # Orquestrador ELÉTRICO
