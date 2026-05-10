@@ -1,0 +1,27 @@
+================================================================================
+RELATÓRIO DE TREINAMENTO K-MEANS - c_640
+================================================================================
+
+Data: 2026-05-10 01:00:24.232363
+Tempo de execução: 0 minutos e 48 segundos
+
+ARQUIVOS GERADOS:
+  - Modelo K-means: C:\Users\manu_\Downloads\TCC_1_FELIPE_COSTA_LOPES-master\code\models\c_640\kmeans_model_moderado_c_640.pkl
+  - Scaler: C:\Users\manu_\Downloads\TCC_1_FELIPE_COSTA_LOPES-master\code\models\c_640\scaler_model_moderado_c_640.pkl
+  - Dados classificados: C:\Users\manu_\Downloads\TCC_1_FELIPE_COSTA_LOPES-master\code\data\processed\dados_classificados_kmeans_moderado_c_640.csv
+  - Dados rotulados: C:\Users\manu_\Downloads\TCC_1_FELIPE_COSTA_LOPES-master\code\data\processed\dados_kmeans_rotulados_conservador_c_640.csv
+  - Info JSON: C:\Users\manu_\Downloads\TCC_1_FELIPE_COSTA_LOPES-master\code\models\c_640\info_kmeans_model_moderado_c_640.json
+
+ESTATÍSTICAS:
+  - Total de amostras: 1,389,174
+  - Amostras LIGADO: 1,310,820 (94.4%)
+  - Amostras DESLIGADO: 78,354 (5.6%)
+  - Amostras rotuladas: 1,389,174
+  - Percentual usado: 100.0%
+
+ESTRATÉGIA:
+  - Método: Classificação dinâmica em 2 estados (DESLIGADO vs LIGADO)
+  - Número de clusters K-means: 6
+  - Lógica: Score combinado (vel_rms + current + rpm normalizados)
+  - Classificação: Baseada em desvio padrão e diferenças entre scores
+  - Clusters com menores scores → DESLIGADO (adaptativo por equipamento)

@@ -1,0 +1,81 @@
+{
+  "tipo": "processing_log",
+  "script_name": "processar_dados_simples_mecanico",
+  "mpoint": "c_1518",
+  "operation": "mechanical_equipment_data_processing",
+  "input_files": [
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw\\dados_c_1518.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw\\dados_slip_c_1518.csv"
+  ],
+  "output_files": [
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\c_1518\\periodo_01_c_c_1518.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\c_1518\\periodo_01_slip_c_1518.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\c_1518\\periodo_02_c_c_1518.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\c_1518\\periodo_02_slip_c_1518.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\c_1518\\periodo_03_c_c_1518.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\c_1518\\periodo_03_slip_c_1518.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\c_1518\\periodo_04_c_c_1518.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\c_1518\\periodo_04_slip_c_1518.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\c_1518\\periodo_05_c_c_1518.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\c_1518\\periodo_05_slip_c_1518.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\c_1518\\periodo_06_c_c_1518.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\c_1518\\periodo_06_slip_c_1518.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\c_1518\\periodo_07_c_c_1518.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\c_1518\\periodo_07_slip_c_1518.csv"
+  ],
+  "parameters": {
+    "gap_detection_threshold": "3_hours",
+    "interpolation_methods": [
+      "simple_spline",
+      "advanced_knn",
+      "linear_fallback"
+    ],
+    "outlier_removal": "IQR_method_3sigma",
+    "period_segmentation": true,
+    "minimum_period_duration": "24.0_hours",
+    "equipment_type": "MECHANICAL",
+    "data_sources": [
+      "temperature",
+      "vibration",
+      "magnetometer",
+      "slip_analysis"
+    ],
+    "no_estimated_data": true,
+    "no_current_rpm": true
+  },
+  "statistics": {
+    "total_periods_identified": 22,
+    "valid_periods_processed": 7,
+    "invalid_periods_discarded": 15,
+    "files_generated": 14,
+    "processing_efficiency": 31.818181818181817,
+    "equipment_type": "MECHANICAL"
+  },
+  "processing_time_seconds": 0.0005533695220947266,
+  "success": true,
+  "error_message": null,
+  "data_description": {
+    "input_sources": [
+      "dados_c_mechanical",
+      "slip_sensors"
+    ],
+    "processing_steps": [
+      "data_loading_and_validation",
+      "gap_detection",
+      "period_segmentation",
+      "outlier_removal",
+      "interpolation",
+      "data_saving"
+    ],
+    "interpolation_strategy": "hybrid_approach",
+    "quality_control": "basic_validation",
+    "analysis_focus": "temperature_and_vibration"
+  },
+  "_metadata": {
+    "timestamp": "2026-05-10T03:02:26.916507",
+    "script": "processar_dados_simples_mecanico",
+    "mpoint": "c_1518",
+    "operation": "processing_complete",
+    "version": "1.0"
+  }
+}

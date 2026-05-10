@@ -1,0 +1,100 @@
+{
+  "tipo": "training_log",
+  "script_name": "kmeans_classificacao_mecanico",
+  "mpoint": "c_1518",
+  "model_info": {
+    "equipment_type": "MECHANICAL",
+    "data_sources": [
+      "temperature",
+      "vibration"
+    ],
+    "algorithm": "K-means",
+    "n_clusters": 6,
+    "classification_strategy": "Dynamic 2-state MECHANICAL (temp + vibration)",
+    "states": [
+      "DESLIGADO",
+      "LIGADO"
+    ],
+    "no_current_rpm": true
+  },
+  "training_data_info": {
+    "total_samples": 585367,
+    "features_used": [
+      "mag_x",
+      "mag_y",
+      "mag_z",
+      "object_temp",
+      "vel_max_x",
+      "vel_max_y",
+      "vel_rms_x",
+      "vel_max_z",
+      "vel_rms_y",
+      "vel_rms_z",
+      "fe_frequency",
+      "fe_magnitude_-_1",
+      "fe_magnitude_0",
+      "fe_magnitude_1",
+      "fr_frequency",
+      "rms"
+    ],
+    "data_source": "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\normalized\\c_1518\\dados_kmeans_c_1518.csv"
+  },
+  "performance_metrics": {
+    "clusters_distribution": {
+      "cluster_3": {
+        "size": 96435,
+        "percentage": 16.474280237867866,
+        "status": "LIGADO"
+      },
+      "cluster_4": {
+        "size": 69636,
+        "percentage": 11.896126703418538,
+        "status": "LIGADO"
+      },
+      "cluster_5": {
+        "size": 54676,
+        "percentage": 9.340465041589294,
+        "status": "LIGADO"
+      },
+      "cluster_1": {
+        "size": 221488,
+        "percentage": 37.83745923497566,
+        "status": "LIGADO"
+      },
+      "cluster_0": {
+        "size": 115299,
+        "percentage": 19.696873926955227,
+        "status": "LIGADO"
+      },
+      "cluster_2": {
+        "size": 27833,
+        "percentage": 4.754794855193409,
+        "status": "DESLIGADO"
+      }
+    },
+    "classification_summary": {
+      "total_ligado": 557534,
+      "total_desligado": 27833,
+      "ligado_percentage": 95.24520514480659,
+      "desligado_percentage": 4.754794855193409
+    }
+  },
+  "model_files": [
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\models\\c_1518\\kmeans_model_moderado_c_1518.pkl",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\models\\c_1518\\scaler_model_moderado_c_1518.pkl",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\models\\c_1518\\info_kmeans_model_moderado_c_1518.json"
+  ],
+  "processing_time": 0.08090782165527344,
+  "training_parameters": {
+    "n_clusters": 6,
+    "random_state": 42,
+    "classification_logic": "Temperature + Vibration based"
+  },
+  "_metadata": {
+    "timestamp": "2026-05-10T03:04:01.964632",
+    "script": "kmeans_classificacao_mecanico",
+    "mpoint": "c_1518",
+    "operation": "training_complete",
+    "version": "1.0"
+  }
+}

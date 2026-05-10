@@ -1,0 +1,85 @@
+{
+  "tipo": "processing_log",
+  "script_name": "unir_sincronizar_periodos",
+  "mpoint": "c_640",
+  "operation": "period_unification_and_synchronization",
+  "input_files": [
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_01_estimated_c_640.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_02_estimated_c_640.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_03_estimated_c_640.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_04_estimated_c_640.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_05_estimated_c_640.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_06_estimated_c_640.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_07_estimated_c_640.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_01_slip_c_640.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_02_slip_c_640.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_03_slip_c_640.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_04_slip_c_640.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_05_slip_c_640.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_06_slip_c_640.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_07_slip_c_640.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_640_periodo_01_v2.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_640_periodo_02_v2.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_640_periodo_03_v2.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_640_periodo_04_v2.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_640_periodo_05_v2.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_640_periodo_06_v2.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_640_periodo_08_v2.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_640_periodo_09_v2.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_640_periodo_10_v2.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_640_periodo_11_v2.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_640_periodo_12_v2.csv"
+  ],
+  "output_files": [
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_01_final_c_640.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_02_final_c_640.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_03_final_c_640.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_04_final_c_640.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_05_final_c_640.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_06_final_c_640.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_07_final_c_640.csv"
+  ],
+  "parameters": {
+    "synchronization_method": "temporal_overlap_optimization",
+    "interpolation_method": "hybrid_spline_knn",
+    "outlier_removal": true,
+    "quality_control": true,
+    "minimum_overlap_hours": "not_specified"
+  },
+  "statistics": {
+    "estimated_periods_found": 7,
+    "slip_periods_found": 7,
+    "c636_periods_found": 11,
+    "final_periods_synchronized": 7,
+    "synchronization_efficiency": 63.63636363636363,
+    "files_generated": 7
+  },
+  "processing_time_seconds": 0.017695903778076172,
+  "success": true,
+  "error_message": null,
+  "data_description": {
+    "input_sources": [
+      "estimated_periods",
+      "slip_periods",
+      "c636_periods"
+    ],
+    "processing_steps": [
+      "period_identification",
+      "temporal_alignment",
+      "overlap_calculation",
+      "synchronization_optimization",
+      "data_interpolation",
+      "quality_validation",
+      "final_unification"
+    ],
+    "synchronization_strategy": "maximum_overlap_based",
+    "quality_assurance": "outlier_removal_and_validation"
+  },
+  "_metadata": {
+    "timestamp": "2026-05-10T00:55:47.959890",
+    "script": "unir_sincronizar_periodos",
+    "mpoint": "c_640",
+    "operation": "unification_complete",
+    "version": "1.0"
+  }
+}

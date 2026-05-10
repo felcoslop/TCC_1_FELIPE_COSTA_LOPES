@@ -1,0 +1,61 @@
+{
+  "tipo": "processing_log",
+  "script_name": "segmentar_preencher_dados",
+  "mpoint": "c_637",
+  "operation": "data_segmentation_and_interpolation",
+  "input_files": [
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw\\dados_c_637.csv"
+  ],
+  "output_files": [
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_637_periodo_01_v2.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_637_periodo_02_v2.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_637_periodo_03_v2.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_637_periodo_04_v2.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_637_periodo_05_v2.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_637_periodo_06_v2.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_637_periodo_07_v2.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_637_periodo_08_v2.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_637_periodo_09_v2.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\metadados_processamento_v2_c_637.json",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\RELATORIO_PROCESSAMENTO_V2_c_637.txt"
+  ],
+  "parameters": {
+    "gap_limit_hours": 3,
+    "minimum_period_days": 1,
+    "interpolation_method": "advanced_KNN_multivariate",
+    "temporal_features": true,
+    "seasonal_detection": true,
+    "quality_validation": true
+  },
+  "statistics": {
+    "periods_processed": 0,
+    "total_gaps_filled": "unknown",
+    "data_quality": "processed_with_advanced_interpolation"
+  },
+  "processing_time_seconds": 0.008913993835449219,
+  "success": true,
+  "error_message": null,
+  "data_description": {
+    "input_file": "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw\\dados_c_637.csv",
+    "processing_version": "2.0",
+    "interpolation_features": [
+      "KNN_temporal_multivariate",
+      "correlation_preservation",
+      "temporal_patterns_hour_day",
+      "adaptive_moving_average",
+      "seasonality_detection"
+    ],
+    "quality_metrics": [
+      "reliability_scores_per_gap",
+      "low_confidence_identification",
+      "detailed_quality_report"
+    ]
+  },
+  "_metadata": {
+    "timestamp": "2026-05-10T00:48:24.282676",
+    "script": "segmentar_preencher_dados",
+    "mpoint": "c_637",
+    "operation": "segmentation_complete",
+    "version": "1.0"
+  }
+}

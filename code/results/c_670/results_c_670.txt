@@ -1,0 +1,76 @@
+{
+  "processing_completed": true,
+  "processing_timestamp": "2026-05-10T03:08:36.574092",
+  "equipment_type": "MECHANICAL",
+  "periods_processed": 31,
+  "total_periods_identified": 53,
+  "files_generated": 62,
+  "processing_efficiency_percent": 58.490566037735846,
+  "processing_parameters": {
+    "gap_detection_threshold": "3_hours",
+    "interpolation_methods": [
+      "simple_spline",
+      "advanced_knn",
+      "linear_fallback"
+    ],
+    "outlier_removal": "IQR_method_3sigma",
+    "period_segmentation": true,
+    "minimum_period_duration": "24.0_hours",
+    "equipment_type": "MECHANICAL",
+    "data_sources": [
+      "temperature",
+      "vibration",
+      "magnetometer",
+      "slip_analysis"
+    ],
+    "no_estimated_data": true,
+    "no_current_rpm": true
+  },
+  "processing_statistics": {
+    "total_periods_identified": 53,
+    "valid_periods_processed": 31,
+    "invalid_periods_discarded": 22,
+    "files_generated": 62,
+    "processing_efficiency": 58.490566037735846,
+    "equipment_type": "MECHANICAL"
+  },
+  "data_sources": [
+    "temperature",
+    "vibration_only"
+  ],
+  "_last_updated": "2026-05-10T03:12:43.449389",
+  "unification_completed": true,
+  "unification_timestamp": "2026-05-10T03:09:17.156220",
+  "periods_unified": 31,
+  "total_records": 1377884,
+  "unification_parameters": {
+    "merge_method": "merge_asof",
+    "merge_tolerance": "2_minutes",
+    "data_sources": [
+      "dados_c_mechanical",
+      "slip_sensors"
+    ],
+    "synchronization_key": "timestamp",
+    "equipment_type": "MECHANICAL"
+  },
+  "normalization_completed": true,
+  "normalization_timestamp": "2026-05-10T03:10:59.594978",
+  "normalized_samples": 1377884,
+  "normalized_features": 16,
+  "kmeans_training_completed": true,
+  "kmeans_training_timestamp": "2026-05-10T03:12:43.424700",
+  "total_clusters": 6,
+  "total_samples_classified": 1377884,
+  "ligado_samples": 1088660,
+  "desligado_samples": 289224,
+  "pipeline_training_completed": true,
+  "pipeline_training_timestamp": "2026-05-10T00:56:42.233412",
+  "mpoint": "c_670",
+  "execution_times_minutes": {
+    "processar_dados_simples_mecanico.py": 1.3307123104731242,
+    "unir_sincronizar_periodos_mecanico.py": 1.1041073441505431,
+    "normalizar_dados_kmeans_mecanico.py": 2.6107003609339396,
+    "kmeans_classificacao_mecanico.py": 3.5241006731987,
+    "visualizar_clusters_3d_mecanico.py": 0.41291140715281166
+  }
+}

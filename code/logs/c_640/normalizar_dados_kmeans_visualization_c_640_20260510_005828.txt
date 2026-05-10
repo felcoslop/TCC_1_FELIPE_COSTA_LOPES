@@ -1,0 +1,41 @@
+{
+  "tipo": "visualization_log",
+  "script_name": "normalizar_dados_kmeans",
+  "mpoint": "c_640",
+  "chart_type": "normalization_analysis",
+  "data_description": {
+    "normalized_data_shape": [
+      1389174,
+      19
+    ],
+    "features_analyzed": [
+      "mag_x",
+      "mag_y",
+      "mag_z",
+      "object_temp",
+      "vel_max_x",
+      "vel_max_y",
+      "vel_rms_x",
+      "vel_max_z",
+      "vel_rms_y",
+      "vel_rms_z"
+    ],
+    "normalization_method": "MinMaxScaler",
+    "comparison_type": "before_after_normalization"
+  },
+  "chart_files": [
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_640\\dados_normalizados_analise_c_640.png"
+  ],
+  "period_info": {
+    "data_start": "2024-11-05 16:51:20+00:00",
+    "data_end": "2025-08-27 16:14:20+00:00",
+    "total_samples": 1389174
+  },
+  "_metadata": {
+    "timestamp": "2026-05-10T00:58:28.126753",
+    "script": "normalizar_dados_kmeans",
+    "mpoint": "c_640",
+    "operation": "visualization",
+    "version": "1.0"
+  }
+}

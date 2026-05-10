@@ -1,0 +1,119 @@
+{
+  "tipo": "training_log",
+  "script_name": "pipeline_deteccao_estados",
+  "mpoint": "c_637",
+  "model_info": {
+    "pipeline_type": "complete_training_pipeline",
+    "stages_completed": [
+      "data_processing",
+      "data_validation",
+      "kmeans_training",
+      "parameter_generation",
+      "3d_visualization"
+    ],
+    "algorithm": "K-means_with_preprocessing",
+    "n_clusters": 6,
+    "classification_strategy": "Dynamic_2_state_based_on_scores"
+  },
+  "training_data_info": {
+    "data_sources": [
+      "raw_csv_files",
+      "influxdb_data"
+    ],
+    "processing_steps": [
+      "segmentation_and_preprocessing",
+      "data_interpolation",
+      "period_unification",
+      "normalization",
+      "kmeans_clustering"
+    ],
+    "quality_checks": [
+      "duration_validation",
+      "data_completeness"
+    ],
+    "mpoint": "c_637"
+  },
+  "performance_metrics": {
+    "pipeline_completion": true,
+    "stages_successful": 5,
+    "artifacts_generated": 20,
+    "charts_generated": 6
+  },
+  "model_files": [
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\models\\c_637\\config_c_637.json",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\models\\c_637\\kmeans_model_moderado_c_637.pkl",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\models\\c_637\\scaler_model_moderado_c_637.pkl",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\models\\c_637\\info_kmeans_model_moderado_c_637.json",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\models\\c_637\\scaler_maxmin_c_637.pkl",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\models\\c_637\\info_normalizacao_c_637.json",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\models\\c_637\\preprocess_pipeline_c_637.pkl",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\normalized\\dados_kmeans_c_637.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\normalized\\dados_normalizados_completos_c_637.npy",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\processed\\dados_unificados_final_c_637.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\processed\\dados_classificados_kmeans_moderado_c_637.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\processed\\dados_kmeans_rotulados_conservador_c_637.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_637\\analise_kmeans_clusters_moderado_c_637.png",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_637\\dados_normalizados_analise_c_637.png",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_637\\estados_corrente_vibracao_tempo_3d_c_637.png",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_637\\estados_rpm_vibracao_tempo_3d_c_637.png",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_637\\estados_temperatura_vibracao_tempo_3d_c_637.png",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_637\\relatorio_treinamento_c_637.txt",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_637\\results_c_637.txt",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_637\\vibracao_reconstrucao_c_637.png"
+  ],
+  "processing_time": 0.010160684585571289,
+  "training_parameters": {
+    "mpoint": "c_637",
+    "training_mode": "complete_pipeline",
+    "data_quality_threshold": "30_days_minimum",
+    "kmeans_clusters": 6,
+    "normalization_method": "MinMax_with_outlier_clipping"
+  },
+  "pipeline_summary": {
+    "total_stages": 5,
+    "completed_stages": [
+      "processing",
+      "validation",
+      "normalization",
+      "training",
+      "visualization"
+    ],
+    "output_artifacts": [
+      "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\models\\c_637\\config_c_637.json",
+      "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\models\\c_637\\kmeans_model_moderado_c_637.pkl",
+      "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\models\\c_637\\scaler_model_moderado_c_637.pkl",
+      "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\models\\c_637\\info_kmeans_model_moderado_c_637.json",
+      "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\models\\c_637\\scaler_maxmin_c_637.pkl",
+      "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\models\\c_637\\info_normalizacao_c_637.json",
+      "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\models\\c_637\\preprocess_pipeline_c_637.pkl",
+      "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\normalized\\dados_kmeans_c_637.csv",
+      "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\normalized\\dados_normalizados_completos_c_637.npy",
+      "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\processed\\dados_unificados_final_c_637.csv",
+      "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\processed\\dados_classificados_kmeans_moderado_c_637.csv",
+      "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\processed\\dados_kmeans_rotulados_conservador_c_637.csv",
+      "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_637\\analise_kmeans_clusters_moderado_c_637.png",
+      "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_637\\dados_normalizados_analise_c_637.png",
+      "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_637\\estados_corrente_vibracao_tempo_3d_c_637.png",
+      "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_637\\estados_rpm_vibracao_tempo_3d_c_637.png",
+      "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_637\\estados_temperatura_vibracao_tempo_3d_c_637.png",
+      "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_637\\relatorio_treinamento_c_637.txt",
+      "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_637\\results_c_637.txt",
+      "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_637\\vibracao_reconstrucao_c_637.png"
+    ],
+    "visualization_charts": [
+      "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_637\\analise_kmeans_clusters_moderado_c_637.png",
+      "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_637\\dados_normalizados_analise_c_637.png",
+      "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_637\\estados_corrente_vibracao_tempo_3d_c_637.png",
+      "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_637\\estados_rpm_vibracao_tempo_3d_c_637.png",
+      "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_637\\estados_temperatura_vibracao_tempo_3d_c_637.png",
+      "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_637\\vibracao_reconstrucao_c_637.png"
+    ]
+  },
+  "_metadata": {
+    "timestamp": "2026-05-10T00:58:29.525043",
+    "script": "pipeline_deteccao_estados",
+    "mpoint": "c_637",
+    "operation": "training_pipeline_complete",
+    "version": "1.0"
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "tipo": "processing_log",
+  "script_name": "normalizar_dados_kmeans",
+  "mpoint": "c_640",
+  "operation": "data_normalization",
+  "input_files": [
+    "periodo_01_final_c_640.csv",
+    "periodo_02_final_c_640.csv",
+    "periodo_03_final_c_640.csv",
+    "periodo_04_final_c_640.csv",
+    "periodo_05_final_c_640.csv",
+    "periodo_06_final_c_640.csv",
+    "periodo_07_final_c_640.csv"
+  ],
+  "output_files": [
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\normalized\\dados_kmeans_c_640.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\normalized\\dados_normalizados_completos_c_640.npy",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\models\\c_640\\scaler_maxmin_c_640.pkl",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\models\\c_640\\info_normalizacao_c_640.json",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\models\\c_640\\preprocess_pipeline_c_640.pkl",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_640\\dados_normalizados_analise_c_640.png"
+  ],
+  "parameters": {
+    "scaler_type": "minmax",
+    "feature_range": [
+      0,
+      1
+    ],
+    "power_transform": "none",
+    "quantile_transform": "none",
+    "variance_threshold": 0.0,
+    "correlation_threshold": null,
+    "pca_components": 0,
+    "pca_variance": 0.0,
+    "outlier_clipping_percentile": 99.5
+  },
+  "statistics": {
+    "total_samples": 1389174,
+    "original_features": 19,
+    "final_features": 19,
+    "normalization_range": [
+      0.0,
+      1.0000000000000002
+    ],
+    "normalization_mean": 0.31066776003330465,
+    "normalization_std": 0.317310710593022,
+    "features_removed_variance": 0,
+    "outliers_clipped": true,
+    "timestamp_range": {
+      "start": "2024-11-05 16:51:20+00:00",
+      "end": "2025-08-27 16:14:20+00:00",
+      "duration_hours": 7079.383333333333
+    }
+  },
+  "processing_time_seconds": 0.21358919143676758,
+  "success": true,
+  "error_message": null,
+  "data_description": {
+    "source_files": [
+      "periodo_01_final_c_640.csv",
+      "periodo_02_final_c_640.csv",
+      "periodo_03_final_c_640.csv",
+      "periodo_04_final_c_640.csv",
+      "periodo_05_final_c_640.csv",
+      "periodo_06_final_c_640.csv",
+      "periodo_07_final_c_640.csv"
+    ],
+    "features_used": [
+      "mag_x",
+      "mag_y",
+      "mag_z",
+      "object_temp",
+      "vel_max_x",
+      "vel_max_y",
+      "vel_rms_x",
+      "vel_max_z",
+      "vel_rms_y",
+      "vel_rms_z",
+      "rotational_speed",
+      "vel_rms",
+      "current",
+      "fe_frequency",
+      "fe_magnitude_-_1",
+      "fe_magnitude_0",
+      "fe_magnitude_1",
+      "fr_frequency",
+      "rms"
+    ],
+    "preprocessing_steps": [
+      "timestamp_validation",
+      "auxiliary_column_removal",
+      "missing_value_filtering",
+      "outlier_clipping",
+      "correlation_filtering",
+      "normalization",
+      "variance_threshold",
+      "pca_reduction"
+    ],
+    "normalization_method": "MinMaxScaler with outlier clipping",
+    "target_range": [
+      0,
+      1
+    ]
+  },
+  "_metadata": {
+    "timestamp": "2026-05-10T00:58:28.118273",
+    "script": "normalizar_dados_kmeans",
+    "mpoint": "c_640",
+    "operation": "normalization_complete",
+    "version": "1.0"
+  }
+}

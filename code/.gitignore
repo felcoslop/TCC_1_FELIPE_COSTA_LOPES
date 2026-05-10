@@ -1,0 +1,22 @@
+# Sistema de Detecção de Estado Operacional para Motobomba Industrial
+# .gitignore - Exclusões do Version Control
+
+# Excluir arquivos CSV da pasta data
+data/**/*.csv
+
+# Excluir modelos treinados (.h5)
+*.h5
+
+# Excluir arrays NumPy (.npy)
+*.npy
+
+# Excluir cache Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Excluir arquivos temporários do sistema
+.DS_Store
+Thumbs.db
+*.tmp
+*.temp

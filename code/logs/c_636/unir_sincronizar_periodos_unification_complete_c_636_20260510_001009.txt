@@ -1,0 +1,74 @@
+{
+  "tipo": "processing_log",
+  "script_name": "unir_sincronizar_periodos",
+  "mpoint": "c_636",
+  "operation": "period_unification_and_synchronization",
+  "input_files": [
+    "c:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_01_estimated_c_636.csv",
+    "c:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_02_estimated_c_636.csv",
+    "c:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_03_estimated_c_636.csv",
+    "c:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_04_estimated_c_636.csv",
+    "c:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_05_estimated_c_636.csv",
+    "c:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_01_slip_c_636.csv",
+    "c:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_02_slip_c_636.csv",
+    "c:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_03_slip_c_636.csv",
+    "c:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_04_slip_c_636.csv",
+    "c:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_05_slip_c_636.csv",
+    "c:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_636_periodo_01_v2.csv",
+    "c:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_636_periodo_02_v2.csv",
+    "c:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_636_periodo_03_v2.csv",
+    "c:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_636_periodo_04_v2.csv",
+    "c:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_636_periodo_05_v2.csv",
+    "c:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_636_periodo_06_v2.csv"
+  ],
+  "output_files": [
+    "c:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_01_final_c_636.csv",
+    "c:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_02_final_c_636.csv",
+    "c:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_03_final_c_636.csv",
+    "c:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_04_final_c_636.csv",
+    "c:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_05_final_c_636.csv"
+  ],
+  "parameters": {
+    "synchronization_method": "temporal_overlap_optimization",
+    "interpolation_method": "hybrid_spline_knn",
+    "outlier_removal": true,
+    "quality_control": true,
+    "minimum_overlap_hours": "not_specified"
+  },
+  "statistics": {
+    "estimated_periods_found": 5,
+    "slip_periods_found": 5,
+    "c636_periods_found": 6,
+    "final_periods_synchronized": 5,
+    "synchronization_efficiency": 83.33333333333334,
+    "files_generated": 5
+  },
+  "processing_time_seconds": 0.001531839370727539,
+  "success": true,
+  "error_message": null,
+  "data_description": {
+    "input_sources": [
+      "estimated_periods",
+      "slip_periods",
+      "c636_periods"
+    ],
+    "processing_steps": [
+      "period_identification",
+      "temporal_alignment",
+      "overlap_calculation",
+      "synchronization_optimization",
+      "data_interpolation",
+      "quality_validation",
+      "final_unification"
+    ],
+    "synchronization_strategy": "maximum_overlap_based",
+    "quality_assurance": "outlier_removal_and_validation"
+  },
+  "_metadata": {
+    "timestamp": "2026-05-10T00:10:09.382826",
+    "script": "unir_sincronizar_periodos",
+    "mpoint": "c_636",
+    "operation": "unification_complete",
+    "version": "1.0"
+  }
+}

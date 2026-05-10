@@ -1,0 +1,45 @@
+{
+  "tipo": "visualization_log",
+  "script_name": "visualizar_clusters_3d_simples",
+  "mpoint": "c_640",
+  "chart_type": "3d_equipment_states_visualization",
+  "data_description": {
+    "data_source": "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\processed\\dados_classificados_kmeans_moderado_c_640.csv",
+    "total_samples": 1389174,
+    "n_clusters": 6,
+    "visualization_dimensions": [
+      "temperature",
+      "current",
+      "rpm",
+      "vibration",
+      "time"
+    ],
+    "time_window": "3_days_sampled",
+    "equipment_states_identified": [
+      "LIGADO",
+      "DESLIGADO"
+    ]
+  },
+  "chart_files": [],
+  "period_info": {
+    "data_start": "2024-11-05 16:51:20+00:00",
+    "data_end": "2025-08-27 16:14:20+00:00",
+    "total_samples": 1389174,
+    "visualization_period_days": 3,
+    "time_sampling": "sampled_for_visualization"
+  },
+  "visualization_details": {
+    "plot_type": "3d_scatter_with_time",
+    "color_coding": "equipment_states",
+    "interactive_rotation": true,
+    "dpi_quality": 300,
+    "view_angles": "multiple_optimized"
+  },
+  "_metadata": {
+    "timestamp": "2026-05-10T01:01:23.930675",
+    "script": "visualizar_clusters_3d_simples",
+    "mpoint": "c_640",
+    "operation": "3d_visualization_complete",
+    "version": "1.0"
+  }
+}

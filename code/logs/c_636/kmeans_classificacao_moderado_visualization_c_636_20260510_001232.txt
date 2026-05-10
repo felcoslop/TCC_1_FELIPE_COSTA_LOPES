@@ -1,0 +1,117 @@
+{
+  "tipo": "visualization_log",
+  "script_name": "kmeans_classificacao_moderado",
+  "mpoint": "c_636",
+  "chart_type": "kmeans_clusters_3d_analysis",
+  "data_description": {
+    "total_samples": 863450,
+    "n_clusters": 6,
+    "features_visualized": [
+      "mag_x",
+      "mag_y",
+      "mag_z",
+      "object_temp",
+      "vel_max_x",
+      "vel_max_y",
+      "vel_rms_x",
+      "vel_max_z",
+      "vel_rms_y",
+      "vel_rms_z"
+    ],
+    "dimensionality_reduction": "PCA_2D",
+    "classification_states": [
+      "DESLIGADO",
+      "LIGADO"
+    ],
+    "clusters_info": {
+      "cluster_4": {
+        "size": 309117,
+        "percentage": 35.80022004748393,
+        "status": "LIGADO",
+        "features_mean": {
+          "mag_x": 0.4413432085339211,
+          "mag_y": 0.32832819768232124,
+          "mag_z": 0.5469246689048358,
+          "object_temp": 0.7265499356062016,
+          "vel_max_x": 0.34506251771779284
+        }
+      },
+      "cluster_3": {
+        "size": 180487,
+        "percentage": 20.903005385372634,
+        "status": "LIGADO",
+        "features_mean": {
+          "mag_x": 0.5235270277377451,
+          "mag_y": 0.3169970097640481,
+          "mag_z": 0.5792891317284881,
+          "object_temp": 0.5022037494739159,
+          "vel_max_x": 0.5621123209312822
+        }
+      },
+      "cluster_0": {
+        "size": 122946,
+        "percentage": 14.238925241762695,
+        "status": "LIGADO",
+        "features_mean": {
+          "mag_x": 0.44772907576428933,
+          "mag_y": 0.3243194554853317,
+          "mag_z": 0.5453792869247763,
+          "object_temp": 0.7017534934113686,
+          "vel_max_x": 0.3541916446918464
+        }
+      },
+      "cluster_5": {
+        "size": 40986,
+        "percentage": 4.746771671781805,
+        "status": "DESLIGADO",
+        "features_mean": {
+          "mag_x": 0.3708358720086728,
+          "mag_y": 0.28782301217888007,
+          "mag_z": 0.5530792853608859,
+          "object_temp": 0.2579699523023983,
+          "vel_max_x": 0.0047033429110293875
+        }
+      },
+      "cluster_2": {
+        "size": 127138,
+        "percentage": 14.72441947999305,
+        "status": "LIGADO",
+        "features_mean": {
+          "mag_x": 0.26398950240835733,
+          "mag_y": 0.039095753707338365,
+          "mag_z": 0.560524209964065,
+          "object_temp": 0.23307369006585651,
+          "vel_max_x": 0.051698583431020545
+        }
+      },
+      "cluster_1": {
+        "size": 82776,
+        "percentage": 9.586658173605883,
+        "status": "LIGADO",
+        "features_mean": {
+          "mag_x": 0.22877387401068605,
+          "mag_y": 0.8567773352297907,
+          "mag_z": 0.8310299427324,
+          "object_temp": 0.3764180227932764,
+          "vel_max_x": 0.9291820264231675
+        }
+      }
+    }
+  },
+  "chart_files": [
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_636\\analise_kmeans_clusters_moderado_c_636.png"
+  ],
+  "period_info": {
+    "data_start": "2025-02-18 16:32:40+00:00",
+    "data_end": "2025-08-27 16:14:20+00:00",
+    "total_samples": 863450,
+    "classified_samples": 863450
+  },
+  "_metadata": {
+    "timestamp": "2026-05-10T00:12:32.120620",
+    "script": "kmeans_classificacao_moderado",
+    "mpoint": "c_636",
+    "operation": "visualization",
+    "version": "1.0"
+  }
+}

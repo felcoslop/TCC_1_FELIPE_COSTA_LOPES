@@ -1,0 +1,48 @@
+{
+  "tipo": "training_log",
+  "script_name": "pipeline_deteccao_estados_mecanico",
+  "mpoint": "c_1518",
+  "model_info": {
+    "equipment_type": "MECHANICAL",
+    "data_sources": [
+      "temperature",
+      "vibration"
+    ],
+    "pipeline_type": "complete_training_pipeline_mechanical",
+    "algorithm": "K-means_mechanical_temperature_vibration",
+    "n_clusters": 6,
+    "classification_strategy": "Dynamic_2_state_mechanical"
+  },
+  "training_data_info": {
+    "data_sources": [
+      "dados_c_mechanical",
+      "slip_sensors"
+    ],
+    "no_current_rpm": true,
+    "processing_steps": [
+      "mechanical_data_processing",
+      "data_interpolation",
+      "period_unification",
+      "normalization_mechanical",
+      "kmeans_clustering_mechanical"
+    ]
+  },
+  "performance_metrics": {
+    "pipeline_completion": true,
+    "equipment_type": "MECHANICAL"
+  },
+  "model_files": [],
+  "processing_time": 0,
+  "training_parameters": {
+    "mpoint": "c_1518",
+    "equipment_type": "MECHANICAL",
+    "training_mode": "complete_pipeline_mechanical"
+  },
+  "_metadata": {
+    "timestamp": "2026-05-10T00:52:15.872021",
+    "script": "pipeline_deteccao_estados_mecanico",
+    "mpoint": "c_1518",
+    "operation": "training_pipeline_complete",
+    "version": "1.0"
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "tipo": "processing_log",
+  "script_name": "processar_dados_simples",
+  "mpoint": "c_637",
+  "operation": "data_processing_and_interpolation",
+  "input_files": [
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw\\dados_estimated_c_637.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw\\dados_slip_c_637.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw\\dados_c_637.csv"
+  ],
+  "output_files": [
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_637_periodo_01_v2.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_637_periodo_02_v2.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_637_periodo_03_v2.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_637_periodo_04_v2.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_637_periodo_05_v2.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_637_periodo_06_v2.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_637_periodo_07_v2.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_637_periodo_08_v2.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\dados_c_637_periodo_09_v2.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\metadados_processamento_v2_c_637.json",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_01_estimated_c_637.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_01_slip_c_637.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_02_estimated_c_637.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_02_slip_c_637.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_03_estimated_c_637.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_03_slip_c_637.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_04_estimated_c_637.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_04_slip_c_637.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_05_estimated_c_637.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_05_slip_c_637.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\RELATORIO_PROCESSAMENTO_V2_c_637.txt"
+  ],
+  "parameters": {
+    "gap_detection_threshold": "3_hours",
+    "interpolation_methods": [
+      "simple_spline",
+      "advanced_knn",
+      "linear_fallback"
+    ],
+    "outlier_removal": "IQR_method_3sigma",
+    "period_segmentation": true,
+    "minimum_period_duration": "not_specified"
+  },
+  "statistics": {
+    "total_periods_identified": 11,
+    "valid_periods_processed": 5,
+    "invalid_periods_discarded": 6,
+    "files_generated": 21,
+    "processing_efficiency": 45.45454545454545
+  },
+  "processing_time_seconds": 0.008688211441040039,
+  "success": true,
+  "error_message": null,
+  "data_description": {
+    "input_sources": [
+      "c636_main",
+      "estimated_sensors",
+      "slip_sensors"
+    ],
+    "processing_steps": [
+      "data_loading_and_validation",
+      "gap_detection",
+      "period_segmentation",
+      "outlier_removal",
+      "interpolation",
+      "data_saving"
+    ],
+    "interpolation_strategy": "hybrid_approach",
+    "quality_control": "basic_validation"
+  },
+  "_metadata": {
+    "timestamp": "2026-05-10T00:49:46.216974",
+    "script": "processar_dados_simples",
+    "mpoint": "c_637",
+    "operation": "processing_complete",
+    "version": "1.0"
+  }
+}

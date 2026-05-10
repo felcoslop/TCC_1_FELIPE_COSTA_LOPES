@@ -1,0 +1,68 @@
+{
+  "tipo": "processing_log",
+  "script_name": "unir_sincronizar_periodos_mecanico",
+  "mpoint": "c_1518",
+  "operation": "period_unification_and_synchronization_mechanical",
+  "input_files": [
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_01_c_c_1518.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_02_c_c_1518.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_03_c_c_1518.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_04_c_c_1518.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_05_c_c_1518.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_06_c_c_1518.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_07_c_c_1518.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_01_slip_c_1518.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_02_slip_c_1518.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_03_slip_c_1518.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_04_slip_c_1518.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_05_slip_c_1518.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_06_slip_c_1518.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_07_slip_c_1518.csv"
+  ],
+  "output_files": [
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_01_final_c_1518.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_02_final_c_1518.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_03_final_c_1518.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_04_final_c_1518.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_05_final_c_1518.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_06_final_c_1518.csv",
+    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\data\\raw_preenchido\\periodo_07_final_c_1518.csv"
+  ],
+  "parameters": {
+    "merge_method": "merge_asof",
+    "merge_tolerance": "2_minutes",
+    "data_sources": [
+      "dados_c_mechanical",
+      "slip_sensors"
+    ],
+    "synchronization_key": "timestamp",
+    "equipment_type": "MECHANICAL"
+  },
+  "statistics": {
+    "total_periods_unified": 7,
+    "total_records": 585367,
+    "average_columns": 19.0,
+    "total_duration_hours": 3252.0
+  },
+  "processing_time_seconds": 0.0,
+  "success": true,
+  "error_message": null,
+  "data_description": {
+    "unified_sources": [
+      "temperature",
+      "vibration",
+      "magnetometer",
+      "slip_analysis"
+    ],
+    "synchronization_strategy": "nearest_timestamp_with_2min_tolerance",
+    "output_format": "unified_csv_per_period",
+    "equipment_type": "MECHANICAL"
+  },
+  "_metadata": {
+    "timestamp": "2026-05-10T00:47:56.851044",
+    "script": "unir_sincronizar_periodos_mecanico",
+    "mpoint": "c_1518",
+    "operation": "unification_complete",
+    "version": "1.0"
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "processing_completed": true,
+  "processing_timestamp": "2026-05-10T03:02:26.917098",
+  "equipment_type": "MECHANICAL",
+  "periods_processed": 7,
+  "total_periods_identified": 22,
+  "files_generated": 14,
+  "processing_efficiency_percent": 31.818181818181817,
+  "processing_parameters": {
+    "gap_detection_threshold": "3_hours",
+    "interpolation_methods": [
+      "simple_spline",
+      "advanced_knn",
+      "linear_fallback"
+    ],
+    "outlier_removal": "IQR_method_3sigma",
+    "period_segmentation": true,
+    "minimum_period_duration": "24.0_hours",
+    "equipment_type": "MECHANICAL",
+    "data_sources": [
+      "temperature",
+      "vibration",
+      "magnetometer",
+      "slip_analysis"
+    ],
+    "no_estimated_data": true,
+    "no_current_rpm": true
+  },
+  "processing_statistics": {
+    "total_periods_identified": 22,
+    "valid_periods_processed": 7,
+    "invalid_periods_discarded": 15,
+    "files_generated": 14,
+    "processing_efficiency": 31.818181818181817,
+    "equipment_type": "MECHANICAL"
+  },
+  "data_sources": [
+    "temperature",
+    "vibration_only"
+  ],
+  "_last_updated": "2026-05-10T03:04:03.397512",
+  "unification_completed": true,
+  "unification_timestamp": "2026-05-10T03:02:40.074617",
+  "periods_unified": 7,
+  "total_records": 585367,
+  "unification_parameters": {
+    "merge_method": "merge_asof",
+    "merge_tolerance": "2_minutes",
+    "data_sources": [
+      "dados_c_mechanical",
+      "slip_sensors"
+    ],
+    "synchronization_key": "timestamp",
+    "equipment_type": "MECHANICAL"
+  },
+  "normalization_completed": true,
+  "normalization_timestamp": "2026-05-10T03:03:18.258237",
+  "normalized_samples": 585367,
+  "normalized_features": 16,
+  "kmeans_training_completed": true,
+  "kmeans_training_timestamp": "2026-05-10T03:04:03.372553",
+  "total_clusters": 6,
+  "total_samples_classified": 585367,
+  "ligado_samples": 557534,
+  "desligado_samples": 27833,
+  "pipeline_training_completed": true,
+  "pipeline_training_timestamp": "2026-05-10T00:52:15.875298",
+  "mpoint": "c_1518",
+  "execution_times_minutes": {
+    "processar_dados_simples_mecanico.py": 0.32017300128936765,
+    "unir_sincronizar_periodos_mecanico.py": 0.40278975168863934,
+    "normalizar_dados_kmeans_mecanico.py": 1.1190226634343465,
+    "kmeans_classificacao_mecanico.py": 2.8009967605272927,
+    "visualizar_clusters_3d_mecanico.py": 0.30753108660380046
+  }
+}
