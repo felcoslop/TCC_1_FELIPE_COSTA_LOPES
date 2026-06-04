@@ -149,7 +149,7 @@ A Tabela~\ref{tab:exemplo_sincronizado} apresenta o resultado da fusão e sincro
     \end{tabular}
 \end{table}
 
-Caso restem lacunas após essa fusão (como os valores \textit{NaN} de \texttt{fe\_frequency} nos instantes finais devido ao esgotamento da janela de retropropagação de 3 minutos), estas são tratadas pelas etapas subsequentes de interpolação adaptativa descritas na Seção~\ref{sec:processamento_interpolacao}.
+Caso restem lacunas após essa fusão (como os valores \textit{NaN} de \texttt{fe\_frequency} nos instantes finais devido ao esgotamento da janela de retropropagação de 3 minutos), estas são representadas como \textit{NaN} na tabela unificada para indicar a ausência de leituras daquela fonte específica naquele instante. Estes valores nulos são de fato preenchidos e interpolados nas etapas subsequentes de processamento e interpolação adaptativa (utilizando PCHIP ou KNN temporal a depender da duração da lacuna, conforme detalhado na Seção~\ref{sec:processamento_interpolacao}), garantindo que a matriz de dados final enviada para normalização e treinamento K-Means esteja totalmente completa.
 
 Equipamentos mecânicos utilizam apenas \texttt{validated\_\allowbreak default} e \texttt{validated\_\allowbreak slip}, focando na sincronização entre temperatura/vibração e análise de frequência. O sistema aplica os seguintes critérios de validação a cada período: (i) ausência de lacunas consecutivas maiores que 3 horas, caso contrário o período é segmentado; (ii) presença de todos os sensores necessários (\texttt{object\_temp}, \texttt{vel\_rms\_x/y/z}, \texttt{mag\_x/y/z} para \texttt{validated\_\allowbreak default}; \texttt{fe\_\allowbreak frequency}, \texttt{rms} para \texttt{validated\_\allowbreak slip}); (iii) consistência temporal, verificando que as marcações temporais são estritamente monotônicas (crescentes); e (iv) sobreposição mínima adequada entre as fontes \texttt{validated\_\allowbreak default} e \texttt{validated\_\allowbreak slip}, garantindo que exista um intervalo temporal compartilhado suficiente para a junção. Períodos que não atendem a esses critérios são automaticamente descartados com registro detalhado em \textit{log}, incluindo o motivo da rejeição e as estatísticas do período.
 
@@ -458,7 +458,14 @@ Os eixos tridimensionais dos gráficos gerados são adaptados dinamicamente com 
     \item \textbf{Equipamentos Mecânicos:} Como não há sensores elétricos, o sistema gera o gráfico utilizando Temperatura ($^\circ$C) $\times$ Vibração RMS (mm/s) $\times$ Tempo, mostrando a dependência térmica inerente ao regime mecânico operacional.
 \end{itemize}
 
-O sistema aplica uma coloração binária automática nos pontos baseando-se na classificação dos clusters (verde para LIGADO e vermelho para DESLIGADO) e salva automaticamente a imagem estática no diretório \texttt{results/}. Uma explanação profunda de cada um dos gráficos tridimensionais históricos e de intervalos gerados por esta aba do sistema, acompanhada da devida análise física, é detalhada no Capítulo~\ref{chap:resultados} (Resultados) nas Figuras 4.1, 4.7, etc.
+O sistema aplica uma coloração binária automática nos pontos baseando-se na classificação dos clusters (verde para LIGADO e vermelho para DESLIGADO) e salva automaticamente a imagem estática no diretório \texttt{results/}. A Figura~\ref{fig:exemplo_grafico_3d_gui} ilustra um exemplo de gráfico tridimensional (Corrente $\times$ Vibração $\times$ Tempo) gerado automaticamente a partir desta funcionalidade para a motobomba $c_{637}$. Uma explanação profunda de cada um dos gráficos tridimensionais históricos e de intervalos gerados por esta aba do sistema, acompanhada da devida análise física, é detalhada no Capítulo~\ref{chap:resultados} (Resultados) nas Figuras 4.1, 4.7, etc.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{results/estados_corrente_vibracao_tempo_3d_c_637.png}
+    \caption{Exemplo de gráfico tridimensional rápido (Corrente $\times$ Vibração $\times$ Tempo) gerado automaticamente pelo sistema para o equipamento $c_{637}$ no período histórico.}
+    \label{fig:exemplo_grafico_3d_gui}
+\end{figure}
 
 \subsection{Arquitetura da Interface}
 

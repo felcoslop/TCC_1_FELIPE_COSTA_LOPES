@@ -21,7 +21,7 @@
     "synchronization_efficiency": 55.55555555555556,
     "files_generated": 5
   },
-  "_last_updated": "2026-06-04T13:27:06.565153",
+  "_last_updated": "2026-06-04T17:34:30.980924",
   "processing_completed": true,
   "processing_timestamp": "2026-06-04T13:23:24.579617",
   "periods_processed": 5,
@@ -154,8 +154,8 @@
     }
   },
   "visualization_3d_completed": true,
-  "visualization_3d_timestamp": "2026-05-10T00:58:27.890455",
-  "charts_generated": 6,
+  "visualization_3d_timestamp": "2026-06-04T17:34:30.968918",
+  "charts_generated": 0,
   "visualization_type": "3d_states_scatter",
   "data_samples_visualized": 1242993,
   "time_window_days": 3,
