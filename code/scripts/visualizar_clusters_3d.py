@@ -41,7 +41,10 @@ def carregar_dados_e_scaler(mpoint=None):
     mpoint_tag = f"_{mpoint}" if mpoint else ""
 
     # Carregar dados classificados
-    arquivo_classificado = DIR_PROCESSED / f'dados_classificados_kmeans_moderado{mpoint_tag}.csv'
+    if mpoint:
+        arquivo_classificado = DIR_PROCESSED / mpoint / f'dados_classificados_kmeans_moderado{mpoint_tag}.csv'
+    else:
+        arquivo_classificado = DIR_PROCESSED / f'dados_classificados_kmeans_moderado.csv'
     if not arquivo_classificado.exists():
         print(f"[ERRO] Arquivo não encontrado: {arquivo_classificado}")
         return None, None

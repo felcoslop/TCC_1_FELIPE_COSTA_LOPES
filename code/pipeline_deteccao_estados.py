@@ -1181,7 +1181,7 @@ class PipelineDeteccaoEstados:
 
         # Verificar se existe dados unificados para classificar
         DIR_PROCESSED = self.base_dir / 'data' / 'processed'
-        arquivo_dados = DIR_PROCESSED / f'dados_unificados_final_{mpoint}.csv'
+        arquivo_dados = DIR_PROCESSED / mpoint / f'dados_unificados_final_{mpoint}.csv'
 
         if not arquivo_dados.exists():
             print(f"   [ERRO] Dados unificados não encontrados: {arquivo_dados.name}")
@@ -1255,7 +1255,7 @@ class PipelineDeteccaoEstados:
 
         # Verificar se existe arquivo classificado na pasta processed
         DIR_PROCESSED = self.base_dir / 'data' / 'processed'
-        arquivo_classificado = DIR_PROCESSED / f'dados_classificados_kmeans_moderado_{mpoint}.csv'
+        arquivo_classificado = DIR_PROCESSED / mpoint / f'dados_classificados_kmeans_moderado_{mpoint}.csv'
 
         if not arquivo_classificado.exists():
             print(f"\n   [AVISO] Arquivo classificado não encontrado: {arquivo_classificado.name}")

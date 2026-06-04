@@ -67,7 +67,10 @@ def main(mpoint=None, data_inicio=None, data_fim=None, intervalo_arquivo=None):
         print(f"[MODO INTERVALO] Carregando resultados: {arquivo.name}")
     # MODO TREINO: Carregar arquivo de dados classificados
     else:
-        arquivo = DIR_PROCESSED / f'dados_classificados_kmeans_moderado{mpoint_tag}.csv'
+        if mpoint:
+            arquivo = DIR_PROCESSED / mpoint / f'dados_classificados_kmeans_moderado{mpoint_tag}.csv'
+        else:
+            arquivo = DIR_PROCESSED / f'dados_classificados_kmeans_moderado.csv'
         print(f"[MODO TREINO] Carregando dados classificados: {arquivo.name}")
     
     if not arquivo.exists():
