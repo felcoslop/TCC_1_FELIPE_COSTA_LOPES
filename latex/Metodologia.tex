@@ -84,6 +84,73 @@ Cada valor interpolado recebe indicador de qualidade: 1,00 para dados originais,
 
 O sistema combina dados de múltiplas fontes em linha temporal unificada. Para equipamentos elétricos, utiliza \texttt{validated\_\allowbreak default} (20 s) como linha temporal base, \texttt{estimated} (aproximadamente 1 minuto) para RPM e corrente, e \texttt{validated\_\allowbreak slip} (2 minutos) para análise de frequência. O processo identifica períodos correspondentes com sobreposição temporal maior que 70\%, realiza junção temporal por alinhamento de marcações temporais e sincronização multifrequência usando preenchimento retroativo (\textit{backward-fill}): tolerância de 6 minutos para \texttt{estimated} e 3 minutos para \texttt{validated\_\allowbreak slip}, evitando preenchimento prospectivo (\textit{forward-fill}) que poderia usar dados futuros. O \textit{backward-fill}~\cite{mckinney2010pandas} é uma técnica de preenchimento de dados faltantes que propaga o próximo valor válido para trás no tempo, ou seja, um dado ausente recebe o valor da próxima leitura futura mais próxima. Inversamente, o \textit{forward-fill} propaga o último valor válido para frente. A escolha pelo \textit{backward-fill} neste contexto é conservadora: garante que a sincronização utilize apenas dados que já existem na linha temporal, sem extrapolar valores passados para janelas futuras.
 
+Para ilustrar o processo de junção e sincronização multifrequência por \textit{backward-fill}, considere o exemplo simplificado a seguir contendo dados hipotéticos das três tabelas originais em um curto intervalo de tempo.
+
+A Tabela~\ref{tab:exemplo_default} representa a fonte de dados base (\texttt{validated\_default}) com intervalo rígido de 20 segundos. A Tabela~\ref{tab:exemplo_estimated} apresenta a fonte \texttt{estimated} com leituras de corrente e rotação em instantes arbitrários (aproximadamente a cada 1 minuto). A Tabela~\ref{tab:exemplo_slip} exibe a fonte \texttt{validated\_slip} com leituras de frequência a cada 2 minutos.
+
+\begin{table}[H]
+    \centering
+    \caption{Dados originais da fonte base \texttt{validated\_default} (grade de 20 segundos)}
+    \label{tab:exemplo_default}
+    \begin{tabular}{ccc}
+        \hline
+        \textbf{Time (UTC)} & \textbf{object\_temp ($^\circ$C)} & \textbf{vel\_rms\_x (mm/s)} \\
+        \hline
+        10:00:00 & 45,2 & 2,1 \\
+        10:00:20 & 45,3 & 2,2 \\
+        10:00:40 & 45,3 & 2,1 \\
+        10:01:00 & 45,4 & 2,3 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \caption{Dados originais da fonte \texttt{estimated} ($\sim$1 minuto)}
+    \label{tab:exemplo_estimated}
+    \begin{tabular}{ccc}
+        \hline
+        \textbf{Time (UTC)} & \textbf{current (A)} & \textbf{rotational\_speed (RPM)} \\
+        \hline
+        10:00:15 & 12,5 & 1180 \\
+        10:01:10 & 12,6 & 1182 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \caption{Dados originais da fonte \texttt{validated\_slip} ($\sim$2 minutos)}
+    \label{tab:exemplo_slip}
+    \begin{tabular}{cc}
+        \hline
+        \textbf{Time (UTC)} & \textbf{fe\_frequency (Hz)} \\
+        \hline
+        10:00:30 & 1,85 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+A Tabela~\ref{tab:exemplo_sincronizado} apresenta o resultado da fusão e sincronização das três fontes na linha de base temporal de 20 segundos. Observa-se que, para o instante \texttt{10:00:00}, os valores elétricos (\texttt{current} e \texttt{rotational\_speed}) foram preenchidos com os dados de \texttt{10:00:15} (o primeiro valor futuro disponível dentro da tolerância de 6 minutos) e a frequência de escorregamento com o dado de \texttt{10:00:30} (tolerância de 3 minutos). Para os instantes \texttt{10:00:20}, \texttt{10:00:40} e \texttt{10:01:00}, as leituras elétricas foram preenchidas a partir de \texttt{10:01:10}, enquanto a frequência de escorregamento continuou sendo retropropagada a partir de \texttt{10:00:30} até o limite de sua respectiva tolerância.
+
+\begin{table}[H]
+    \centering
+    \caption{Tabela final sincronizada e unificada (grade de 20 segundos)}
+    \label{tab:exemplo_sincronizado}
+    \begin{tabular}{cccccc}
+        \hline
+        \textbf{Time (UTC)} & \textbf{object\_temp} & \textbf{vel\_rms\_x} & \textbf{current} & \textbf{rotational\_speed} & \textbf{fe\_frequency} \\
+        \hline
+        10:00:00 & 45,2 & 2,1 & 12,5 & 1180 & 1,85 \\
+        10:00:20 & 45,3 & 2,2 & 12,6 & 1182 & 1,85 \\
+        10:00:40 & 45,3 & 2,1 & 12,6 & 1182 & \textit{NaN} \\
+        10:01:00 & 45,4 & 2,3 & 12,6 & 1182 & \textit{NaN} \\
+        \hline
+    \end{tabular}
+\end{table}
+
+Caso restem lacunas após essa fusão (como os valores \textit{NaN} de \texttt{fe\_frequency} nos instantes finais devido ao esgotamento da janela de retropropagação de 3 minutos), estas são tratadas pelas etapas subsequentes de interpolação adaptativa descritas na Seção~\ref{sec:processamento_interpolacao}.
+
 Equipamentos mecânicos utilizam apenas \texttt{validated\_\allowbreak default} e \texttt{validated\_\allowbreak slip}, focando na sincronização entre temperatura/vibração e análise de frequência. O sistema aplica os seguintes critérios de validação a cada período: (i) ausência de lacunas consecutivas maiores que 3 horas, caso contrário o período é segmentado; (ii) presença de todos os sensores necessários (\texttt{object\_temp}, \texttt{vel\_rms\_x/y/z}, \texttt{mag\_x/y/z} para \texttt{validated\_\allowbreak default}; \texttt{fe\_\allowbreak frequency}, \texttt{rms} para \texttt{validated\_\allowbreak slip}); (iii) consistência temporal, verificando que as marcações temporais são estritamente monotônicas (crescentes); e (iv) sobreposição mínima adequada entre as fontes \texttt{validated\_\allowbreak default} e \texttt{validated\_\allowbreak slip}, garantindo que exista um intervalo temporal compartilhado suficiente para a junção. Períodos que não atendem a esses critérios são automaticamente descartados com registro detalhado em \textit{log}, incluindo o motivo da rejeição e as estatísticas do período.
 
 \section{Normalização}
@@ -135,24 +202,6 @@ Adicionalmente, implementou-se uma trava de segurança denominada \textit{Vibrat
 
 O sistema calcula e persiste limiares específicos para cada equipamento baseado no percentil 95\% dos dados do \textit{cluster} DESLIGADO, salvos como valores físicos reais (não normalizados) para comparação direta com valores reais em análises futuras. O modelo K-Means treinado é persistido junto com metadados incluindo atributos utilizados, classificação dos \textit{clusters}, estatísticas e data de treinamento.
 
-\section{Análise por Intervalo e Validação}
-
-O sistema implementa análise por intervalo com validações criteriosas, exigindo cobertura temporal maior que 70\% e lacunas consecutivas menores que 10 minutos. Valores 0,0 são válidos e representam equipamento desligado; o que invalida são lacunas temporais (ausência de dados). A lógica de máxima cautela ordena \textit{clusters} por \textit{score} crescente, classificando apenas o \textit{cluster} de menor \textit{score} como DESLIGADO inicialmente e incluindo um segundo \textit{cluster} somente quando atendidos os critérios estritos de similaridade detalhados na Seção~\ref{sec:kmeans_classification} (proximidade de \textit{score} e vibração residual), garantindo que apenas estados inequivocamente desligados sejam classificados como tal.
-
-Na análise de intervalos, a classificação usa limiares reais específicos do equipamento salvos durante o treinamento, comparando valores físicos reais sem necessidade de uma nova normalização. O equipamento é classificado como DESLIGADO se corrente, RPM e vibração estiverem todos abaixo dos limiares calculados, ou se corrente e RPM estiverem baixos com vibração residual até 3,0 mm/s. Cada equipamento usa seus próprios limiares calculados dinamicamente, priorizando corrente e RPM como sinais mais confiáveis.
-
-O sistema implementa filtros de limpeza de dados incluindo filtro de \textit{outliers} temporais que corrige classificações espúrias (sequências menores que 10 minutos), filtro de \textit{outliers} por IQR~\cite{tukey1977iqr} removendo valores fisicamente impossíveis, filtro de continuidade temporal validando lacunas menores que 3 horas, validação de atributos obrigatórios garantindo presença de sensores críticos e verificação de consistência temporal. Equipamentos elétricos validam simultaneamente RPM, corrente e vibração, enquanto mecânicos validam temperatura \textit{versus} vibração.
-
-Este \textit{pipeline} de análise por intervalo, acessível através da aba de Análise de Intervalo do sistema (Figura~\ref{fig:gui_intervalo}), é utilizado para classificar novos períodos de dados após a conclusão do treinamento do modelo. O processo opera em cinco fases, conforme ilustrado na Figura~\ref{fig:pipeline_cinco_fases}: validação de requisitos (intervalo mínimo 24 horas, modelo treinado, \textit{scaler} persistido e acesso ao InfluxDB), extração e validação (conversão GMT-3 para UTC, \textit{download} de dados e validação de cobertura temporal maior que 70\%), processamento (segmentação temporal, interpolação adaptativa e sincronização multifrequência), classificação avançada (predição K-Means, correção por limiares físicos e filtro de \textit{outliers} temporais) e análise de métricas calculando tempo em cada estado considerando durações temporais reais.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.95\textwidth]{plots/05_pipeline_cinco_fases.png}
-    \caption{Visão geral das cinco fases do \textit{pipeline} completo de análise por intervalo. Cada fase é executada sequencialmente: a validação de requisitos garante a existência de modelos e dados; a extração obtém e valida os dados brutos; o processamento aplica segmentação, interpolação e sincronização; a classificação avançada utiliza K-Means com correção por limiares físicos; e a análise de métricas calcula os tempos efetivos em cada estado operacional.}
-    \label{fig:pipeline_cinco_fases}
-\end{figure}
-
-O sistema oferece interface interativa com entrada de datas em formato brasileiro, tratamento robusto de erros com \textit{retry} e \textit{backoff} exponencial, \textit{cache} inteligente evitando re-\textit{download} desnecessário, \textit{logs} estruturados com rastreabilidade completa e visualizações automáticas com gráficos 3D e relatórios detalhados. Para equipamentos mecânicos, algoritmo especial seleciona intervalos 3D otimizando balanceamento de tempo ligado/desligado, número de transições e qualidade dos dados.
 
 \section{Redução de Dimensionalidade por Análise de Componentes Principais (PCA)}
 
@@ -357,7 +406,7 @@ Funcionalidades da Aba de Treinamento: O sistema identifica equipamentos com dad
 
 \subsection{Aba de Análise por Intervalo}
 
-A segunda aba (Figura~\ref{fig:gui_intervalo}) permite análise de períodos específicos consultando dados diretamente do InfluxDB em tempo real, ideal para investigação de anomalias ou validação de períodos customizados.
+A segunda aba (Figura~\ref{fig:gui_intervalo}) permite a análise e classificação de períodos específicos consultando dados diretamente do InfluxDB em tempo real. Importante ressaltar que este processo de análise por intervalo não faz parte do pipeline principal de treinamento e classificação automática dos modelos K-Means; trata-se de um pipeline secundário de predição, projetado especificamente para permitir a aplicação de modelos previamente consolidados sobre novos registros temporais informados pelo operador na interface gráfica.
 
 \begin{figure}[H]
     \centering
@@ -368,18 +417,48 @@ A segunda aba (Figura~\ref{fig:gui_intervalo}) permite análise de períodos esp
 
 Funcionalidades da Aba de Análise por Intervalo: Permite configuração do InfluxDB com IP (10.8.0.XXX) e porta (8086) configuráveis, seleção de equipamento através de \textit{dropdown} com todos os equipamentos treinados, definição de intervalo temporal com seletores de data/hora para início e fim (GMT-3), recarga da lista de equipamentos com modelos disponíveis, execução de análise que baixa dados do período, aplica modelo treinado e classifica estados, e console de saída mostrando progresso de \textit{download}, processamento e resultados.
 
+O processamento nesta aba opera em cinco fases, conforme ilustrado na Figura~\ref{fig:pipeline_cinco_fases}:
+\begin{enumerate}
+    \item \textbf{Validação de requisitos:} Verifica a existência do modelo K-Means treinado e do \textit{scaler} MinMax persistidos para o equipamento, além de testar a conectividade com o InfluxDB e exigir um intervalo de análise de no mínimo 24 horas.
+    \item \textbf{Extração e validação:} Converte as marcações de horário fornecidas pelo operador (GMT-3) para UTC, efetua o \textit{download} das séries brutas e valida a densidade do intervalo, exigindo cobertura de dados maior que 70\% e rejeitando períodos com lacunas consecutivas maiores que 10 minutos (valores 0,0 são válidos; o que invalida são ausências reais de sinal).
+    \item \textbf{Processamento:} Realiza a segmentação temporal, interpolação adaptativa de lacunas e a sincronização multifrequência.
+    \item \textbf{Classificação avançada:} Aplica o classificador K-Means nos dados normalizados e realiza correções usando os limiares físicos salvos durante a etapa de treinamento. Não há necessidade de re-treinar o modelo ou recalcular limiares; a classificação utiliza a lógica de máxima cautela descrita na Seção~\ref{sec:kmeans_classification}, comparando valores físicos reais (RPM, corrente e vibração). Por fim, aplica-se o filtro de \textit{outliers} temporais para remover transições espúrias com duração menor que 10 minutos.
+    \item \textbf{Análise de métricas:} Calcula e reporta o tempo acumulado em cada estado operacional (LIGADO, DESLIGADO, e Incerteza/Sem Conexão) com base nas durações temporais reais, gerando relatórios textuais e gráficos de reconstrução temporal.
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{plots/05_pipeline_cinco_fases.png}
+    \caption{Visão geral das cinco fases do \textit{pipeline} completo de análise por intervalo. Cada fase é executada sequencialmente: a validação de requisitos garante a existência de modelos e dados; a extração obtém e valida os dados brutos; o processamento aplica segmentação, interpolação e sincronização; a classificação avançada utiliza K-Means com correção por limiares físicos; e a análise de métricas calcula os tempos efetivos em cada estado operacional.}
+    \label{fig:pipeline_cinco_fases}
+\end{figure}
+
+O sistema implementa ainda filtros robustos de limpeza de dados para esta análise, incluindo detecção de \textit{outliers} via IQR~\cite{tukey1977iqr} para remover picos físicos impossíveis, filtros de continuidade de lacunas de 3 horas e validações de consistência temporal e atributos obrigatórios (corrente, RPM e vibração para elétricos; temperatura e vibração para mecânicos). Toda a execução conta com suporte a \textit{retry} e \textit{backoff} exponencial no InfluxDB, \textit{cache} inteligente para evitar novos downloads de intervalos idênticos, \textit{logs} estruturados e geração automática de relatórios em formato amigável no diretório \texttt{results/}. Para equipamentos mecânicos, um algoritmo heurístico seleciona e isola automaticamente os melhores intervalos de dados, priorizando trechos que maximizem o balanço de tempo nos estados ligado e desligado e a quantidade de transições operacionais válidas.
+
 \subsection{Aba de Visualização 3D}
 
-A terceira aba (Figura~\ref{fig:gui_visualizacao}) gera visualizações tridimensionais dos \textit{clusters} K-Means e estados operacionais classificados, permitindo inspeção visual da qualidade da clusterização.
+A terceira aba (Figura~\ref{fig:gui_visualizacao}) é projetada para a renderização rápida de gráficos tridimensionais interativos baseados nos dados históricos classificados, servindo como uma ferramenta de diagnóstico visual imediato para avaliar a qualidade e a separabilidade da clusterização K-Means.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.5\textwidth]{results/gui_visualizacao.png}
-    \caption{Interface gráfica -- Aba de Visualização 3D. Seleção de equipamento e geração automática de gráficos 3D: Corrente $\times$ Vibração $\times$ Tempo e RPM $\times$ Vibração $\times$ Tempo (equipamentos elétricos) ou Temperatura $\times$ Vibração $\times$ Tempo (equipamentos mecânicos).}
+    \caption{Interface gráfica -- Aba de Visualização 3D. Seleção de equipamento e geração automática de gráficos 3D rápido a partir dos pontos classificados.}
     \label{fig:gui_visualizacao}
 \end{figure}
 
-Funcionalidades da Aba de Visualização 3D: Permite seleção entre equipamentos com modelos treinados, cria automaticamente gráficos tridimensionais, adapta gráficos por tipo de equipamento (RPM para elétricos, Temperatura para mecânicos), aplica coloração por estado (verde para LIGADO, vermelho para DESLIGADO) e salva automaticamente gráficos no diretório results/.
+Para evitar gargalos de processamento gráfico e travamentos do sistema (uma vez que os históricos contêm mais de 1 milhão de registros e o Matplotlib possui limitações severas de desempenho para grandes volumes de pontos interativos), o sistema não renderiza a totalidade dos dados na frequência original de 20 em 20 segundos. Em vez disso, aplica-se uma estratégia dupla de seleção e redução de dados (\textit{downsampling}):
+\begin{itemize}
+    \item \textbf{Seleção de Intervalo Otimizado:} O sistema emprega um algoritmo de busca para identificar e recortar o "melhor período" de dados contínuos. Este intervalo representativo é escolhido de forma que apresente uma distribuição equilibrada entre os estados LIGADO e DESLIGADO, além de maximizar a presença de transições entre os estados e garantir que a densidade e a qualidade do sinal sejam ideais.
+    \item \textbf{Downsampling Sistemático:} Sobre o intervalo selecionado, os pontos são amostrados sistematicamente (por exemplo, aplicando um fator de passo para extrair uma amostra a cada $N$ registros), reduzindo a quantidade de elementos gráficos a um volume ótimo para renderização instantânea (tipicamente limitado a cerca de 10.000 pontos).
+\end{itemize}
+
+Os eixos tridimensionais dos gráficos gerados são adaptados dinamicamente com base nas características físicas de cada equipamento:
+\begin{itemize}
+    \item \textbf{Equipamentos Elétricos:} São gerados dois gráficos distintos. O primeiro utiliza os eixos Corrente (A) $\times$ Vibração RMS (mm/s) $\times$ Tempo. O segundo utiliza RPM $\times$ Vibração RMS (mm/s) $\times$ Tempo. Esses gráficos buscam relacionar os sinais elétricos estimados com a resposta física de vibração ao longo da série histórica.
+    \item \textbf{Equipamentos Mecânicos:} Como não há sensores elétricos, o sistema gera o gráfico utilizando Temperatura ($^\circ$C) $\times$ Vibração RMS (mm/s) $\times$ Tempo, mostrando a dependência térmica inerente ao regime mecânico operacional.
+\end{itemize}
+
+O sistema aplica uma coloração binária automática nos pontos baseando-se na classificação dos clusters (verde para LIGADO e vermelho para DESLIGADO) e salva automaticamente a imagem estática no diretório \texttt{results/}. Uma explanação profunda de cada um dos gráficos tridimensionais históricos e de intervalos gerados por esta aba do sistema, acompanhada da devida análise física, é detalhada no Capítulo~\ref{chap:resultados} (Resultados) nas Figuras 4.1, 4.7, etc.
 
 \subsection{Arquitetura da Interface}
 
