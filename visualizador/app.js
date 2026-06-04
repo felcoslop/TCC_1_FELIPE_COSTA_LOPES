@@ -33,6 +33,39 @@ const META = {
     temp: { titulo: "Temperatura (°C)" },
 };
 
+const EQUIP_INFO = {
+    "c_636": {
+        nome: "Motobomba SH 2",
+        tipo: "Motor - Elétrico",
+        descr: "Motobomba SH 2 – Motor",
+        detalhes: "Motor 90 kW, 440 V, 60 Hz, 155 A, 6 polos, rolamentos 6316 / 6316, bomba A4VSO125DR/30R-PPB13N, 9 pistões. Localização: Motor SH 2 (PLTCM Ipatinga)."
+    },
+    "c_637": {
+        nome: "Motobomba SH 3",
+        tipo: "Motor - Elétrico",
+        descr: "Motobomba SH 3 – Motor",
+        detalhes: "Motor 90 kW, 440 V, 60 Hz, 155 A, 6 polos, rolamentos 6316 / 6316, bomba A4VSO125DR/30R-PPB13N, 9 pistões. Localização: Motor SH 3 (PLTCM Ipatinga)."
+    },
+    "c_640": {
+        nome: "SHAP Recirculação 1",
+        tipo: "Motor REC 1 - Elétrico",
+        descr: "SHAP Recirculação 1 – Motor REC 1 SHAP",
+        detalhes: "Motobomba de recirculação da área SHAP (Motor REC 1 SHAP). Propriedades não cadastradas no modelo. Localização: Área SHAP - Oil Cellar - PLTCM Ipatinga."
+    },
+    "c_670": {
+        nome: "Bridle 4 R1",
+        tipo: "Redutora - Mecânico",
+        descr: "Bridle 4 R1 – Redutora",
+        detalhes: "Bridle 4 R1 – monitoramento da redutora. Modelo sem propriedades cadastradas. Localização: Área Centro - PLTCM Ipatinga."
+    },
+    "c_1518": {
+        nome: "CT-M1 Tambor 01 Descarga",
+        tipo: "Mancal Direito - Mecânico",
+        descr: "CT-M1 Tambor 01 Descarga – Mancal Direito",
+        detalhes: "Tambor de descarga da correia transportadora CT-M1. Monitoramento do mancal lado direito do tambor. Modelo Conveyor Drum. Localização: CT-M1 - Alto Forno 3 - Ipatinga."
+    }
+};
+
 const el = (id) => document.getElementById(id);
 
 // Estado global do equipamento carregado
@@ -70,9 +103,11 @@ function renderCards(lista) {
         const pctOn = eq.pct_ligado != null ? eq.pct_ligado : 0;
         const card = document.createElement("div");
         card.className = "card";
+        const info = EQUIP_INFO[eq.mpoint] || { nome: eq.mpoint, tipo: eq.tipo, descr: eq.mpoint, detalhes: "" };
         card.innerHTML = `
-            <span class="tag ${eq.tipo}">${eq.tipo.toUpperCase()}</span>
-            <h3>${eq.mpoint}</h3>
+            <span class="tag ${eq.tipo}">${info.tipo}</span>
+            <h3>${info.nome}</h3>
+            <p class="card-mpoint">${eq.mpoint}</p>
             <div class="info">
                 ${Number(eq.n_pontos).toLocaleString("pt-BR")} pontos<br>
                 ${eq.graficos.length} gráficos sincronizados<br>
@@ -88,7 +123,20 @@ function renderCards(lista) {
 async function abrirEquipamento(eq) {
     el("tela-selecao").classList.add("hidden");
     el("tela-graficos").classList.remove("hidden");
-    el("titulo-equip").textContent = `${eq.mpoint} (${eq.tipo})`;
+    
+    const info = EQUIP_INFO[eq.mpoint] || { nome: eq.mpoint, tipo: eq.tipo, descr: eq.mpoint, detalhes: "" };
+    el("titulo-equip").textContent = `${info.nome} (${eq.mpoint})`;
+    
+    // Configura o clique do botão de informações
+    el("btn-info").onclick = () => {
+        el("info-nome").textContent = info.nome;
+        el("info-mpoint").textContent = eq.mpoint;
+        el("info-tipo").textContent = info.tipo;
+        el("info-descr").textContent = info.descr;
+        el("info-detalhes").textContent = info.detalhes;
+        el("modal-info").classList.remove("hidden");
+    };
+
     const msg = el("msg-graficos");
     msg.classList.remove("hidden");
     msg.textContent = "Carregando dados…";
@@ -429,8 +477,20 @@ el("btn-reset").onclick = () => {
     Plotly.relayout(G.plotDiv, { "xaxis.autorange": true });   // e ajusta o X ao periodo todo (nativo)
 };
 
+// Controles do modal de informações
+el("btn-fechar-modal").onclick = () => {
+    el("modal-info").classList.add("hidden");
+};
+
+window.addEventListener("click", (event) => {
+    const modal = el("modal-info");
+    if (event.target === modal) {
+        modal.classList.add("hidden");
+    }
+});
+
 // Marcador de versao: confira no console (F12) e no rodape se carregou o codigo novo.
-const BUILD = "2026-06-04-m";
+const BUILD = "2026-06-04-m2";
 console.log("%c[Visualizador] build " + BUILD, "color:#2980b9;font-weight:bold");
 window.addEventListener("DOMContentLoaded", () => {
     const d = document.querySelector(".dica");

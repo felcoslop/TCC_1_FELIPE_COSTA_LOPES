@@ -25,6 +25,7 @@
         <header class="barra">
             <button id="btn-voltar" class="btn">&larr; Equipamentos</button>
             <button id="btn-reset" class="btn">&#8634; Resetar zoom</button>
+            <button id="btn-info" class="btn">&#8505; Info do Equipamento</button>
             <h2 id="titulo-equip"></h2>
             <div class="legenda">
                 <span class="leg"><span class="dot" style="background:#2ecc71"></span>LIGADO</span>
@@ -43,6 +44,22 @@
         <p class="dica">Dica: arraste para dar zoom (o eixo do tempo é compartilhado entre os gráficos). Duplo clique
             volta à visão completa. Aproxime até enxergar cada ponto de 20&nbsp;em&nbsp;20&nbsp;s.</p>
     </section>
+
+    <!-- MODAL DE INFORMAÇÕES DO EQUIPAMENTO -->
+    <div id="modal-info" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-button" id="btn-fechar-modal">&times;</span>
+            <h2 id="modal-titulo">Informações do Equipamento</h2>
+            <div class="modal-body">
+                <p><strong>Equipamento:</strong> <span id="info-nome"></span></p>
+                <p><strong>Ponto de Medição:</strong> <span id="info-mpoint"></span></p>
+                <p><strong>Tipo:</strong> <span id="info-tipo"></span></p>
+                <p><strong>Descrição:</strong> <span id="info-descr"></span></p>
+                <p><strong>Especificações técnicas:</strong></p>
+                <p id="info-detalhes" class="detalhes-texto"></p>
+            </div>
+        </div>
+    </div>
 
     <script src="app.js"></script>
 </body>
