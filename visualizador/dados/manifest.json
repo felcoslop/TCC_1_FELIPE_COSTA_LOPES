@@ -1,0 +1,75 @@
+{
+  "equipamentos": [
+    {
+      "mpoint": "c_636",
+      "tipo": "eletrico",
+      "arquivo": "dados/c_636.csv",
+      "n_pontos": 863450,
+      "t_min": 1739896360000,
+      "t_max": 1756311260000,
+      "graficos": [
+        "vib",
+        "cur",
+        "rpm",
+        "temp"
+      ],
+      "pct_ligado": 95.25
+    },
+    {
+      "mpoint": "c_637",
+      "tipo": "eletrico",
+      "arquivo": "dados/c_637.csv",
+      "n_pontos": 1242993,
+      "t_min": 1731002700000,
+      "t_max": 1756311260000,
+      "graficos": [
+        "vib",
+        "cur",
+        "rpm",
+        "temp"
+      ],
+      "pct_ligado": 95.48
+    },
+    {
+      "mpoint": "c_640",
+      "tipo": "eletrico",
+      "arquivo": "dados/c_640.csv",
+      "n_pontos": 1389174,
+      "t_min": 1730825480000,
+      "t_max": 1756311260000,
+      "graficos": [
+        "vib",
+        "cur",
+        "rpm",
+        "temp"
+      ],
+      "pct_ligado": 94.36
+    },
+    {
+      "mpoint": "c_1518",
+      "tipo": "mecanico",
+      "arquivo": "dados/c_1518.csv",
+      "n_pontos": 585367,
+      "t_min": 1743714880000,
+      "t_max": 1756311280000,
+      "graficos": [
+        "vib",
+        "temp"
+      ],
+      "pct_ligado": 95.25
+    },
+    {
+      "mpoint": "c_670",
+      "tipo": "mecanico",
+      "arquivo": "dados/c_670.csv",
+      "n_pontos": 1377884,
+      "t_min": 1725285000000,
+      "t_max": 1756311240000,
+      "graficos": [
+        "vib",
+        "temp"
+      ],
+      "pct_ligado": 79.01
+    }
+  ]
+}

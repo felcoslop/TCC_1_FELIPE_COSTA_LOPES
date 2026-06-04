@@ -1,0 +1,3 @@
+# Nao versionar os CSV crus (pesados, ~196 MB). Para o deploy usamos os .csv.gz (~39 MB).
+# Os .csv ficam so localmente (o servidor de dev os usa direto).
+dados/*.csv

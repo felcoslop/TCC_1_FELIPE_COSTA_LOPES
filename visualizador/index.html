@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Visualizador de Estados Operacionais</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="lib/plotly.min.js"></script>
+</head>
+
+<body>
+    <!-- TELA 1: seleção de equipamento -->
+    <section id="tela-selecao">
+        <header class="topo">
+            <h1>Visualizador de Estados Operacionais</h1>
+            <p class="sub">Detecção LIGADO / DESLIGADO por K-Means &mdash; séries temporais a 20&nbsp;s</p>
+        </header>
+        <p id="msg-selecao" class="msg">Carregando equipamentos&hellip;</p>
+        <div id="lista-equipamentos" class="cards"></div>
+    </section>
+
+    <!-- TELA 2: gráficos -->
+    <section id="tela-graficos" class="hidden">
+        <header class="barra">
+            <button id="btn-voltar" class="btn">&larr; Equipamentos</button>
+            <button id="btn-reset" class="btn">&#8634; Resetar zoom</button>
+            <h2 id="titulo-equip"></h2>
+            <div class="legenda">
+                <span class="leg"><span class="dot" style="background:#2ecc71"></span>LIGADO</span>
+                <span class="leg"><span class="dot" style="background:#e74c3c"></span>DESLIGADO</span>
+                <span class="sep"></span>
+                <span class="leg"><span class="shape">&#9679;</span>real</span>
+                <span class="leg"><span class="shape">&#9632;</span>interp. PCHIP</span>
+                <span class="leg"><span class="shape">&#9670;</span>interp. KNN</span>
+                <span class="sep"></span>
+                <span class="leg"><span class="dot" style="background:#bdc3c7"></span>sem dados (&gt;3h)</span>
+            </div>
+        </header>
+        <p id="msg-graficos" class="msg hidden"></p>
+        <div id="data-topo" class="data-topo"></div>
+        <div id="plot"></div>
+        <p class="dica">Dica: arraste para dar zoom (o eixo do tempo é compartilhado entre os gráficos). Duplo clique
+            volta à visão completa. Aproxime até enxergar cada ponto de 20&nbsp;em&nbsp;20&nbsp;s.</p>
+    </section>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

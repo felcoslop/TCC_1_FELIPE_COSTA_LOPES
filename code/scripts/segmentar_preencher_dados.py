@@ -636,10 +636,11 @@ class SegmentadorPreenchedor:
             
             if salvar_individual:
                 caminho_base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-                pasta_saida = os.path.join(caminho_base, 'data', 'raw_preenchido')
-                
                 periodo_id = periodo_info['periodo_id']
                 mpoint_nome = mpoint if mpoint else "c_636"  # fallback para compatibilidade
+                # Salvar no subdiretorio do mpoint (mesmo local onde unir_sincronizar busca os arquivos)
+                pasta_saida = os.path.join(caminho_base, 'data', 'raw_preenchido', mpoint_nome)
+                os.makedirs(pasta_saida, exist_ok=True)
                 intervalo_tag = f"_{intervalo_arquivo}" if intervalo_arquivo else ""
                 arquivo_saida = os.path.join(
                     pasta_saida,

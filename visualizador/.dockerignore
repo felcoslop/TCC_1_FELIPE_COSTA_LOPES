@@ -1,0 +1,10 @@
+# Nao enviar para o build: CSV crus (usamos os .csv.gz) e arquivos de dev.
+dados/*.csv
+iniciar_visualizador.py
+iniciar_visualizador.bat
+comprimir_dados.py
+LEIA-ME.txt
+DEPLOY.md
+Dockerfile
+.dockerignore
+.git

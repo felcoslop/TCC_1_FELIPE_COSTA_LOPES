@@ -1,0 +1,40 @@
+================================================================================
+  VISUALIZADOR WEB DE ESTADOS OPERACIONAIS  (offline)
+================================================================================
+
+O QUE E
+  Sistema web que roda 100% offline (sem internet) no navegador, dentro da
+  propria pasta do projeto. Mostra, por equipamento, as series temporais a 20s
+  da tabela unificada (completa e preenchida) com a classificacao LIGADO/
+  DESLIGADO do K-Means (o mesmo resultado dos graficos 3D e da reconstrucao).
+
+COMO USAR (2 passos)
+  1) Gerar os dados (uma vez, ou sempre que retreinar):
+        cd code
+        python treinar_todos.py                (treina os 5 equipamentos)
+        python exportar_visualizador_web.py    (exporta para visualizador/dados/)
+
+  2) Abrir o visualizador:
+        - De um duplo clique em  iniciar_visualizador.bat
+        - O navegador abre sozinho em http://localhost:8000/
+        - Mantenha a janela preta aberta enquanto usa. Feche com Ctrl+C.
+
+NA TELA
+  - Primeiro voce escolhe o equipamento (eletrico ou mecanico).
+  - Depois abrem os graficos sincronizados no eixo do tempo (X):
+        Eletricos -> 4 graficos: vibracao, corrente, RPM e temperatura
+        Mecanicos -> 2 graficos: vibracao e temperatura
+  - Arraste para dar zoom (o tempo e compartilhado entre todos os graficos).
+    Aproxime ate enxergar cada ponto de 20 em 20 segundos. Duplo clique reseta.
+
+CORES E FORMAS DOS PONTOS
+  Cor   = estado:   verde = LIGADO        vermelho = DESLIGADO
+  Forma = origem:   circulo = real        quadrado = interpolado PCHIP
+                    losango = interpolado KNN
+  Faixa cinza       = periodo sem dados (lacuna > 3h, nao interpolado)
+
+REQUISITOS
+  - Python instalado (ja usado pelo projeto).
+  - Nenhuma biblioteca extra: a unica dependencia do navegador (Plotly) ja esta
+    embutida em lib/plotly.min.js. Nao precisa de internet para usar.
+================================================================================
