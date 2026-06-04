@@ -69,4 +69,4 @@ O script irá:
 
 ## Deploy em Produção
 
-Para instruções detalhadas de como realizar o deploy do visualizador em um servidor remoto (utilizando EasyPanel, Dockerfile ou volumes compartilhados), consulte o guia [DEPLOY.md](file:///c:/Users/Felipe%20Costa/Downloads/BACKUP/Downloads/TCC_1_FELIPE_COSTA_LOPES-master/visualizador/DEPLOY.md).
+Para instruções detalhadas de como realizar o deploy do visualizador em um servidor remoto (utilizando EasyPanel, Dockerfile ou volumes compartilhados), consulte o guia [DEPLOY.md](DEPLOY.md).

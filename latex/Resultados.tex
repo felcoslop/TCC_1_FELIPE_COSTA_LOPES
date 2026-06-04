@@ -10,50 +10,27 @@ O \textit{pipeline} foi executado com dados reais de cinco equipamentos industri
 
 Um experimento adicional mostrou que o equipamento $c_{636}$ (motobomba), quando processado com o \textit{pipeline} mecânico simplificado, apresentou separação mais clara entre os estados operacionais, indicando que a inclusão de sinais estimados adiciona complexidade sem melhorar o desempenho.
 
-\section{Análise de Desempenho da Classificação}
+\section{Interpolação Adaptativa de Lacunas}
+\label{sec:resultados_interpolacao}
 
-A Tabela~\ref{tab:resultados_classificacao} sintetiza os resultados obtidos para cada equipamento, detalhando o tipo, descrição, número de amostras processadas e a quantidade de atributos utilizados na classificação.
+A Tabela~\ref{tab:interpolacao_horas} apresenta a quantidade de dados interpolados para o equipamento $c_{637}$, discriminada por método de interpolação. No total, 157,83 horas de dados foram reconstruídas, sendo 141,74 horas via PCHIP (lacunas $\leq$ 30 minutos) e 16,09 horas via KNN multivariado (lacunas entre 30 minutos e 3 horas). Esses valores representam apenas 2,3\% do total de dados processados, demonstrando que a grande maioria do sinal é composta por dados originais do sensor. A coluna Qualidade corresponde ao indicador de confiabilidade atribuído a cada amostra conforme sua origem, definido na Seção~\ref{chap:metodologia} (Processamento e Interpolação): 1,00 para dados originais do sensor, 0,95 para valores reconstruídos por PCHIP e 0,75 para valores reconstruídos por KNN. Trata-se de um peso de confiança decrescente que reflete a incerteza progressivamente maior associada à interpolação, sendo máximo para a leitura direta do sensor e reduzido à medida que a lacuna preenchida é maior e o método de estimativa, menos direto.
 
 \begin{table}[H]
     \centering
-    \caption{Resultados da classificação por equipamento}
-    \label{tab:resultados_classificacao}
-    \begin{tabular}{|l|c|c|r|c|}
+    \caption{Horas interpoladas por método -- Equipamento $c_{637}$}
+    \label{tab:interpolacao_horas}
+    \begin{tabular}{|l|r|r|r|}
         \hline
-        \textbf{Equipamento} & \textbf{Tipo} & \textbf{Descrição} & \textbf{Amostras}  & \textbf{Atributos} \\
+        \textbf{Método}            & \textbf{Pontos} & \textbf{Horas}  & \textbf{Qualidade} \\
         \hline
-        $c_{636}$            & Elétrico      & Motobomba          & 863.450            & 19                 \\
-        $c_{637}$            & Elétrico      & Motobomba          & 1.242.993          & 19                 \\
-        $c_{640}$            & Elétrico      & Motor REC          & 1.389.174          & 19                 \\
-        $c_{1518}$           & Mecânico      & Mancal             & 585.367            & 16                 \\
-        $c_{670}$            & Mecânico      & Redutora bridle    & 1.377.884          & 16                 \\
+        PCHIP ($\leq$ 30 min)      & 25.514          & 141,74          & 0,95               \\
+        KNN (30 min -- 3h)         & 2.896           & 16,09           & 0,75               \\
         \hline
-        \textbf{Total}       & \textbf{---}  & \textbf{---}       & \textbf{5.458.868} & \textbf{---}       \\
+        \textbf{Total interpolado} & \textbf{28.410} & \textbf{157,83} & \textbf{---}       \\
+        Dados originais            & 1.214.583       & 6.747,68        & 1,00               \\
         \hline
     \end{tabular}
 \end{table}
-
-Conforme apresentado na Tabela~\ref{tab:resultados_classificacao}, todos os cinco equipamentos foram classificados integralmente, com 100\% dos pontos rotulados em LIGADO ou DESLIGADO. Vale ressaltar que a classificação não é avaliada por uma métrica de acurácia supervisionada: como o estado é determinado pela comparação dos dados com \textit{thresholds} físicos calculados a partir dos próprios \textit{clusters}, todo ponto é necessariamente atribuído a um dos estados, de modo que a cobertura é sempre total por construção. O total de amostras processadas ultrapassa 5,4 milhões de registros, validando a escalabilidade do sistema.
-
-A Figura~\ref{fig:estados_3d_c_637_intervalo} demonstra a visualização 3D do equipamento $c_{637}$ no espaço Corrente $\times$ Vibração $\times$ Tempo, permitindo identificar a separação entre estados operacionais ao longo do período histórico completo.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.7\textwidth]{results/estados_corrente_vibracao_tempo_3d_c_637.png}
-    \caption{Visualização 3D -- Corrente $\times$ Vibração $\times$ Tempo -- Equipamento $c_{637}$. Demonstra a separação entre estados LIGADO (verde) e DESLIGADO (vermelho) ao longo do período histórico, com 1.242.993 amostras classificadas.}
-    \label{fig:estados_3d_c_637_intervalo}
-\end{figure}
-
-A Figura~\ref{fig:analise_clusters_c_636_moderado} ilustra a análise K-Means do equipamento $c_{636}$, evidenciando a separação binária clara entre os estados LIGADO e DESLIGADO.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.85\textwidth]{results/analise_kmeans_clusters_moderado_c_636.png}
-    \caption{Análise K-Means do equipamento $c_{636}$ processado com \textit{pipeline} moderado. Mostra separação binária clara entre estados LIGADO (95,25\%) e DESLIGADO (4,75\%) com convergência robusta e inércia final de 158.793, demonstrando a eficácia da classificação dinâmica baseada em \textit{scores}.}
-    \label{fig:analise_clusters_c_636_moderado}
-\end{figure}
-
-O \textit{pipeline} implementa múltiplas estratégias de processamento com diferentes níveis de qualidade: dados originais sem interpolação (qualidade 1,00), interpolação PCHIP~\cite{fritsch1980pchip} para lacunas de até 30 minutos (qualidade 0,95) e interpolação KNN multivariada para lacunas entre 30 minutos e 3 horas (qualidade 0,75). Lacunas maiores que 3 horas resultam em segmentação automática em períodos distintos.
 
 \section{Análise de Dados Normalizados}
 
@@ -364,25 +341,6 @@ Esse padrão pode ser verificado de forma interativa no visualizador web das sé
 \section{Aplicabilidade Prática}
 
 O \textit{pipeline} K-Means foi validado com sucesso em cenários industriais variados. A análise histórica permitiu processar meses de dados por equipamento, gerando métricas de utilização e horímetro precisas, com relatórios automáticos e classificação sem erros, oferecendo uma base confiável para planejamento de manutenção preventiva. Para intervalos específicos de horas ou dias, o \textit{pipeline} possibilitou investigação detalhada de padrões operacionais e detecção de anomalias, com visualizações 3D de alta resolução temporal, facilitando diagnósticos rápidos. A classificação automática demonstrou robustez em qualquer intervalo com dados suficientes, garantindo LIGADO/DESLIGADO sem intervenção manual e precisão completa consistente.
-
-A Tabela~\ref{tab:interpolacao_horas} apresenta a quantidade de dados interpolados para o equipamento $c_{637}$, discriminada por método de interpolação. No total, 157,83 horas de dados foram reconstruídas, sendo 141,74 horas via PCHIP (lacunas $\leq$ 30 minutos) e 16,09 horas via KNN multivariado (lacunas entre 30 minutos e 3 horas). Esses valores representam apenas 2,3\% do total de dados processados, demonstrando que a grande maioria do sinal é composta por dados originais do sensor. A coluna Qualidade corresponde ao indicador de confiabilidade atribuído a cada amostra conforme sua origem, definido na Seção~\ref{chap:metodologia} (Processamento e Interpolação): 1,00 para dados originais do sensor, 0,95 para valores reconstruídos por PCHIP e 0,75 para valores reconstruídos por KNN. Trata-se de um peso de confiança decrescente que reflete a incerteza progressivamente maior associada à interpolação, sendo máximo para a leitura direta do sensor e reduzido à medida que a lacuna preenchida é maior e o método de estimativa, menos direto.
-
-\begin{table}[H]
-    \centering
-    \caption{Horas interpoladas por método -- Equipamento $c_{637}$}
-    \label{tab:interpolacao_horas}
-    \begin{tabular}{|l|r|r|r|}
-        \hline
-        \textbf{Método}            & \textbf{Pontos} & \textbf{Horas}  & \textbf{Qualidade} \\
-        \hline
-        PCHIP ($\leq$ 30 min)      & 25.514          & 141,74          & 0,95               \\
-        KNN (30 min -- 3h)         & 2.896           & 16,09           & 0,75               \\
-        \hline
-        \textbf{Total interpolado} & \textbf{28.410} & \textbf{157,83} & \textbf{---}       \\
-        Dados originais            & 1.214.583       & 6.747,68        & 1,00               \\
-        \hline
-    \end{tabular}
-\end{table}
 
 Os benefícios operacionais incluem precisão total na tomada de decisão, automação completa do processo, escalabilidade para milhões de registros, interpretabilidade dos resultados por meio de visualizações compreensíveis e robustez frente a dados não utilizados no treinamento.
 
