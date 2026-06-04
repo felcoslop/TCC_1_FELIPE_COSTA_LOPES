@@ -78,3 +78,7 @@ ENV/
 config.env
 CLAUDE.md
 
+# ===== CONFIABILIDADE =====
+confiabilidade/
+
+
