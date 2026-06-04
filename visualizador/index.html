@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Visualizador de Estados Operacionais</title>
     <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="https://logodownload.org/wp-content/uploads/2015/02/UFMG-logo.png" type="image/png" />
     <script src="lib/plotly.min.js"></script>
 </head>
 
@@ -26,16 +27,17 @@
             <button id="btn-voltar" class="btn">&larr; Equipamentos</button>
             <button id="btn-reset" class="btn">&#8634; Resetar zoom</button>
             <button id="btn-info" class="btn">&#8505; Info do Equipamento</button>
+            <button id="btn-horas" class="btn">&#128338; Horas Totais</button>
             <h2 id="titulo-equip"></h2>
             <div class="legenda">
-                <span class="leg"><span class="dot" style="background:#2ecc71"></span>LIGADO</span>
-                <span class="leg"><span class="dot" style="background:#e74c3c"></span>DESLIGADO</span>
+                <span class="leg"><span class="dot" style="background:#2ecc71"></span>LIGADO (<span id="legenda-horas-ligado"></span>h)</span>
+                <span class="leg"><span class="dot" style="background:#e74c3c"></span>DESLIGADO (<span id="legenda-horas-desligado"></span>h)</span>
                 <span class="sep"></span>
                 <span class="leg"><span class="shape">&#9679;</span>real</span>
                 <span class="leg"><span class="shape">&#9632;</span>interp. PCHIP</span>
                 <span class="leg"><span class="shape">&#9670;</span>interp. KNN</span>
                 <span class="sep"></span>
-                <span class="leg"><span class="dot" style="background:#bdc3c7"></span>sem dados (&gt;3h)</span>
+                <span class="leg"><span class="dot" style="background:#bdc3c7"></span>sem conexão (<span id="legenda-horas-semconexao"></span>h)</span>
             </div>
         </header>
         <p id="msg-graficos" class="msg hidden"></p>
@@ -57,6 +59,49 @@
                 <p><strong>Descrição:</strong> <span id="info-descr"></span></p>
                 <p><strong>Especificações técnicas:</strong></p>
                 <p id="info-detalhes" class="detalhes-texto"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE HORAS TOTAIS -->
+    <div id="modal-horas" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-button" id="btn-fechar-modal-horas">&times;</span>
+            <h2 id="modal-horas-titulo">Horas Totais de Operação</h2>
+            <div class="modal-body">
+                <p><strong>Equipamento:</strong> <span id="horas-equip-nome"></span> (<span id="horas-equip-mpoint"></span>)</p>
+                <p><strong>Período Total do Monitoramento:</strong> <span id="horas-periodo-total"></span></p>
+                <hr style="border: 0; border-top: 1px solid var(--borda); margin: 15px 0;">
+                
+                <div style="margin: 15px 0;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px;">
+                        <span style="color: #2ecc71; font-weight: bold;">LIGADO</span>
+                        <span id="horas-val-ligado" style="font-weight: 600;"></span>
+                    </div>
+                    <div class="bar" style="background: #eef1f4; height: 8px; border-radius: 999px; overflow: hidden; margin-top: 2px;">
+                        <div id="horas-bar-ligado" style="background: #2ecc71; height: 100%; width: 0%;"></div>
+                    </div>
+                </div>
+                
+                <div style="margin: 15px 0;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px;">
+                        <span style="color: #e74c3c; font-weight: bold;">DESLIGADO</span>
+                        <span id="horas-val-desligado" style="font-weight: 600;"></span>
+                    </div>
+                    <div class="bar" style="background: #eef1f4; height: 8px; border-radius: 999px; overflow: hidden; margin-top: 2px;">
+                        <div id="horas-bar-desligado" style="background: #e74c3c; height: 100%; width: 0%;"></div>
+                    </div>
+                </div>
+                
+                <div style="margin: 15px 0;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px;">
+                        <span style="color: #7f8c8d; font-weight: bold;">SEM CONEXÃO (Incerteza)</span>
+                        <span id="horas-val-semconexao" style="font-weight: 600;"></span>
+                    </div>
+                    <div class="bar" style="background: #eef1f4; height: 8px; border-radius: 999px; overflow: hidden; margin-top: 2px;">
+                        <div id="horas-bar-semconexao" style="background: #7f8c8d; height: 100%; width: 0%;"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

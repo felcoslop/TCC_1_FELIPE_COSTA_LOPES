@@ -38,31 +38,36 @@ const EQUIP_INFO = {
         nome: "Motobomba SH 2",
         tipo: "Motor - Elétrico",
         descr: "Motobomba SH 2 – Motor",
-        detalhes: "Motor 90 kW, 440 V, 60 Hz, 155 A, 6 polos, rolamentos 6316 / 6316, bomba A4VSO125DR/30R-PPB13N, 9 pistões. Localização: Motor SH 2 (PLTCM Ipatinga)."
+        detalhes: "Motor 90 kW, 440 V, 60 Hz, 155 A, 6 polos, rolamentos 6316 / 6316, bomba A4VSO125DR/30R-PPB13N, 9 pistões. Localização: Motor SH 2 (PLTCM Ipatinga).",
+        horas: { ligado: 3933.98, desligado: 195.34, sem_dados: 430.38, total: 4559.69 }
     },
     "c_637": {
         nome: "Motobomba SH 3",
         tipo: "Motor - Elétrico",
         descr: "Motobomba SH 3 – Motor",
-        detalhes: "Motor 90 kW, 440 V, 60 Hz, 155 A, 6 polos, rolamentos 6316 / 6316, bomba A4VSO125DR/30R-PPB13N, 9 pistões. Localização: Motor SH 3 (PLTCM Ipatinga)."
+        detalhes: "Motor 90 kW, 440 V, 60 Hz, 155 A, 6 polos, rolamentos 6316 / 6316, bomba A4VSO125DR/30R-PPB13N, 9 pistões. Localização: Motor SH 3 (PLTCM Ipatinga).",
+        horas: { ligado: 5668.32, desligado: 268.26, sem_dados: 1093.58, total: 7030.16 }
     },
     "c_640": {
         nome: "SHAP Recirculação 1",
         tipo: "Motor REC 1 - Elétrico",
         descr: "SHAP Recirculação 1 – Motor REC 1 SHAP",
-        detalhes: "Motobomba de recirculação da área SHAP (Motor REC 1 SHAP). Propriedades não cadastradas no modelo. Localização: Área SHAP - Oil Cellar - PLTCM Ipatinga."
+        detalhes: "Motobomba de recirculação da área SHAP (Motor REC 1 SHAP). Propriedades não cadastradas no modelo. Localização: Área SHAP - Oil Cellar - PLTCM Ipatinga.",
+        horas: { ligado: 6259.16, desligado: 373.83, sem_dados: 446.40, total: 7079.38 }
     },
     "c_670": {
         nome: "Bridle 4 R1",
         tipo: "Redutora - Mecânico",
         descr: "Bridle 4 R1 – Redutora",
-        detalhes: "Bridle 4 R1 – monitoramento da redutora. Modelo sem propriedades cadastradas. Localização: Área Centro - PLTCM Ipatinga."
+        detalhes: "Bridle 4 R1 – monitoramento da redutora. Modelo sem propriedades cadastradas. Localização: Área Centro - PLTCM Ipatinga.",
+        horas: { ligado: 6047.99, desligado: 1606.76, sem_dados: 963.66, total: 8618.40 }
     },
     "c_1518": {
         nome: "CT-M1 Tambor 01 Descarga",
         tipo: "Mancal Direito - Mecânico",
         descr: "CT-M1 Tambor 01 Descarga – Mancal Direito",
-        detalhes: "Tambor de descarga da correia transportadora CT-M1. Monitoramento do mancal lado direito do tambor. Modelo Conveyor Drum. Localização: CT-M1 - Alto Forno 3 - Ipatinga."
+        detalhes: "Tambor de descarga da correia transportadora CT-M1. Monitoramento do mancal lado direito do tambor. Modelo Conveyor Drum. Localização: CT-M1 - Alto Forno 3 - Ipatinga.",
+        horas: { ligado: 3097.38, desligado: 154.63, sem_dados: 247.00, total: 3499.00 }
     }
 };
 
@@ -103,15 +108,16 @@ function renderCards(lista) {
         const pctOn = eq.pct_ligado != null ? eq.pct_ligado : 0;
         const card = document.createElement("div");
         card.className = "card";
-        const info = EQUIP_INFO[eq.mpoint] || { nome: eq.mpoint, tipo: eq.tipo, descr: eq.mpoint, detalhes: "" };
+        const info = EQUIP_INFO[eq.mpoint] || { nome: eq.mpoint, tipo: eq.tipo, descr: eq.mpoint, detalhes: "", horas: { ligado: 0, desligado: 0, sem_dados: 0 } };
         card.innerHTML = `
             <span class="tag ${eq.tipo}">${info.tipo}</span>
             <h3>${info.nome}</h3>
             <p class="card-mpoint">${eq.mpoint}</p>
             <div class="info">
-                ${Number(eq.n_pontos).toLocaleString("pt-BR")} pontos<br>
-                ${eq.graficos.length} gráficos sincronizados<br>
-                LIGADO ${pctOn}% &middot; DESLIGADO ${(100 - pctOn).toFixed(2)}%
+                ${Number(eq.n_pontos).toLocaleString("pt-BR")} pontos &middot; ${eq.graficos.length} gráficos<br>
+                <span style="color:#2ecc71;font-weight:600">LIGADO:</span> ${pctOn}% (${info.horas.ligado.toFixed(0)}h)<br>
+                <span style="color:#e74c3c;font-weight:600">DESLIGADO:</span> ${(100 - pctOn).toFixed(1)}% (${info.horas.desligado.toFixed(0)}h)<br>
+                <span style="color:#7f8c8d;font-weight:600">SEM CONEXÃO:</span> ${info.horas.sem_dados.toFixed(0)}h
             </div>
             <div class="bar"><span style="width:${pctOn}%"></span></div>`;
         card.onclick = () => abrirEquipamento(eq);
@@ -124,9 +130,14 @@ async function abrirEquipamento(eq) {
     el("tela-selecao").classList.add("hidden");
     el("tela-graficos").classList.remove("hidden");
     
-    const info = EQUIP_INFO[eq.mpoint] || { nome: eq.mpoint, tipo: eq.tipo, descr: eq.mpoint, detalhes: "" };
+    const info = EQUIP_INFO[eq.mpoint] || { nome: eq.mpoint, tipo: eq.tipo, descr: eq.mpoint, detalhes: "", horas: { ligado: 0, desligado: 0, sem_dados: 0, total: 0 } };
     el("titulo-equip").textContent = `${info.nome} (${eq.mpoint})`;
     
+    // Popula a legenda com as horas
+    el("legenda-horas-ligado").textContent = info.horas.ligado.toFixed(0);
+    el("legenda-horas-desligado").textContent = info.horas.desligado.toFixed(0);
+    el("legenda-horas-semconexao").textContent = info.horas.sem_dados.toFixed(0);
+
     // Configura o clique do botão de informações
     el("btn-info").onclick = () => {
         el("info-nome").textContent = info.nome;
@@ -135,6 +146,26 @@ async function abrirEquipamento(eq) {
         el("info-descr").textContent = info.descr;
         el("info-detalhes").textContent = info.detalhes;
         el("modal-info").classList.remove("hidden");
+    };
+
+    // Configura o clique do botão de horas totais
+    el("btn-horas").onclick = () => {
+        el("horas-equip-nome").textContent = info.nome;
+        el("horas-equip-mpoint").textContent = eq.mpoint;
+        
+        const h = info.horas;
+        const total = h.total || (h.ligado + h.desligado + h.sem_dados);
+        el("horas-periodo-total").textContent = `${total.toFixed(0)} horas`;
+        
+        el("horas-val-ligado").textContent = `${h.ligado.toFixed(0)}h (${(h.ligado/total*100).toFixed(1)}%)`;
+        el("horas-val-desligado").textContent = `${h.desligado.toFixed(0)}h (${(h.desligado/total*100).toFixed(1)}%)`;
+        el("horas-val-semconexao").textContent = `${h.sem_dados.toFixed(0)}h (${(h.sem_dados/total*100).toFixed(1)}%)`;
+        
+        el("horas-bar-ligado").style.width = `${(h.ligado/total*100)}%`;
+        el("horas-bar-desligado").style.width = `${(h.desligado/total*100)}%`;
+        el("horas-bar-semconexao").style.width = `${(h.sem_dados/total*100)}%`;
+        
+        el("modal-horas").classList.remove("hidden");
     };
 
     const msg = el("msg-graficos");
@@ -482,15 +513,24 @@ el("btn-fechar-modal").onclick = () => {
     el("modal-info").classList.add("hidden");
 };
 
+// Controles do modal de horas
+el("btn-fechar-modal-horas").onclick = () => {
+    el("modal-horas").classList.add("hidden");
+};
+
 window.addEventListener("click", (event) => {
-    const modal = el("modal-info");
-    if (event.target === modal) {
-        modal.classList.add("hidden");
+    const modalInfo = el("modal-info");
+    if (event.target === modalInfo) {
+        modalInfo.classList.add("hidden");
+    }
+    const modalHoras = el("modal-horas");
+    if (event.target === modalHoras) {
+        modalHoras.classList.add("hidden");
     }
 });
 
 // Marcador de versao: confira no console (F12) e no rodape se carregou o codigo novo.
-const BUILD = "2026-06-04-m2";
+const BUILD = "2026-06-04-m3";
 console.log("%c[Visualizador] build " + BUILD, "color:#2980b9;font-weight:bold");
 window.addEventListener("DOMContentLoaded", () => {
     const d = document.querySelector(".dica");
