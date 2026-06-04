@@ -2,8 +2,8 @@
 RELATÓRIO DE TREINAMENTO K-MEANS - c_670 - EQUIPAMENTO MECÂNICO
 ================================================================================
 
-Data: 2026-05-10 03:12:43.170742
-Tempo de execução: 0 minutos e 37 segundos
+Data: 2026-06-04 13:38:09.638436
+Tempo de execução: 0 minutos e 25 segundos
 
 TIPO DE EQUIPAMENTO:
   - Equipamento MECÂNICO (sem current, sem RPM)

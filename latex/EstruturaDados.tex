@@ -1,0 +1,313 @@
+\newpage
+\section{Documentação de Dados e Thresholds Dinâmicos}
+\label{sec:estrutura_dados}
+
+A compreensão da estrutura dos dados em diferentes etapas do \textit{pipeline} é fundamental para validação da integridade do sistema e reproducibilidade dos resultados. Esta seção documenta as características de cada conjunto de dados, desde os arquivos brutos até os dados normalizados e classificados, bem como os \textit{thresholds} dinâmicos gerados automaticamente pelo treinamento do modelo K-Means.
+
+\subsection{Dados Brutos do InfluxDB}
+
+Os dados brutos são baixados diretamente do InfluxDB através de consultas SQL via \textit{scripts} especializados, preservando a estrutura original do banco de dados. Para equipamentos elétricos como o \texttt{c\_636}, três fontes de dados distintas são capturadas:
+
+Fonte: \texttt{validated\_default} (20 segundos)
+
+Esta é a fonte de dados primária contendo magnetômetro em 3 eixos, temperatura do objeto e velocidade máxima/RMS de vibração em 3 eixos. O arquivo \texttt{dados\_c\_636.csv} contém 772.238 registros com frequência de amostragem de 20 segundos, cuja estrutura de campos é detalhada na Tabela~\ref{tab:dados_raw_default}.
+
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabular}{|l|r|r|r|}
+    \hline
+    \textbf{Campo} & \textbf{Tipo} & \textbf{Exemplo}     & \textbf{Descrição}            \\
+    \hline
+    time           & datetime      & 2025-02-18T16:32:20Z & \textit{Timestamp} UTC        \\
+    mag\_x         & float64       & -6.55                & Magnetômetro eixo X (mT)      \\
+    mag\_y         & float64       & -26.48               & Magnetômetro eixo Y (mT)      \\
+    mag\_z         & float64       & 20.01                & Magnetômetro eixo Z (mT)      \\
+    object\_temp   & float64       & 46.36                & Temperatura objeto (°C)       \\
+    vel\_max\_x    & float64       & 4.63                 & Vibração máxima eixo X (mm/s) \\
+    vel\_max\_y    & float64       & 8.90                 & Vibração máxima eixo Y (mm/s) \\
+    vel\_max\_z    & float64       & 6.48                 & Vibração máxima eixo Z (mm/s) \\
+    vel\_rms\_x    & float64       & 9.45                 & Vibração RMS eixo X (mm/s)    \\
+    vel\_rms\_y    & float64       & 3.13                 & Vibração RMS eixo Y (mm/s)    \\
+    vel\_rms\_z    & float64       & 3.10                 & Vibração RMS eixo Z (mm/s)    \\
+    m\_point       & object        & c\_636               & Identificador do equipamento  \\
+    \hline
+  \end{tabular}
+  \caption{Estrutura de \texttt{dados\_c\_636.csv} - Fonte \texttt{validated\_default}.}
+  \label{tab:dados_raw_default}
+\end{table}
+
+Fonte: \texttt{estimated} (1 minuto)
+
+Esta fonte contém estimativas de grandezas elétricas (corrente e RPM) inferidas a partir da análise espectral do campo magnético, além de vibração RMS estimada. O arquivo \texttt{dados\_estimated\_c\_636.csv} contém 5.578.276 registros com frequência de amostragem aproximada de 1 minuto, com a estrutura de campos apresentada na Tabela~\ref{tab:dados_raw_estimated}.
+
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabular}{|l|r|r|r|}
+    \hline
+    \textbf{Campo}    & \textbf{Tipo} & \textbf{Exemplo}            & \textbf{Descrição}           \\
+    \hline
+    time              & datetime      & 2025-02-18T16:32:28.318559Z & \textit{Timestamp} UTC       \\
+    rotational\_speed & float64       & 1195.21                     & Velocidade rotacional (RPM)  \\
+    vel\_rms          & float64       & 4.82                        & Vibração RMS estimada (mm/s) \\
+    current           & float64       & 692.47                      & Corrente elétrica (A)        \\
+    m\_point          & object        & c\_636                      & Identificador do equipamento \\
+    \hline
+  \end{tabular}
+  \caption{Estrutura de \texttt{dados\_estimated\_c\_636.csv} - Fonte \texttt{estimated}.}
+  \label{tab:dados_raw_estimated}
+\end{table}
+
+Fonte: \texttt{validated\_slip} (2 minutos)
+
+Esta fonte fornece análise espectral detalhada de frequência de escorregamento e magnitudes de componentes harmônicas, utilizadas para diagnóstico de condição do motor. O arquivo \texttt{dados\_slip\_c\_636.csv} contém 128.003 registros com frequência de amostragem de 2 minutos, cujos campos são descritos na Tabela~\ref{tab:dados_raw_slip}.
+
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabular}{|l|r|r|r|}
+    \hline
+    \textbf{Campo}      & \textbf{Tipo} & \textbf{Exemplo}            & \textbf{Descrição}                \\
+    \hline
+    time                & datetime      & 2025-02-18T16:34:24.331822Z & \textit{Timestamp} UTC            \\
+    fe\_frequency       & float64       & 59.9908                     & Frequência fundamental (Hz)       \\
+    fe\_magnitude\_-\_1 & float64       & 0.35                        & Magnitude harmônica -1 (mT)       \\
+    fe\_magnitude\_0    & float64       & 50.70                       & Magnitude harmônica 0 (mT)        \\
+    fe\_magnitude\_1    & float64       & 0.40                        & Magnitude harmônica +1 (mT)       \\
+    fr\_frequency       & float64       & 0.0183                      & Frequência de escorregamento (Hz) \\
+    rms                 & float64       & 2.40                        & RMS do escorregamento (mT)        \\
+    m\_point            & object        & c\_636                      & Identificador do equipamento      \\
+    \hline
+  \end{tabular}
+  \caption{Estrutura de \texttt{dados\_slip\_c\_636.csv} - Fonte \texttt{validated\_slip}.}
+  \label{tab:dados_raw_slip}
+\end{table}
+
+\subsection{Período Pré-Processado}
+
+Após segmentação, validação e interpolação, cada período contínuo de dados é armazenado separadamente. O arquivo \texttt{dados\_c\_636\_periodo\_01\_v2.csv} contém um exemplo do período 1 (\texttt{periodo\_01}) com 90.946 registros em frequência uniforme de 20 segundos. A Tabela~\ref{tab:dados_periodo_preprocessado} apresenta sua estrutura, incluindo os indicadores de interpolação por amostra.
+
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabular}{|l|r|r|}
+    \hline
+    \textbf{Campo}                   & \textbf{Tipo} & \textbf{Descrição}                        \\
+    \hline
+    time                             & datetime      & \textit{Timestamp} UTC alinhado           \\
+    mag\_x, mag\_y, mag\_z           & float64       & Magnetômetro (mT) - dados interpolados    \\
+    object\_temp                     & float64       & Temperatura (°C)                          \\
+    vel\_max\_x/y/z, vel\_rms\_x/y/z & float64       & Vibração máxima/RMS (mm/s)                \\
+    m\_point                         & object        & Identificador do equipamento              \\
+    periodo\_id                      & int64         & ID do período contínuo                    \\
+    interpolado                      & bool          & Flag indicando se amostra foi interpolada \\
+    \hline
+  \end{tabular}
+  \caption{Estrutura de período pré-processado com indicadores de interpolação.}
+  \label{tab:dados_periodo_preprocessado}
+\end{table}
+
+\subsection{Dados Unificados (Após Junção e Sincronização)}
+
+Após a etapa de junção multifrequência e sincronização, as três fontes de dados são combinadas em uma única tabela com alinhamento temporal, resultando em 863.450 registros consolidados. A Tabela~\ref{tab:dados_unificados_cobertura} resume a cobertura de cada atributo após essa unificação.
+
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabular}{|l|r|r|}
+    \hline
+    \textbf{Atributo}                                           & \textbf{Quantidade} & \textbf{Cobertura}   \\
+    \hline
+    Magnetômetro (mag\_x/y/z)                                   & 863.450             & 100\%                \\
+    Temperatura (object\_temp)                                  & 863.450             & 100\%                \\
+    Vibração RMS (vel\_rms\_x/y/z, vel\_rms)                    & 863.450             & 100\%                \\
+    Corrente (current)                                          & 863.450             & 100\% (sincronizada) \\
+    RPM (rotational\_speed)                                     & 863.450             & 100\% (sincronizada) \\
+    Frequência de escorregamento (fe\_frequency, fr\_frequency) & 863.450             & 100\% (sincronizada) \\
+    Magnitudes harmônicas (fe\_magnitude)                       & 863.450             & 100\% (sincronizada) \\
+    \hline
+  \end{tabular}
+  \caption{Cobertura de atributos nos dados unificados (\texttt{dados\_\allowbreak unificados\_\allowbreak final\_c\_\allowbreak 636.csv}). Após sincronização multifrequência, todos os 24 atributos estão presentes em 100\% das 863.450 amostras.}
+  \label{tab:dados_unificados_cobertura}
+\end{table}
+
+O conjunto unificado apresenta a distribuição estatística resumida na Tabela~\ref{tab:resumo_stats_unificados} (valores em unidades físicas reais). A coluna Mediana representa o percentil 50 (Q50), que indica o valor abaixo do qual se encontram 50\% das amostras, sendo uma medida robusta de tendência central menos afetada por valores extremos:
+
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabular}{|l|r|r|r|r|r|}
+    \hline
+    \textbf{Atributo}   & \textbf{Média}                              & \textbf{Desv. Padrão} & \textbf{Mínimo} & \textbf{Mediana} & \textbf{Máximo} \\
+    \hline
+    Corrente (A)        & 537,68                                      & 264,74                & 0,21            & 652,08           & 2730,77         \\
+    RPM                 & 986,34                                      & 451,91                & 0,00            & 1194,29          & 1786,94         \\
+    Vibração RMS (mm/s) & 6,90                                        & 5,24                  & 0,03            & 5,09             & 42,39           \\
+    Temperatura (°C)    & 39,26                                       & 4,13                  & 25,27           & 39,82            & 49,14           \\
+    Magnetômetro (mT)   & \multicolumn{5}{c|}{variável conforme eixo}                                                                                \\
+    \hline
+  \end{tabular}
+  \caption{Resumo estatístico dos principais atributos nos dados unificados. Valores em unidades físicas reais sem normalização, calculados após o tratamento de \textit{outliers} por IQR.}
+  \label{tab:resumo_stats_unificados}
+\end{table}
+
+\subsection{Dados Normalizados}
+
+Após aplicação do MinMaxScaler, os dados são escalados para o intervalo $[0, 1]$, preservando integralmente a distribuição estatística enquanto equilibra pesos entre atributos de escalas variadas. O conjunto normalizado contém 863.450 registros com 20 atributos normalizados. A Tabela~\ref{tab:dados_normalizados_stats} resume as estatísticas dos principais atributos após a normalização.
+
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabular}{|l|r|r|r|r|r|}
+    \hline
+    \textbf{Atributo Normalizado} & \textbf{Média} & \textbf{Desv. Padrão} & \textbf{Mín.} & \textbf{Med.} & \textbf{Máx.} \\
+    \hline
+    current\_norm                 & 0,642          & 0,317                 & 0,000         & 0,779         & 1,000         \\
+    rotational\_speed\_norm       & 0,825          & 0,378                 & 0,000         & 0,999         & 1,000         \\
+    vel\_rms\_norm                & 0,312          & 0,242                 & 0,000         & 0,228         & 1,000         \\
+    object\_temp\_norm            & 0,548          & 0,224                 & 0,000         & 0,578         & 1,000         \\
+    mag\_x\_norm                  & 0,410          & 0,206                 & 0,000         & 0,391         & 1,000         \\
+    \hline
+  \end{tabular}
+  \caption{Resumo estatístico dos atributos após normalização MinMax. Os dados preservam a distribuição original enquanto são escalados para $[0, 1]$.}
+  \label{tab:dados_normalizados_stats}
+\end{table}
+
+\subsection{Dados Classificados (Após K-Means e Thresholds)}
+
+Após clusterização e aplicação de regras de thresholds físicos, os dados recebem rótulos de estado operacional. O conjunto final contém 863.450 registros dos quais:
+
+\begin{itemize}
+  \item 822.464 registros (95,25\%) classificados como LIGADO
+  \item 40.986 registros (4,75\%) classificados como DESLIGADO
+\end{itemize}
+
+A distribuição desequilibrada reflete a operação contínua típica de equipamentos industriais, onde o estado LIGADO é predominante. Esta proporção é validada contra regras de negócio: um equipamento industrial que passa mais de 95\% do tempo em operação é uma característica operacional legítima. A Tabela~\ref{tab:comparacao_ligado_desligado} compara os valores médios dos principais atributos entre os estados LIGADO e DESLIGADO, evidenciando a separação física entre eles.
+
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabular}{|l|r|r|r|}
+    \hline
+    \textbf{Atributo}         & \textbf{LIGADO} & \textbf{DESLIGADO} & \textbf{Razão} \\
+    \hline
+    Corrente Média (A)        & 652,08          & 15,69              & 41,6x          \\
+    RPM Médio                 & 1194,29         & 0,45               & 2.654x         \\
+    Vibração RMS Média (mm/s) & 8,80            & 0,20               & 44,0x          \\
+    Temperatura Média (°C)    & 40,36           & 30,85              & +9,51°C        \\
+    \hline
+  \end{tabular}
+  \caption{Comparação entre estados LIGADO (822.464 amostras) e DESLIGADO (40.986 amostras). O equipamento em estado LIGADO apresenta valores significativamente mais elevados confirmando a qualidade da classificação.}
+  \label{tab:comparacao_ligado_desligado}
+\end{table}
+
+Cabe destacar que, enquanto corrente, RPM e vibração são expressos como razão multiplicativa (em ``x''), por serem grandezas medidas em escala de razão (com zero absoluto, no qual o valor nulo representa ausência física da grandeza), a temperatura é apresentada como diferença absoluta ($+9{,}51$°C). Isso ocorre porque a temperatura em graus Celsius é uma grandeza de escala intervalar, cujo zero é arbitrário (não corresponde à ausência de energia térmica); dividir duas temperaturas em °C não produz uma razão fisicamente significativa. Por esse motivo, a diferença de temperatura entre os estados é a métrica adequada, indicando o aquecimento de aproximadamente $9{,}5$°C provocado pela operação do equipamento.
+
+\subsection{Thresholds Dinâmicos Gerados pelo Modelo K-Means}
+
+O modelo K-Means treinado gera automaticamente \textit{thresholds} dinâmicos específicos do equipamento, baseados na análise estatística dos \textit{clusters}. Esses \textit{thresholds} são salvos em formato JSON e utilizados para validação física de novos períodos.
+
+Para o equipamento \texttt{c\_636}, o arquivo \texttt{info\_kmeans\_model\_moderado\_c\_636.json} contém as seguintes informações estruturadas:
+
+O arquivo \texttt{info\_kmeans\_\allowbreak model\_\allowbreak moderado\_c\_636.json} contém todas as informações estruturadas necessárias para validação e re-aplicação do modelo:
+
+\begin{center}
+  \footnotesize
+  \begin{verbatim}
+{
+  "colunas_utilizadas": [
+    "mag_x", "mag_y", "mag_z", "object_temp",
+    "vel_max_x", "vel_max_y", "vel_rms_x", "vel_max_z",
+    "vel_rms_y", "vel_rms_z", "rotational_speed", "vel_rms",
+    "current", "fe_frequency", "fe_magnitude_-_1",
+    "fe_magnitude_0", "fe_magnitude_1", "fr_frequency", "rms"
+  ],
+  "numero_clusters": 6,
+  "total_amostras_originais": 863450,
+  "amostras_classificadas": 863450,
+  "percentual_classificados": 100.0,
+  "estrategia": "Classificação dinâmica em 2 estados baseada
+                 em scores e desvio padrão",
+  "estados": ["DESLIGADO", "LIGADO"],
+  "amostras_ligado": 822464,
+  "amostras_desligado": 40986,
+  "cluster_ligado": null,
+  "cluster_desligado": null,
+  "clusters_intermediarios": [],
+  "thresholds_desligado": {
+    "vel_rms_max": 0.2650299642785661,
+    "vel_rms_mean": 0.20259358254725657,
+    "vel_rms_std": 0.37437294006318844,
+    "current_max": 11.836313519708842,
+    "current_mean": 15.687311575707065,
+    "current_std": 91.3717009876141,
+    "rpm_max": 100.0,
+    "rpm_mean": 0.44880655579389633,
+    "rpm_median": 0.0,
+    "rpm_std": 12.62023283484314,
+    "threshold_vibracao_residual_norm": 1.3,
+    "clusters_desligado": [5],
+    "amostras_desligado": 40986,
+    "porcentagem_desligado": 4.746771671781805
+  }
+}
+\end{verbatim}
+\end{center}
+
+O mapeamento dos \textit{clusters} para estados é realizado através da análise dinâmica de \textit{scores} ponderados: para cada \textit{cluster} (0 a 5), calcula-se um \textit{score} segundo as Equações~\ref{eq:score_eletrico} ou~\ref{eq:score_mecanico}. O \textit{cluster} com menor \textit{score} (cluster 5, neste caso) é classificado como DESLIGADO, enquanto os demais são classificados como LIGADO, com validação adicional por critérios de similaridade de \textit{scores} e limites de vibração residual conforme descrito na Seção~\ref{sec:kmeans_classification}.
+
+Os \textit{thresholds} apresentados na Tabela~\ref{tab:thresholds_desligado} definem o limite estatístico para o estado DESLIGADO do equipamento, calculados como percentil 95\% dos valores do \textit{cluster} classificado como repouso:
+
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabular}{|l|r|l|}
+    \hline
+    \textbf{Parâmetro de Threshold}     & \textbf{Valor} & \textbf{Interpretação}                           \\
+    \hline
+    vel\_rms\_max                       & 0,2650         & Vibração RMS máxima normalizada para repouso     \\
+    vel\_rms\_mean                      & 0,2026         & Vibração RMS média normalizada para repouso      \\
+    vel\_rms\_std                       & 0,3744         & Desvio padrão normalizado de vibração em repouso \\
+    current\_max                        & 11,8363        & Corrente máxima (A) para repouso                 \\
+    current\_mean                       & 15,6873        & Corrente média (A) em repouso                    \\
+    current\_std                        & 91,3717        & Desvio padrão de corrente em repouso             \\
+    rpm\_max                            & 100,0000       & RPM máxima de repouso (limitado a 100 RPM)       \\
+    rpm\_mean                           & 0,4488         & RPM média de repouso                             \\
+    rpm\_median                         & 0,0000         & RPM mediana (invariavelmente zero)               \\
+    rpm\_std                            & 12,6202        & Desvio padrão de RPM em repouso                  \\
+    threshold\_vibracao\_residual\_norm & 1,3000         & Multiplicador de vibração residual (segurança)   \\
+    \hline
+  \end{tabular}
+  \caption{Thresholds dinâmicos de estado DESLIGADO. Estes valores definem os limites físicos calculados automaticamente e são utilizados na validação de novos períodos sem necessidade de re-normalização.}
+  \label{tab:thresholds_desligado}
+\end{table}
+
+\subsection{Distribuição de Amostras por Cluster}
+
+O K-Means com $k=6$ \textit{clusters} identifica o seguinte mapeamento:
+
+\begin{verbatim}
+{
+  "clusters_desligado": [5],
+  "amostras_desligado": 40986,
+  "porcentagem_desligado": 4.746771671781805
+}
+\end{verbatim}
+
+O \textit{cluster} 5 foi identificado como o estado DESLIGADO pela análise de \textit{scores} ponderados, contendo 40.986 amostras (4,75\% do total). Os demais cinco \textit{clusters} (0, 1, 2, 3, 4) representam diferentes regimes operacionais do estado LIGADO, incluindo operação em diferentes cargas e velocidades.
+
+\subsection{Rastreabilidade e Reproducibilidade}
+
+Cada estágio do \textit{pipeline} persiste metadados críticos para reproducibilidade:
+
+\begin{itemize}
+  \item Arquivo JSON de Normalização: Contém parâmetros exatos do MinMaxScaler (mínimos, máximos e offset) para cada atributo, permitindo normalização idêntica de novos dados.
+  \item Modelo K-Means Persistido (.pkl): Contém centróides treinados e histórico de convergência, permitindo predição em novos dados.
+  \item Log de Processamento: Arquivo de texto detalhado contendo timestamp de execução, versões de bibliotecas, duração de processamento e estatísticas intermediárias.
+  \item Flags de Interpolação: Campo \texttt{interpolado} em dados pré-processados marca quais amostras foram interpoladas, permitindo análise de confiabilidade.
+\end{itemize}
+
+Esta arquitetura de rastreabilidade garante que resultados possam ser re-gerados exactamente, facilitando auditoria, validação e manutenção contínua do sistema em produção.
+
+\clearpage

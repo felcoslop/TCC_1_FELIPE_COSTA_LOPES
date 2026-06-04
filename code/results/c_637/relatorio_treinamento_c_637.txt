@@ -2,15 +2,15 @@
 RELATÓRIO DE TREINAMENTO K-MEANS - c_637
 ================================================================================
 
-Data: 2026-05-10 00:57:18.640020
-Tempo de execução: 0 minutos e 57 segundos
+Data: 2026-06-04 13:26:40.467891
+Tempo de execução: 0 minutos e 30 segundos
 
 ARQUIVOS GERADOS:
-  - Modelo K-means: C:\Users\manu_\Downloads\TCC_1_FELIPE_COSTA_LOPES-master\code\models\c_637\kmeans_model_moderado_c_637.pkl
-  - Scaler: C:\Users\manu_\Downloads\TCC_1_FELIPE_COSTA_LOPES-master\code\models\c_637\scaler_model_moderado_c_637.pkl
-  - Dados classificados: C:\Users\manu_\Downloads\TCC_1_FELIPE_COSTA_LOPES-master\code\data\processed\dados_classificados_kmeans_moderado_c_637.csv
-  - Dados rotulados: C:\Users\manu_\Downloads\TCC_1_FELIPE_COSTA_LOPES-master\code\data\processed\dados_kmeans_rotulados_conservador_c_637.csv
-  - Info JSON: C:\Users\manu_\Downloads\TCC_1_FELIPE_COSTA_LOPES-master\code\models\c_637\info_kmeans_model_moderado_c_637.json
+  - Modelo K-means: C:\Users\Felipe Costa\Downloads\BACKUP\Downloads\TCC_1_FELIPE_COSTA_LOPES-master\code\models\c_637\kmeans_model_moderado_c_637.pkl
+  - Scaler: C:\Users\Felipe Costa\Downloads\BACKUP\Downloads\TCC_1_FELIPE_COSTA_LOPES-master\code\models\c_637\scaler_model_moderado_c_637.pkl
+  - Dados classificados: C:\Users\Felipe Costa\Downloads\BACKUP\Downloads\TCC_1_FELIPE_COSTA_LOPES-master\code\data\processed\c_637\dados_classificados_kmeans_moderado_c_637.csv
+  - Dados rotulados: C:\Users\Felipe Costa\Downloads\BACKUP\Downloads\TCC_1_FELIPE_COSTA_LOPES-master\code\data\processed\c_637\dados_kmeans_rotulados_conservador_c_637.csv
+  - Info JSON: C:\Users\Felipe Costa\Downloads\BACKUP\Downloads\TCC_1_FELIPE_COSTA_LOPES-master\code\models\c_637\info_kmeans_model_moderado_c_637.json
 
 ESTATÍSTICAS:
   - Total de amostras: 1,242,993

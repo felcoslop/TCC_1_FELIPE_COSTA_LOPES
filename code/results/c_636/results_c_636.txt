@@ -1,6 +1,6 @@
 {
   "segmentation_completed": true,
-  "segmentation_timestamp": "2026-05-10T00:08:13.702131",
+  "segmentation_timestamp": "2026-06-04T13:18:03.677651",
   "processing_version": "2.0",
   "files_generated": 5,
   "gap_limit_hours": 3,
@@ -21,14 +21,14 @@
     "synchronization_efficiency": 83.33333333333334,
     "files_generated": 5
   },
-  "_last_updated": "2026-05-10T00:13:23.487717",
+  "_last_updated": "2026-06-04T13:22:06.291468",
   "processing_completed": true,
-  "processing_timestamp": "2026-05-10T00:09:20.932736",
+  "processing_timestamp": "2026-06-04T13:18:26.693321",
   "periods_processed": 5,
   "total_periods_identified": 12,
   "processing_efficiency_percent": 41.66666666666667,
   "unification_completed": true,
-  "unification_timestamp": "2026-05-10T00:10:09.383834",
+  "unification_timestamp": "2026-06-04T13:18:59.823650",
   "periods_synchronized": 5,
   "input_periods": {
     "estimated": 5,
@@ -37,7 +37,7 @@
   },
   "synchronization_efficiency_percent": 83.33333333333334,
   "normalization_completed": true,
-  "normalization_timestamp": "2026-05-10T00:11:10.663232",
+  "normalization_timestamp": "2026-06-04T13:20:00.866235",
   "normalized_samples": 863450,
   "normalized_features": 19,
   "normalization_range": [
@@ -45,7 +45,7 @@
     1.0000000000000002
   ],
   "normalization_charts": [
-    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_636\\dados_normalizados_analise_c_636.png"
+    "C:\\Users\\Felipe Costa\\Downloads\\BACKUP\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_636\\dados_normalizados_analise_c_636.png"
   ],
   "preprocessing_parameters": {
     "scaler_type": "minmax",
@@ -62,7 +62,7 @@
     "outlier_clipping_percentile": 99.5
   },
   "kmeans_training_completed": true,
-  "kmeans_training_timestamp": "2026-05-10T00:13:06.447687",
+  "kmeans_training_timestamp": "2026-06-04T13:22:06.275945",
   "total_clusters": 6,
   "total_samples_classified": 863450,
   "ligado_samples": 822464,
@@ -70,14 +70,14 @@
   "classification_accuracy": 100.0,
   "model_inertia": 158792.82499460733,
   "cluster_analysis_charts": [
-    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_636\\analise_kmeans_clusters_moderado_c_636.png"
+    "C:\\Users\\Felipe Costa\\Downloads\\BACKUP\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_636\\analise_kmeans_clusters_moderado_c_636.png"
   ],
   "training_parameters": {
-    "mpoint": "c_636",
-    "training_mode": "complete_pipeline",
-    "data_quality_threshold": "30_days_minimum",
-    "kmeans_clusters": 6,
-    "normalization_method": "MinMax_with_outlier_clipping"
+    "n_clusters": 6,
+    "random_state": 42,
+    "n_init": 10,
+    "max_iter": 300,
+    "classification_logic": "Dynamic score-based clustering with std deviation analysis"
   },
   "cluster_statistics": {
     "cluster_4": {
@@ -85,11 +85,11 @@
       "percentage": 35.80022004748393,
       "status": "LIGADO",
       "features_mean": {
-        "mag_x": 0.4413432085339211,
+        "mag_x": 0.441343208533921,
         "mag_y": 0.32832819768232124,
-        "mag_z": 0.5469246689048358,
+        "mag_z": 0.5469246689048359,
         "object_temp": 0.7265499356062016,
-        "vel_max_x": 0.34506251771779284
+        "vel_max_x": 0.3450625177177928
       }
     },
     "cluster_3": {
@@ -98,10 +98,10 @@
       "status": "LIGADO",
       "features_mean": {
         "mag_x": 0.5235270277377451,
-        "mag_y": 0.3169970097640481,
+        "mag_y": 0.31699700976404815,
         "mag_z": 0.5792891317284881,
-        "object_temp": 0.5022037494739159,
-        "vel_max_x": 0.5621123209312822
+        "object_temp": 0.5022037494739161,
+        "vel_max_x": 0.562112320931282
       }
     },
     "cluster_0": {
@@ -113,7 +113,7 @@
         "mag_y": 0.3243194554853317,
         "mag_z": 0.5453792869247763,
         "object_temp": 0.7017534934113686,
-        "vel_max_x": 0.3541916446918464
+        "vel_max_x": 0.35419164469184644
       }
     },
     "cluster_5": {
@@ -123,9 +123,9 @@
       "features_mean": {
         "mag_x": 0.3708358720086728,
         "mag_y": 0.28782301217888007,
-        "mag_z": 0.5530792853608859,
+        "mag_z": 0.5530792853608858,
         "object_temp": 0.2579699523023983,
-        "vel_max_x": 0.0047033429110293875
+        "vel_max_x": 0.004703342911029387
       }
     },
     "cluster_2": {
@@ -136,8 +136,8 @@
         "mag_x": 0.26398950240835733,
         "mag_y": 0.039095753707338365,
         "mag_z": 0.560524209964065,
-        "object_temp": 0.23307369006585651,
-        "vel_max_x": 0.051698583431020545
+        "object_temp": 0.23307369006585654,
+        "vel_max_x": 0.05169858343102055
       }
     },
     "cluster_1": {
@@ -148,8 +148,8 @@
         "mag_x": 0.22877387401068605,
         "mag_y": 0.8567773352297907,
         "mag_z": 0.8310299427324,
-        "object_temp": 0.3764180227932764,
-        "vel_max_x": 0.9291820264231675
+        "object_temp": 0.37641802279327624,
+        "vel_max_x": 0.9291820264231674
       }
     }
   },

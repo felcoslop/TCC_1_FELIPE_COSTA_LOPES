@@ -1,37 +1,34 @@
 {
   "segmentation_completed": true,
-  "segmentation_timestamp": "2026-05-10T00:52:05.529473",
+  "segmentation_timestamp": "2026-06-04T13:29:43.275671",
   "processing_version": "2.0",
-  "files_generated": 14,
+  "files_generated": 7,
   "gap_limit_hours": 3,
   "min_period_days": 1,
   "interpolation_method": "advanced_KNN_multivariate",
   "processing_parameters": {
-    "gap_detection_threshold": "3_hours",
-    "interpolation_methods": [
-      "simple_spline",
-      "advanced_knn",
-      "linear_fallback"
-    ],
-    "outlier_removal": "IQR_method_3sigma",
-    "period_segmentation": true,
-    "minimum_period_duration": "not_specified"
+    "synchronization_method": "temporal_overlap_optimization",
+    "interpolation_method": "hybrid_spline_knn",
+    "outlier_removal": true,
+    "quality_control": true,
+    "minimum_overlap_hours": "not_specified"
   },
   "processing_statistics": {
-    "total_periods_identified": 13,
-    "valid_periods_processed": 7,
-    "invalid_periods_discarded": 6,
-    "files_generated": 14,
-    "processing_efficiency": 53.84615384615385
+    "estimated_periods_found": 7,
+    "slip_periods_found": 7,
+    "c636_periods_found": 11,
+    "final_periods_synchronized": 7,
+    "synchronization_efficiency": 63.63636363636363,
+    "files_generated": 7
   },
-  "_last_updated": "2026-05-10T03:06:45.015592",
+  "_last_updated": "2026-06-04T13:34:50.397026",
   "processing_completed": true,
-  "processing_timestamp": "2026-05-10T03:06:45.014586",
+  "processing_timestamp": "2026-06-04T13:30:16.134727",
   "periods_processed": 7,
   "total_periods_identified": 13,
   "processing_efficiency_percent": 53.84615384615385,
   "unification_completed": true,
-  "unification_timestamp": "2026-05-10T00:55:47.961399",
+  "unification_timestamp": "2026-06-04T13:31:20.958830",
   "periods_synchronized": 7,
   "input_periods": {
     "estimated": 7,
@@ -40,7 +37,7 @@
   },
   "synchronization_efficiency_percent": 63.63636363636363,
   "normalization_completed": true,
-  "normalization_timestamp": "2026-05-10T00:58:28.129477",
+  "normalization_timestamp": "2026-06-04T13:32:46.112627",
   "normalized_samples": 1389174,
   "normalized_features": 19,
   "normalization_range": [
@@ -48,7 +45,7 @@
     1.0000000000000002
   ],
   "normalization_charts": [
-    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_640\\dados_normalizados_analise_c_640.png"
+    "C:\\Users\\Felipe Costa\\Downloads\\BACKUP\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_640\\dados_normalizados_analise_c_640.png"
   ],
   "preprocessing_parameters": {
     "scaler_type": "minmax",
@@ -65,22 +62,22 @@
     "outlier_clipping_percentile": 99.5
   },
   "kmeans_training_completed": true,
-  "kmeans_training_timestamp": "2026-05-10T01:01:06.106571",
+  "kmeans_training_timestamp": "2026-06-04T13:34:50.383857",
   "total_clusters": 6,
   "total_samples_classified": 1389174,
   "ligado_samples": 1310820,
   "desligado_samples": 78354,
   "classification_accuracy": 100.0,
-  "model_inertia": 125669.88983292907,
+  "model_inertia": 125669.88983292908,
   "cluster_analysis_charts": [
-    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_640\\analise_kmeans_clusters_moderado_c_640.png"
+    "C:\\Users\\Felipe Costa\\Downloads\\BACKUP\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_640\\analise_kmeans_clusters_moderado_c_640.png"
   ],
   "training_parameters": {
-    "mpoint": "c_640",
-    "training_mode": "complete_pipeline",
-    "data_quality_threshold": "30_days_minimum",
-    "kmeans_clusters": 6,
-    "normalization_method": "MinMax_with_outlier_clipping"
+    "n_clusters": 6,
+    "random_state": 42,
+    "n_init": 10,
+    "max_iter": 300,
+    "classification_logic": "Dynamic score-based clustering with std deviation analysis"
   },
   "cluster_statistics": {
     "cluster_4": {
@@ -91,7 +88,7 @@
         "mag_x": 0.6436887908033162,
         "mag_y": 0.35078565238433856,
         "mag_z": 0.2831971536517159,
-        "object_temp": 0.7951651539065271,
+        "object_temp": 0.795165153906527,
         "vel_max_x": 0.6532982258851658
       }
     },
@@ -115,8 +112,8 @@
         "mag_x": 0.48710963751631764,
         "mag_y": 0.5044969687122539,
         "mag_z": 0.5035305030101689,
-        "object_temp": 0.7939672674666332,
-        "vel_max_x": 0.654624333947832
+        "object_temp": 0.7939672674666333,
+        "vel_max_x": 0.6546243339478321
       }
     },
     "cluster_5": {
@@ -128,7 +125,7 @@
         "mag_y": 0.517517848508363,
         "mag_z": 0.517920017042946,
         "object_temp": 0.24808658405079873,
-        "vel_max_x": 0.0034215666481119127
+        "vel_max_x": 0.003421566648111912
       }
     },
     "cluster_1": {
@@ -136,10 +133,10 @@
       "percentage": 55.57705514212042,
       "status": "LIGADO",
       "features_mean": {
-        "mag_x": 0.4924637798826182,
+        "mag_x": 0.49246377988261814,
         "mag_y": 0.4853936388102726,
-        "mag_z": 0.5077024392449285,
-        "object_temp": 0.22424302605271423,
+        "mag_z": 0.5077024392449286,
+        "object_temp": 0.2242430260527142,
         "vel_max_x": 0.18561266209986665
       }
     },
@@ -148,11 +145,11 @@
       "percentage": 11.735462944166821,
       "status": "LIGADO",
       "features_mean": {
-        "mag_x": 0.45810466524469295,
-        "mag_y": 0.576759896334508,
+        "mag_x": 0.45810466524469307,
+        "mag_y": 0.5767598963345076,
         "mag_z": 0.5520146659556787,
         "object_temp": 0.32272473486880254,
-        "vel_max_x": 0.845192013824639
+        "vel_max_x": 0.8451920138246388
       }
     }
   },

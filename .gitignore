@@ -3,20 +3,24 @@
 
 # ===== PASTA LATEX (TODA) =====
 # latex/
-latex/*.aux
-latex/*.log
-latex/*.out
-latex/*.toc
-latex/*.pdf
-latex/*.fdb_latexmk
-latex/*.fls
-latex/*.synctex.gz
-latex/*.blg
-latex/*.bbl
-latex/*.idx
-latex/*.lof
-latex/*.lot
-latex/*.zip
+latex/**/*.aux
+latex/**/*.log
+latex/**/*.out
+latex/**/*.toc
+latex/**/*.pdf
+latex/**/*.fdb_latexmk
+latex/**/*.fls
+latex/**/*.synctex.gz
+latex/**/*.blg
+latex/**/*.bbl
+latex/**/*.idx
+latex/**/*.lof
+latex/**/*.lot
+latex/**/*.zip
+latex/**/*.nav
+latex/**/*.snm
+latex/**/*.ilg
+
 
 # ===== ARQUIVOS CSV (TODOS) =====
 *.csv
@@ -43,7 +47,7 @@ __pycache__/
 *.pyc
 
 # ===== LOGS (OPCIONAL - MANTER ESTRUTURA) =====
-code/logs/*.txt
+code/logs/
 
 # ===== RESULTS COM CSV =====
 code/results/**/*.csv
@@ -66,6 +70,7 @@ ENV/
 .vscode/
 .idea/
 *.sublime-*
+.claude/
 
 # ===== JUPYTER NOTEBOOK =====
 .ipynb_checkpoints/

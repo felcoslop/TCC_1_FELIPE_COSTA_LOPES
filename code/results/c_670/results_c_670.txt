@@ -1,6 +1,6 @@
 {
   "processing_completed": true,
-  "processing_timestamp": "2026-05-10T03:08:36.574092",
+  "processing_timestamp": "2026-06-04T13:35:30.442294",
   "equipment_type": "MECHANICAL",
   "periods_processed": 31,
   "total_periods_identified": 53,
@@ -38,9 +38,9 @@
     "temperature",
     "vibration_only"
   ],
-  "_last_updated": "2026-05-10T03:12:43.449389",
+  "_last_updated": "2026-06-04T13:38:09.818014",
   "unification_completed": true,
-  "unification_timestamp": "2026-05-10T03:09:17.156220",
+  "unification_timestamp": "2026-06-04T13:35:55.593254",
   "periods_unified": 31,
   "total_records": 1377884,
   "unification_parameters": {
@@ -54,11 +54,11 @@
     "equipment_type": "MECHANICAL"
   },
   "normalization_completed": true,
-  "normalization_timestamp": "2026-05-10T03:10:59.594978",
+  "normalization_timestamp": "2026-06-04T13:37:06.836541",
   "normalized_samples": 1377884,
   "normalized_features": 16,
   "kmeans_training_completed": true,
-  "kmeans_training_timestamp": "2026-05-10T03:12:43.424700",
+  "kmeans_training_timestamp": "2026-06-04T13:38:09.809126",
   "total_clusters": 6,
   "total_samples_classified": 1377884,
   "ligado_samples": 1088660,

@@ -1,37 +1,34 @@
 {
   "segmentation_completed": true,
-  "segmentation_timestamp": "2026-05-10T00:48:24.285212",
+  "segmentation_timestamp": "2026-06-04T13:22:54.221556",
   "processing_version": "2.0",
-  "files_generated": 10,
+  "files_generated": 5,
   "gap_limit_hours": 3,
   "min_period_days": 1,
   "interpolation_method": "advanced_KNN_multivariate",
   "processing_parameters": {
-    "gap_detection_threshold": "3_hours",
-    "interpolation_methods": [
-      "simple_spline",
-      "advanced_knn",
-      "linear_fallback"
-    ],
-    "outlier_removal": "IQR_method_3sigma",
-    "period_segmentation": true,
-    "minimum_period_duration": "not_specified"
+    "synchronization_method": "temporal_overlap_optimization",
+    "interpolation_method": "hybrid_spline_knn",
+    "outlier_removal": true,
+    "quality_control": true,
+    "minimum_overlap_hours": "not_specified"
   },
   "processing_statistics": {
-    "total_periods_identified": 11,
-    "valid_periods_processed": 5,
-    "invalid_periods_discarded": 6,
-    "files_generated": 10,
-    "processing_efficiency": 45.45454545454545
+    "estimated_periods_found": 5,
+    "slip_periods_found": 5,
+    "c636_periods_found": 9,
+    "final_periods_synchronized": 5,
+    "synchronization_efficiency": 55.55555555555556,
+    "files_generated": 5
   },
-  "_last_updated": "2026-05-10T03:05:09.838364",
+  "_last_updated": "2026-06-04T13:27:06.565153",
   "processing_completed": true,
-  "processing_timestamp": "2026-05-10T03:05:09.837153",
+  "processing_timestamp": "2026-06-04T13:23:24.579617",
   "periods_processed": 5,
   "total_periods_identified": 11,
   "processing_efficiency_percent": 45.45454545454545,
   "unification_completed": true,
-  "unification_timestamp": "2026-05-10T00:51:54.907125",
+  "unification_timestamp": "2026-06-04T13:24:17.988908",
   "periods_synchronized": 5,
   "input_periods": {
     "estimated": 5,
@@ -40,7 +37,7 @@
   },
   "synchronization_efficiency_percent": 55.55555555555556,
   "normalization_completed": true,
-  "normalization_timestamp": "2026-05-10T00:54:46.623184",
+  "normalization_timestamp": "2026-06-04T13:25:29.035038",
   "normalized_samples": 1242993,
   "normalized_features": 19,
   "normalization_range": [
@@ -48,7 +45,7 @@
     1.0000000000000002
   ],
   "normalization_charts": [
-    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_637\\dados_normalizados_analise_c_637.png"
+    "C:\\Users\\Felipe Costa\\Downloads\\BACKUP\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_637\\dados_normalizados_analise_c_637.png"
   ],
   "preprocessing_parameters": {
     "scaler_type": "minmax",
@@ -65,7 +62,7 @@
     "outlier_clipping_percentile": 99.5
   },
   "kmeans_training_completed": true,
-  "kmeans_training_timestamp": "2026-05-10T00:58:08.562587",
+  "kmeans_training_timestamp": "2026-06-04T13:27:06.555142",
   "total_clusters": 6,
   "total_samples_classified": 1242993,
   "ligado_samples": 1186770,
@@ -73,14 +70,14 @@
   "classification_accuracy": 100.0,
   "model_inertia": 138139.2392181344,
   "cluster_analysis_charts": [
-    "C:\\Users\\manu_\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_637\\analise_kmeans_clusters_moderado_c_637.png"
+    "C:\\Users\\Felipe Costa\\Downloads\\BACKUP\\Downloads\\TCC_1_FELIPE_COSTA_LOPES-master\\code\\results\\c_637\\analise_kmeans_clusters_moderado_c_637.png"
   ],
   "training_parameters": {
-    "mpoint": "c_637",
-    "training_mode": "complete_pipeline",
-    "data_quality_threshold": "30_days_minimum",
-    "kmeans_clusters": 6,
-    "normalization_method": "MinMax_with_outlier_clipping"
+    "n_clusters": 6,
+    "random_state": 42,
+    "n_init": 10,
+    "max_iter": 300,
+    "classification_logic": "Dynamic score-based clustering with std deviation analysis"
   },
   "cluster_statistics": {
     "cluster_1": {
@@ -88,10 +85,10 @@
       "percentage": 23.43158811031116,
       "status": "LIGADO",
       "features_mean": {
-        "mag_x": 0.4644029327869297,
+        "mag_x": 0.46440293278692957,
         "mag_y": 0.8481691522260019,
         "mag_z": 0.208308467992799,
-        "object_temp": 0.8216173375704421,
+        "object_temp": 0.8216173375704422,
         "vel_max_x": 0.3444570456731389
       }
     },
@@ -103,7 +100,7 @@
         "mag_x": 0.6714538932936311,
         "mag_y": 0.32436454637063317,
         "mag_z": 0.7534860896270132,
-        "object_temp": 0.6943889948504381,
+        "object_temp": 0.6943889948504383,
         "vel_max_x": 0.21828856718799963
       }
     },
@@ -115,7 +112,7 @@
         "mag_x": 0.6395479809603976,
         "mag_y": 0.2523451118083245,
         "mag_z": 0.6311834780074002,
-        "object_temp": 0.2437583849729991,
+        "object_temp": 0.24375838497299904,
         "vel_max_x": 0.002768078504994299
       }
     },
@@ -124,9 +121,9 @@
       "percentage": 16.620045326079875,
       "status": "LIGADO",
       "features_mean": {
-        "mag_x": 0.6511303147140641,
-        "mag_y": 0.17159743635182775,
-        "mag_z": 0.7077480824441363,
+        "mag_x": 0.6511303147140642,
+        "mag_y": 0.1715974363518277,
+        "mag_z": 0.7077480824441365,
         "object_temp": 0.19858180720395627,
         "vel_max_x": 0.45264815402608216
       }
@@ -136,10 +133,10 @@
       "percentage": 38.53923553873594,
       "status": "LIGADO",
       "features_mean": {
-        "mag_x": 0.6735611965551274,
-        "mag_y": 0.17329403711758332,
-        "mag_z": 0.8062761574677204,
-        "object_temp": 0.3263934475599847,
+        "mag_x": 0.6735611965551273,
+        "mag_y": 0.17329403711758337,
+        "mag_z": 0.8062761574677206,
+        "object_temp": 0.3263934475599846,
         "vel_max_x": 0.24771816560067217
       }
     },
@@ -148,8 +145,8 @@
       "percentage": 7.973335328517537,
       "status": "LIGADO",
       "features_mean": {
-        "mag_x": 0.697403087690564,
-        "mag_y": 0.11928591866453427,
+        "mag_x": 0.6974030876905639,
+        "mag_y": 0.11928591866453428,
         "mag_z": 0.8039564015003803,
         "object_temp": 0.6762790330835987,
         "vel_max_x": 0.8883431918706419

@@ -1,0 +1,23 @@
+\newpage
+\chapter{Impactos na Sociedade e no Meio Ambiente}
+\label{chap:impacto_socioambiental}
+
+Além das contribuições técnicas, o sistema de detecção automática de estados operacionais desenvolvido neste trabalho apresenta desdobramentos relevantes nas dimensões ambiental e social. A capacidade de determinar com precisão quando um equipamento industrial está efetivamente operando (LIGADO) ou em repouso (DESLIGADO), a partir de dados de sensores IoT já existentes na planta, habilita um conjunto de benefícios que extrapolam o ganho de eficiência computacional, alcançando o uso responsável de recursos energéticos e materiais e a democratização do acesso à tecnologia de monitoramento. Este capítulo discute esses impactos com base nas características concretas da solução implementada.
+
+\section{Impactos Ambientais}
+
+O principal impacto ambiental do sistema decorre da sua aplicação à gestão energética. Ao identificar com exatidão os períodos efetivos de operação e os períodos ociosos de cada equipamento, o sistema fornece horímetros precisos que tornam visíveis desperdícios energéticos antes ocultos, como equipamentos mantidos ligados sem necessidade operacional. Essa visibilidade é o primeiro passo para a redução do consumo de eletricidade e, por consequência, das emissões de gases de efeito estufa associadas à geração de energia. Para os equipamentos analisados, observou-se que a proporção de tempo em estado DESLIGADO variou de cerca de 4,5\% a 21\% (Tabela~\ref{tab:distribuicao_estados}), evidenciando que a quantificação correta desses intervalos é mensurável e operacionalmente significativa.
+
+Um segundo vetor de impacto ambiental está na manutenção baseada em condição que o sistema viabiliza. Ao fornecer um registro fiel das horas reais de funcionamento, a programação de manutenções passa a ser orientada pelo uso efetivo do equipamento, e não por intervalos fixos de calendário. Isso reduz intervenções desnecessárias e a troca prematura de componentes ainda funcionais, diminuindo o descarte de peças, óleos lubrificantes e demais insumos, bem como a geração de resíduos industriais. Estudos indicam que a manutenção baseada em condição pode reduzir custos de manutenção em até 30\% em comparação a abordagens preventivas baseadas em tempo fixo~\cite{jardine2006review}, redução que se traduz diretamente em menor consumo de materiais e prolongamento da vida útil dos ativos.
+
+Cabe ainda destacar a sobriedade computacional da solução. A escolha do K-Means em detrimento de arquiteturas de aprendizado profundo, além de motivada pela adequação ao problema, resulta em um sistema que treina em poucos minutos e executa em um equipamento de configuração modesta, sem necessidade de aceleradores gráficos dedicados ou de infraestrutura de computação em nuvem de alto consumo. Esse menor custo computacional implica menor consumo energético associado ao próprio processamento dos dados, alinhando a solução a princípios de computação sustentável.
+
+\section{Impactos Sociais}
+
+No âmbito social, o sistema contribui para a segurança operacional e para a confiabilidade dos ativos industriais. O monitoramento contínuo e a caracterização precisa dos padrões de operação permitem compreender melhor o comportamento dos equipamentos, oferecendo uma base para a antecipação de paradas e para a redução de falhas inesperadas que poderiam expor trabalhadores a situações de risco. Um parque industrial mais confiável é também um ambiente de trabalho mais seguro.
+
+Um aspecto socialmente relevante é a democratização do acesso à tecnologia. A interface gráfica desenvolvida permite que operadores sem conhecimento técnico especializado em programação ou em aprendizado de máquina possam treinar modelos, analisar períodos específicos e gerar visualizações com poucos cliques. Essa redução da barreira de entrada amplia o alcance da solução para além de equipes altamente especializadas, favorecendo a capacitação de profissionais e a apropriação da tecnologia pelo próprio chão de fábrica.
+
+A acessibilidade também se manifesta no baixo custo de adoção. Por operar sobre dados de sensores já instalados e por exigir apenas hardware convencional, o sistema é viável inclusive para pequenas e médias indústrias, que tradicionalmente enfrentam maiores dificuldades para incorporar soluções de monitoramento inteligente. Adicionalmente, a disponibilização pública do código-fonte e da documentação, detalhada no Capítulo~\ref{chap:conclusao}, promove o compartilhamento de conhecimento, a reprodutibilidade dos resultados e a sua extensão para novos casos de uso, com valor educacional para estudantes e pesquisadores da área.
+
+\clearpage
