@@ -109,8 +109,14 @@ function renderCards(lista) {
         const card = document.createElement("div");
         card.className = "card";
         const info = EQUIP_INFO[eq.mpoint] || { nome: eq.mpoint, tipo: eq.tipo, descr: eq.mpoint, detalhes: "", horas: { ligado: 0, desligado: 0, sem_dados: 0 } };
+        
+        // Define ícone com base no tipo (elétrico = raio, mecânico = engrenagem)
+        const tagIcon = eq.tipo === "eletrico"
+            ? `<i data-lucide="zap"></i>`
+            : `<i data-lucide="settings"></i>`;
+
         card.innerHTML = `
-            <span class="tag ${eq.tipo}">${info.tipo}</span>
+            <span class="tag ${eq.tipo}">${tagIcon}${info.tipo}</span>
             <h3>${info.nome}</h3>
             <p class="card-mpoint">${eq.mpoint}</p>
             <div class="info">
@@ -122,6 +128,11 @@ function renderCards(lista) {
             <div class="bar"><span style="width:${pctOn}%"></span></div>`;
         card.onclick = () => abrirEquipamento(eq);
         cont.appendChild(card);
+    }
+    
+    // Inicializa todos os ícones Lucide no documento (tanto os botões quanto as tags)
+    if (window.lucide) {
+        lucide.createIcons();
     }
 }
 

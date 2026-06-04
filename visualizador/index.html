@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="style.css" />
     <link rel="icon" href="https://logodownload.org/wp-content/uploads/2015/02/UFMG-logo.png" type="image/png" />
     <script src="lib/plotly.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
 <body>
@@ -24,10 +25,10 @@
     <!-- TELA 2: gráficos -->
     <section id="tela-graficos" class="hidden">
         <header class="barra">
-            <button id="btn-voltar" class="btn">&larr; Equipamentos</button>
-            <button id="btn-reset" class="btn">&#8634; Resetar zoom</button>
-            <button id="btn-info" class="btn">&#8505; Info do Equipamento</button>
-            <button id="btn-horas" class="btn">&#128338; Horas Totais</button>
+            <button id="btn-voltar" class="btn"><i data-lucide="arrow-left"></i> Equipamentos</button>
+            <button id="btn-reset" class="btn"><i data-lucide="refresh-cw"></i> Resetar zoom</button>
+            <button id="btn-info" class="btn"><i data-lucide="info"></i> Info do Equipamento</button>
+            <button id="btn-horas" class="btn"><i data-lucide="clock"></i> Horas Totais</button>
             <h2 id="titulo-equip"></h2>
             <div class="legenda">
                 <span class="leg"><span class="dot" style="background:#2ecc71"></span>LIGADO (<span id="legenda-horas-ligado"></span>h)</span>
