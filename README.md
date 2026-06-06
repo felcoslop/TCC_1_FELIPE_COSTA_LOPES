@@ -1,5 +1,8 @@
 # Sistema de Detecção de Estados Operacionais de Equipamentos Industriais
 
+> **Resultados Finais — Visualizador de Estados Operacionais:**  
+> [https://evolution-tcc-felipe-costa-lopes-visualizador.hfzba0.easypanel.host/](https://evolution-tcc-felipe-costa-lopes-visualizador.hfzba0.easypanel.host/)
+
 ## Visão Geral
 
 Sistema completo para detecção automática de estados operacionais (LIGADO/DESLIGADO) de equipamentos industriais utilizando Machine Learning. Suporta dois tipos de equipamentos:
