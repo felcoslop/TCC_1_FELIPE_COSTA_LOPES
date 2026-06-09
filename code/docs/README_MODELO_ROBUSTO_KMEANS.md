@@ -1,15 +1,15 @@
 # Modelo Robusto CNN + ConvAE para Classificação LIGADO/DESLIGADO
 
-## 📋 Descrição
+## Descrição
 Modelo robusto que combina CNN (Convolutional Neural Network) e ConvAE (Convolutional Autoencoder) para classificar o status de equipamentos industriais como LIGADO ou DESLIGADO, com capacidade de detectar incerteza nas predições.
 
-## 🎯 Objetivo
+## Objetivo
 - Classificar equipamentos como LIGADO ou DESLIGADO com alta precisão
 - Detectar quando o modelo não tem certeza sobre a classificação
 - Usar dados rotulados do K-means para treinamento supervisionado
 - Aplicar em contexto real com confiança
 
-## 🧠 Arquitetura do Modelo
+## Arquitetura do Modelo
 
 ### 1. ConvAE (Convolutional Autoencoder)
 - **Função**: Extração de features e redução de dimensionalidade
@@ -29,7 +29,7 @@ Modelo robusto que combina CNN (Convolutional Neural Network) e ConvAE (Convolut
 - **Métrica**: Entropia das predições
 - **Threshold**: Incerteza > 0.5 = alta incerteza
 
-## 📊 Dados de Entrada
+## Dados de Entrada
 - **Fonte**: `data/normalized/dados_kmeans_rotulados_conservador.csv`
 - **Features**: 19 variáveis normalizadas (0-1)
 - **Sequências**: 30 timesteps por amostra
@@ -50,7 +50,7 @@ Modelo robusto que combina CNN (Convolutional Neural Network) e ConvAE (Convolut
 10. `slip_fr_frequency` - Frequência de escorregamento
 11. `slip_rms` - RMS de escorregamento
 
-## 🚀 Como Usar
+## Como Usar
 
 ### Treinamento
 ```bash
@@ -71,11 +71,11 @@ def predict_with_uncertainty(model, X, n_samples=100):
     for _ in range(n_samples):
         pred = model(X, training=True)  # Dropout ativo
         predictions.append(pred)
-    
+
     predictions = np.array(predictions)
     mean_pred = np.mean(predictions, axis=0)
     uncertainty = -np.sum(mean_pred * np.log(mean_pred + 1e-8), axis=1)
-    
+
     return mean_pred, uncertainty
 
 # Exemplo de uso
@@ -83,12 +83,12 @@ X_new = np.random.random((1, 30, 19))  # 1 amostra, 30 timesteps, 19 features
 mean_pred, uncertainty = predict_with_uncertainty(model, X_new)
 
 if uncertainty[0] > 0.5:
-    print("⚠️ Alta incerteza na predição")
+    print(" Alta incerteza na predição")
 else:
-    print(f"✅ Predição confiável: {mean_pred[0]}")
+    print(f" Predição confiável: {mean_pred[0]}")
 ```
 
-## 📁 Arquivos Gerados
+## Arquivos Gerados
 
 ### Modelos
 - `models/convae_model_robusto.h5` - ConvAE completo
@@ -104,7 +104,7 @@ else:
 ### Metadados
 - `models/info_modelo_robusto.json` - Informações do treinamento
 
-## 📈 Performance
+## Performance
 
 ### Métricas de Treinamento (Dados Limpos - 100 épocas - FINAL)
 - **ConvAE Loss**: 0.0040 (treino) / 0.0040 (validação)
@@ -125,7 +125,7 @@ else:
     accuracy                           1.00       100
 ```
 
-## 🔧 Configurações
+## Configurações
 
 ### Parâmetros de Treinamento (FINAL)
 - **Épocas**: 100 (completo - ConvAE parou em 99, CNN em 16)
@@ -153,7 +153,7 @@ Dense(2, activation='softmax')  # LIGADO/DESLIGADO
 - **Model Checkpoint**: Salva melhor modelo
 - **Terminate on NaN**: Para em caso de erro
 
-## 🎯 Características Especiais
+## Características Especiais
 
 ### 1. Detecção de Incerteza
 - **Monte Carlo Dropout**: 100 amostras por predição
@@ -174,7 +174,7 @@ Dense(2, activation='softmax')  # LIGADO/DESLIGADO
 - **Validação**: 20% para teste
 - **Qualidade**: Apenas clusters com alta certeza (99.5%+)
 
-## 🔄 Fluxo de Trabalho
+## Fluxo de Trabalho
 
 1. **Carregamento**: Dados limpos (apenas clusters de alta certeza)
 2. **Balanceamento**: 25k amostras por classe
@@ -184,7 +184,7 @@ Dense(2, activation='softmax')  # LIGADO/DESLIGADO
 6. **Validação**: Teste com detecção de incerteza
 7. **Salvamento**: Modelos e metadados
 
-## 📊 Vantagens
+## Vantagens
 
 ### 1. Alta Precisão
 - **Accuracy**: 99.92% no conjunto de teste
@@ -208,7 +208,7 @@ Dense(2, activation='softmax')  # LIGADO/DESLIGADO
 - **Sequências temporais**: 30 timesteps
 - **Produção**: Pronto para deployment
 
-## ⚠️ Limitações
+## Limitações
 
 ### 1. Dependência de Dados
 - **K-means**: Requer dados pré-classificados
@@ -225,7 +225,7 @@ Dense(2, activation='softmax')  # LIGADO/DESLIGADO
 - **Features**: 19 variáveis complexas
 - **Sequências**: Padrões temporais
 
-## 🚀 Aplicações
+## Aplicações
 
 ### 1. Monitoramento Industrial
 - **Status**: LIGADO/DESLIGADO em tempo real
@@ -242,7 +242,7 @@ Dense(2, activation='softmax')  # LIGADO/DESLIGADO
 - **Tendências**: Análise temporal
 - **Alertas**: Casos de alta incerteza
 
-## 📈 Próximos Passos
+## Próximos Passos
 
 ### 1. Otimizações
 - **Quantização**: Reduzir tamanho do modelo
@@ -259,7 +259,7 @@ Dense(2, activation='softmax')  # LIGADO/DESLIGADO
 - **Streaming**: Dados em tempo real
 - **Dashboard**: Interface visual
 
-## 🔧 Manutenção
+## Manutenção
 
 ### 1. Retreinamento
 - **Frequência**: Mensal ou conforme necessário
@@ -276,7 +276,7 @@ Dense(2, activation='softmax')  # LIGADO/DESLIGADO
 - **Features**: Novas variáveis
 - **Arquitetura**: Melhorias estruturais
 
-## 📊 Estatísticas do Dataset
+## Estatísticas do Dataset
 
 - **Total de amostras**: 93,910 (dados limpos)
 - **Amostras classificadas**: 93,910 (100%)
@@ -287,7 +287,7 @@ Dense(2, activation='softmax')  # LIGADO/DESLIGADO
 - **Normalização**: MinMax (0-1)
 - **Estratégia**: Apenas clusters com alta certeza (99.5%+)
 
-## 🎯 Conclusão
+## Conclusão
 
 O modelo robusto CNN + ConvAE oferece uma solução completa para classificação de status de equipamentos industriais, combinando alta precisão com detecção de incerteza. A arquitetura híbrida permite extração eficiente de features e classificação confiável, sendo ideal para aplicações em produção onde a confiabilidade é crítica.
 

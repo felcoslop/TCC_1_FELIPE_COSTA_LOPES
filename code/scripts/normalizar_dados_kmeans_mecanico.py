@@ -481,40 +481,54 @@ def preparar_dados_kmeans(dados_normalizados, colunas_validas, timestamp, mpoint
 def criar_visualizacoes(dados_normalizados, colunas_validas, df_original, args):
     """Cria visualizações dos dados normalizados"""
     print("\nCriando visualizações...")
-    
+    plt.rcParams.update({
+        'font.size': 18,
+        'axes.titlesize': 20,
+        'axes.labelsize': 18,
+        'xtick.labelsize': 16,
+        'ytick.labelsize': 16,
+        'legend.fontsize': 16,
+        'legend.borderpad': 1.2,
+        'legend.handlelength': 3.0,
+        'legend.handleheight': 1.8,
+        'legend.handletextpad': 1.0,
+        'legend.labelspacing': 0.8,
+        'legend.framealpha': 0.95,
+    })
+
     # Selecionar algumas colunas para visualização (primeiras 20)
     colunas_viz = colunas_validas[:20]
-    
+
     # Criar figura
     fig, axes = plt.subplots(2, 2, figsize=(15, 12))
     
     # 1. Distribuição antes da normalização
     df_original_viz = df_original[colunas_viz]
-    axes[0,0].boxplot([df_original_viz[col].dropna() for col in colunas_viz[:10]], 
+    axes[0,0].boxplot([df_original_viz[col].dropna() for col in colunas_viz[:10]],
                       labels=colunas_viz[:10])
-    axes[0,0].set_title('Distribuição Original (primeiras 10 colunas)')
+    axes[0,0].set_title('Distr. Original (10 col. iniciais)', fontweight='bold')
     axes[0,0].tick_params(axis='x', rotation=45)
-    
+
     # 2. Distribuição após normalização
     dados_viz = dados_normalizados[:, :10]
-    axes[0,1].boxplot([dados_viz[:, i] for i in range(10)], 
+    axes[0,1].boxplot([dados_viz[:, i] for i in range(10)],
                       labels=colunas_viz[:10])
-    axes[0,1].set_title('Distribuição Normalizada (primeiras 10 colunas)')
+    axes[0,1].set_title('Distr. Normalizada (10 col. iniciais)', fontweight='bold')
     axes[0,1].tick_params(axis='x', rotation=45)
-    
+
     # 3. Histograma de uma coluna específica (antes)
     col_exemplo = colunas_viz[0]
     axes[1,0].hist(df_original[col_exemplo].dropna(), bins=50, alpha=0.7, color='blue')
     axes[1,0].set_title(f'Histograma Original - {col_exemplo}')
-    axes[1,0].set_xlabel('Valor')
-    axes[1,0].set_ylabel('Frequência')
-    
+    axes[1,0].set_xlabel('Valor', fontweight='bold')
+    axes[1,0].set_ylabel('Frequência', fontweight='bold')
+
     # 4. Histograma de uma coluna específica (depois)
     col_idx = colunas_validas.index(col_exemplo)
     axes[1,1].hist(dados_normalizados[:, col_idx], bins=50, alpha=0.7, color='red')
     axes[1,1].set_title(f'Histograma Normalizado - {col_exemplo}')
-    axes[1,1].set_xlabel('Valor Normalizado')
-    axes[1,1].set_ylabel('Frequência')
+    axes[1,1].set_xlabel('Valor Normalizado', fontweight='bold')
+    axes[1,1].set_ylabel('Frequência', fontweight='bold')
     
     plt.tight_layout()
     from utils.artifact_paths import results_dir

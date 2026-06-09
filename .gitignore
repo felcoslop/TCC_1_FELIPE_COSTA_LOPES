@@ -8,6 +8,9 @@ latex/**/*.log
 latex/**/*.out
 latex/**/*.toc
 latex/**/*.pdf
+# Excecoes: manter os PDFs finais (deliverables) versionados
+!latex/Monografia.pdf
+!latex/apresentacao/apresentacao.pdf
 latex/**/*.fdb_latexmk
 latex/**/*.fls
 latex/**/*.synctex.gz

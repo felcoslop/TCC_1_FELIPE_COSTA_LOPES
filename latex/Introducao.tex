@@ -26,7 +26,7 @@ Dados de sensores industriais também contêm \textit{outliers} devido a picos d
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.85\textwidth]{plots/02_comparativo_knn_lstm_subplots.png}
-    \caption{Comparativo entre os métodos KNN e LSTM para reconstrução de lacunas temporais. O KNN apresentou resultados superiores com menor complexidade computacional, tornando-se a escolha definitiva para lacunas entre 30 minutos e 3 horas.}
+    \caption{Comparativo entre os métodos KNN e LSTM para reconstrução de lacunas temporais. Os dados são sintéticos, com padrão de operação LIGADO/DESLIGADO bem definido, escolhidos justamente para ilustrar de forma clara a equivalência prática entre os dois métodos: ambos reconstroem o sinal de vibração no interior da lacuna com qualidade semelhante. Como o LSTM exige treinamento de rede neural (custo computacional muito superior) sem ganho de precisão correspondente, o KNN tornou-se a escolha definitiva para lacunas entre 30 minutos e 3 horas.}
     \label{fig:comparativo_knn_lstm}
 \end{figure}
 

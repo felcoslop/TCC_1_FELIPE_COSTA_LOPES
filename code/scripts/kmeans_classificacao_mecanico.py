@@ -506,59 +506,101 @@ def criar_visualizacoes(df_analise, colunas_validas, mpoint):
         cluster_colors[c['id']] = green_palette[i + 2] # +2 para evitar tons brancos/muito claros
     
     fig, axes = plt.subplots(2, 2, figsize=(15, 12))
-    
+
     # 1. Scatter plot dos clusters
+    from matplotlib.lines import Line2D as _L2D
+    from matplotlib.ticker import FuncFormatter, MultipleLocator
     for i in range(6):
         mask = df_analise['cluster'] == i
         if mask.sum() > 0:
-            status = df_analise[df_analise['cluster'] == i]['equipamento_status'].iloc[0]
-            label = f'Cluster {i} ({status})'
             color = cluster_colors.get(i, 'gray')
-            axes[0,0].scatter(dados_pca[mask, 0], dados_pca[mask, 1], 
-                             c=color, alpha=0.6, s=1, label=label)
-    
-    axes[0,0].set_xlabel(f'PC1 ({pca.explained_variance_ratio_[0]:.2%} var)')
-    axes[0,0].set_ylabel(f'PC2 ({pca.explained_variance_ratio_[1]:.2%} var)')
-    axes[0,0].set_title('Clusters K-means - Equipamento MECÂNICO (6 clusters)')
-    axes[0,0].legend(bbox_to_anchor=(1.05, 1), loc='upper left')
-    
-    # 2. Scatter plot por status
-    status_colors = {'LIGADO': 'green', 'DESLIGADO': 'red'}
+            axes[0,0].scatter(dados_pca[mask, 0], dados_pca[mask, 1],
+                             c=color, alpha=0.6, s=1)
+
+    axes[0,0].set_xlabel(f'PC1 ({pca.explained_variance_ratio_[0]:.2%} var)', fontsize=15, fontweight='bold')
+    axes[0,0].set_ylabel(f'PC2 ({pca.explained_variance_ratio_[1]:.2%} var)', fontsize=15, fontweight='bold')
+    axes[0,0].set_title('Clusters K-means - Equipamento MECANICO (6 clusters)', fontsize=13, fontweight='bold')
+    axes[0,0].tick_params(labelsize=15)
+
+    # 2. Scatter plot por status — sem legenda interna
+    status_colors = {'LIGADO': '#2ecc71', 'DESLIGADO': '#e74c3c'}
     for status, color in status_colors.items():
         mask = df_analise['equipamento_status'] == status
         if mask.sum() > 0:
-            axes[0,1].scatter(dados_pca[mask, 0], dados_pca[mask, 1], 
-                             c=color, alpha=0.6, s=1, label=status)
-    
-    axes[0,1].set_xlabel(f'PC1 ({pca.explained_variance_ratio_[0]:.2%} var)')
-    axes[0,1].set_ylabel(f'PC2 ({pca.explained_variance_ratio_[1]:.2%} var)')
-    axes[0,1].set_title('Classificação - Temperatura + Vibração')
-    axes[0,1].legend()
-    
+            axes[0,1].scatter(dados_pca[mask, 0], dados_pca[mask, 1],
+                             c=color, alpha=0.6, s=1)
+
+    axes[0,1].set_xlabel(f'PC1 ({pca.explained_variance_ratio_[0]:.2%} var)', fontsize=15, fontweight='bold')
+    axes[0,1].set_ylabel(f'PC2 ({pca.explained_variance_ratio_[1]:.2%} var)', fontsize=15, fontweight='bold')
+    axes[0,1].set_title('Classificacao - Temperatura + Vibracao', fontsize=13, fontweight='bold')
+    axes[0,1].tick_params(labelsize=15)
+
     # 3. Distribuição dos clusters
     cluster_counts = df_analise['cluster'].value_counts().sort_index()
     bar_colors = [cluster_colors.get(i, 'gray') for i in cluster_counts.index]
-    
+
     bars = axes[1,0].bar(cluster_counts.index, cluster_counts.values, color=bar_colors, edgecolor='black', alpha=0.8)
-    axes[1,0].set_xlabel('Cluster')
-    axes[1,0].set_ylabel('Número de Amostras')
-    axes[1,0].set_title('Distribuição dos Clusters')
-    
-    # Adicionar labels nas barras
+    axes[1,0].set_xlabel('Cluster', fontsize=15, fontweight='bold')
+    axes[1,0].set_ylabel('Numero de Amostras (k = 1000)', fontsize=15, fontweight='bold')
+    axes[1,0].set_title('Distribuicao dos Clusters', fontsize=13, fontweight='bold')
+    axes[1,0].tick_params(labelsize=15)
+    # escala em milhares (k) para ocupar menos espaco
+    axes[1,0].yaxis.set_major_locator(MultipleLocator(50000))
+    axes[1,0].yaxis.set_major_formatter(FuncFormatter(lambda v, _p: f'{int(v/1000)}k'))
+
     for bar in bars:
         height = bar.get_height()
         axes[1,0].text(bar.get_x() + bar.get_width()/2., height + 0.01,
-                f'{int(height):,}', ha='center', va='bottom', fontsize=9)
-    
-    # 4. Distribuição do status
+                f'{int(height/1000)}k', ha='center', va='bottom', fontsize=16, fontweight='bold')
+
+    # 4. Distribuição do status — labels negrito/maior, % maior com fundo branco
     status_counts = df_analise['equipamento_status'].value_counts()
     if len(status_counts) > 0:
         pie_colors = [status_colors.get(s, 'gray') for s in status_counts.index]
-        axes[1,1].pie(status_counts.values, labels=status_counts.index, autopct='%1.1f%%', colors=pie_colors,
-                     wedgeprops={'edgecolor': 'white', 'linewidth': 1.5})
-    axes[1,1].set_title('Distribuição do Status')
-    
-    plt.tight_layout()
+        _wedges, _texts, _autotexts = axes[1,1].pie(
+            status_counts.values, labels=status_counts.index, autopct='%1.1f%%',
+            colors=pie_colors, startangle=140, explode=[0.03]*len(status_counts),
+            wedgeprops={'edgecolor': 'white', 'linewidth': 1.5},
+            textprops={'fontsize': 17, 'fontweight': 'bold'})
+        for _at in _autotexts:
+            _at.set_fontsize(16)
+            _at.set_fontweight('bold')
+            _at.set_color('black')
+            _at.set_bbox(dict(facecolor='white', edgecolor='none', alpha=0.85,
+                              boxstyle='round,pad=0.25'))
+        axes[1,1].axis('equal')
+    axes[1,1].set_title('Distribuicao do Status', fontsize=13, fontweight='bold')
+
+    # layout quadrado, reservando faixa minima embaixo p/ legendas
+    fig.tight_layout(rect=[0, 0.10, 1, 1])
+
+    # Legenda 1 (Cluster X) — FORA, abaixo, sem comprimir subplots
+    _leg1_m = [
+        _L2D([0], [0], marker='o', color='w',
+             markerfacecolor=cluster_colors.get(i, 'gray'),
+             markeredgecolor='k', markeredgewidth=0.5,
+             markersize=14, label=f'Cluster {i}')
+        for i in range(6) if df_analise['cluster'].isin([i]).any()
+    ]
+    _l1m = fig.legend(handles=_leg1_m,
+                      bbox_to_anchor=(0.30, 0.075), loc='upper center',
+                      frameon=True, fontsize=13, ncol=3,
+                      handletextpad=0.35, labelspacing=0.9, columnspacing=1.4, borderpad=0.8)
+    fig.add_artist(_l1m)
+
+    # Legenda 2 (DESLIGADO/LIGADO) — ao lado
+    _leg2_m = [
+        _L2D([0], [0], marker='o', color='w',
+             markerfacecolor='#e74c3c', markeredgecolor='k', markeredgewidth=0.5,
+             markersize=14, label='DESLIGADO'),
+        _L2D([0], [0], marker='o', color='w',
+             markerfacecolor='#2ecc71', markeredgecolor='k', markeredgewidth=0.5,
+             markersize=14, label='LIGADO'),
+    ]
+    fig.legend(handles=_leg2_m,
+               bbox_to_anchor=(0.72, 0.075), loc='upper center',
+               frameon=True, fontsize=13, labelspacing=0.9, borderpad=0.8, handletextpad=0.35)
+
     from utils.artifact_paths import results_dir
     dir_resultados = results_dir(mpoint, create=True) if mpoint else DIR_RESULTS
     mpoint_tag = f'_{mpoint}' if mpoint else ''

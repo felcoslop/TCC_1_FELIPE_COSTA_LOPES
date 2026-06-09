@@ -298,16 +298,16 @@ def criar_visualizacao_3d_mecanico(mpoint):
         z_meio = (tempo_horas.min() + tempo_horas.max()) / 2
         z_fim = tempo_horas.max()
         
-        label_inicio = tempo_inicio.strftime('%d/%m %H:%M')
-        label_meio = (tempo_inicio + pd.Timedelta(hours=(z_fim - z_inicio) / 2)).strftime('%d/%m %H:%M')
-        label_fim = tempo_fim.strftime('%d/%m %H:%M')
-        
+        label_inicio = tempo_inicio.strftime('%d/%m/%y\n%Hh')
+        label_meio = (tempo_inicio + pd.Timedelta(hours=(z_fim - z_inicio) / 2)).strftime('%d/%m/%y\n%Hh')
+        label_fim = tempo_fim.strftime('%d/%m/%y\n%Hh')
+
         # 6. Criar visualização
         cores = {'DESLIGADO': '#e74c3c', 'LIGADO': '#2ecc71'}
-        
-        fig = plt.figure(figsize=(16, 12))
+
+        fig = plt.figure(figsize=(22, 12))
         ax1 = fig.add_subplot(111, projection='3d')
-        
+
         for estado in ['DESLIGADO', 'LIGADO']:
             mask = status == estado
             if mask.sum() > 0:
@@ -322,17 +322,28 @@ def criar_visualizacao_3d_mecanico(mpoint):
                     edgecolors='k',
                     linewidths=0.5
                 )
-        
-        ax1.set_xlabel('Temperatura (°C)', fontsize=12, fontweight='bold', labelpad=10)
-        ax1.set_ylabel('Vibração RMS Média (mm/s)', fontsize=12, fontweight='bold', labelpad=10)
-        ax1.set_zlabel('Tempo', fontsize=12, fontweight='bold', labelpad=10)
-        
+
+        ax1.set_xlabel('Temperatura (°C)', fontsize=20, fontweight='bold', labelpad=14)
+        ax1.set_ylabel('Vibracao RMS Media (mm/s)', fontsize=20, fontweight='bold', labelpad=14)
+        ax1.set_zlabel('Tempo', fontsize=20, fontweight='bold', labelpad=90)
+
         ax1.set_zticks([z_inicio, z_meio, z_fim])
-        ax1.set_zticklabels([label_inicio, label_meio, label_fim], fontsize=10)
-        
-        ax1.set_title(f'Gráfico {i+1} - Temp x Vib x Tempo ({label_inicio} a {label_fim})\n{mpoint}',
-                      fontsize=14, fontweight='bold', pad=20)
-        ax1.legend(loc='upper left', fontsize=10, framealpha=0.9)
+        ax1.set_zticklabels([label_inicio, label_meio, label_fim], fontsize=14)
+        ax1.tick_params(axis='x', labelsize=14)
+        ax1.tick_params(axis='y', labelsize=14)
+        ax1.zaxis.pane.fill = True
+        ax1.zaxis.pane.set_facecolor((1.0, 1.0, 1.0, 0.85))
+        for lbl in ax1.get_zticklabels():
+            lbl.set_bbox(dict(facecolor='white', edgecolor='none', alpha=0.85, pad=3))
+
+        ax1.set_title(f'Grafico {i+1} - Temp x Vib x Tempo — {mpoint}',
+                      fontsize=20, fontweight='bold', pad=20)
+        from matplotlib.lines import Line2D as _L2D
+        _leg_m = [_L2D([0],[0], marker='o', color='w', markerfacecolor=cores[e],
+                        markeredgecolor='k', markeredgewidth=0.5, markersize=13, label=e)
+                  for e in ['DESLIGADO', 'LIGADO']]
+        ax1.legend(handles=_leg_m, loc='upper left', fontsize=17, framealpha=0.95,
+                   handletextpad=0.4, labelspacing=0.35, borderpad=0.7)
         ax1.grid(True, alpha=0.3)
         ax1.view_init(elev=20, azim=45)
         

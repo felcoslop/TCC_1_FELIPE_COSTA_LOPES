@@ -38,7 +38,7 @@
     "temperature",
     "vibration_only"
   ],
-  "_last_updated": "2026-06-04T13:17:03.482541",
+  "_last_updated": "2026-06-09T19:22:00.410770",
   "unification_completed": true,
   "unification_timestamp": "2026-06-04T13:16:08.494893",
   "periods_unified": 7,
@@ -54,11 +54,11 @@
     "equipment_type": "MECHANICAL"
   },
   "normalization_completed": true,
-  "normalization_timestamp": "2026-06-04T13:16:33.126323",
+  "normalization_timestamp": "2026-06-09T16:02:33.438219",
   "normalized_samples": 585367,
   "normalized_features": 16,
   "kmeans_training_completed": true,
-  "kmeans_training_timestamp": "2026-06-04T13:17:03.471527",
+  "kmeans_training_timestamp": "2026-06-09T19:22:00.399311",
   "total_clusters": 6,
   "total_samples_classified": 585367,
   "ligado_samples": 557534,

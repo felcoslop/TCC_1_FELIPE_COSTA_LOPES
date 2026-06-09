@@ -2,8 +2,8 @@
 RELATÓRIO DE TREINAMENTO K-MEANS - c_1518 - EQUIPAMENTO MECÂNICO
 ================================================================================
 
-Data: 2026-06-04 13:17:03.388885
-Tempo de execução: 0 minutos e 13 segundos
+Data: 2026-06-09 19:22:00.308455
+Tempo de execução: 0 minutos e 15 segundos
 
 TIPO DE EQUIPAMENTO:
   - Equipamento MECÂNICO (sem current, sem RPM)

@@ -164,6 +164,20 @@ def plot_vibracao_reconstrucao_completa(mpoint='c_637', start_time=None, end_tim
     seg_colors = np.array(seg_colors)
     seg_is_rec = np.array(seg_is_rec)
     
+    plt.rcParams.update({
+        'font.size': 18,
+        'axes.titlesize': 20,
+        'axes.labelsize': 18,
+        'xtick.labelsize': 16,
+        'ytick.labelsize': 16,
+        'legend.fontsize': 16,
+        'legend.borderpad': 1.2,
+        'legend.handlelength': 3.0,
+        'legend.handleheight': 1.8,
+        'legend.handletextpad': 1.0,
+        'legend.labelspacing': 0.8,
+        'legend.framealpha': 0.95,
+    })
     fig, ax = plt.subplots(figsize=(20, 10))
     ax.plot(df_plot['time'], vibs, color='lightgray', linewidth=0.3, alpha=0.1, zorder=1)
     
@@ -188,27 +202,48 @@ def plot_vibracao_reconstrucao_completa(mpoint='c_637', start_time=None, end_tim
     # Estética
     ax.autoscale_view()
     ax.xaxis.set_major_locator(mdates.AutoDateLocator())
-    ax.xaxis.set_major_formatter(mdates.DateFormatter('%d/%m %H:%M'))
-    ax.yaxis.set_major_locator(plt.MultipleLocator(1.0))
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%d/%m/%y'))
+    vib_max = max(vibs) * 1.1 if len(vibs) > 0 else 10
+    tick_step = 0.5 if vib_max <= 6 else (1.0 if vib_max <= 12 else 2.0)
+    ax.yaxis.set_major_locator(plt.MultipleLocator(tick_step))
+    ax.yaxis.set_minor_locator(plt.MultipleLocator(tick_step / 2))
     ax.grid(axis='y', color='gray', linestyle='-', alpha=0.2)
+    ax.grid(axis='y', which='minor', color='gray', linestyle=':', alpha=0.1)
     plt.xticks(rotation=45)
-    
+    # Ticks com fonte grande (acima do rcParams)
+    ax.tick_params(axis='both', labelsize=20)
+
     title = f'Vibração Temporal Reconstruída - {mpoint}'
     if start_time: title += f' ({start_time} a {end_time})'
-    ax.set_title(title, fontsize=16, fontweight='bold')
-    ax.set_ylabel('Vibração RMS (mm/s)', fontsize=12)
-    ax.set_ylim(0, max(vibs) * 1.1 if not df_plot.empty else 10)
-    
+    ax.set_title(title, fontweight='bold')
+    ax.set_xlabel('Data', fontsize=20, fontweight='bold')
+    ax.set_ylabel('Vibração RMS (mm/s)', fontsize=20, fontweight='bold')
+    ax.set_ylim(0, vib_max)
+
+    # Legenda externa com círculos (padrão do gráfico 3D: markersize=13, edgecolor k)
     legend_elements = [
-        Line2D([0], [0], color=COLOR_LIGADO, lw=2, label='Real: LIGADO'),
-        Line2D([0], [0], color=COLOR_DESLIGADO, lw=2, label='Real: DESLIGADO'),
-        Line2D([0], [0], color=COLOR_KNN_LIGADO, lw=3, label='KNN: Rosa Ligado'),
-        Line2D([0], [0], color=COLOR_KNN_DESLIGADO, lw=3, label='KNN: Rosa Escuro'),
-        Line2D([0], [0], color=COLOR_SPLINE_LIGADO, lw=3, label='Spline: Ligado'),
-        Line2D([0], [0], color=COLOR_SPLINE_DESLIGADO, lw=3, label='Spline: Desligado'),
-        Line2D([0], [0], color=COLOR_VAZIO, lw=8, alpha=0.3, label='Lacuna (> 3h)')
+        Line2D([0], [0], marker='o', color='w', markerfacecolor=COLOR_LIGADO,
+               markeredgecolor='k', markeredgewidth=0.5, markersize=13, label='Real: LIGADO'),
+        Line2D([0], [0], marker='o', color='w', markerfacecolor=COLOR_DESLIGADO,
+               markeredgecolor='k', markeredgewidth=0.5, markersize=13, label='Real: DESLIGADO'),
+        Line2D([0], [0], marker='o', color='w', markerfacecolor=COLOR_KNN_LIGADO,
+               markeredgecolor='k', markeredgewidth=0.5, markersize=13, label='KNN: LIGADO'),
+        Line2D([0], [0], marker='o', color='w', markerfacecolor=COLOR_KNN_DESLIGADO,
+               markeredgecolor='k', markeredgewidth=0.5, markersize=13, label='KNN: DESLIGADO'),
+        Line2D([0], [0], marker='o', color='w', markerfacecolor=COLOR_SPLINE_LIGADO,
+               markeredgecolor='k', markeredgewidth=0.5, markersize=13, label='Spline: LIGADO'),
+        Line2D([0], [0], marker='o', color='w', markerfacecolor=COLOR_SPLINE_DESLIGADO,
+               markeredgecolor='k', markeredgewidth=0.5, markersize=13, label='Spline: DESLIGADO'),
+        Line2D([0], [0], marker='s', color='w', markerfacecolor=COLOR_VAZIO,
+               markeredgecolor='k', markeredgewidth=0.5, markersize=13,
+               alpha=0.6, label='Lacuna (> 3h)'),
     ]
-    ax.legend(handles=legend_elements, loc='upper right', frameon=True, shadow=True, fontsize=9)
+    fig.subplots_adjust(right=0.76)
+    ax.legend(handles=legend_elements,
+              bbox_to_anchor=(1.01, 1), loc='upper left',
+              frameon=True, shadow=True,
+              fontsize=18, borderpad=1.0, handletextpad=0.4,
+              labelspacing=0.3, borderaxespad=0.0)
     
     plt.tight_layout()
     tag = f"_{str(start_time).replace(':', '-')}" if start_time else ""

@@ -1,22 +1,22 @@
 # Script: kmeans_classificacao_moderado.py
 
-## 📋 Descrição
+## Descrição
 Script **totalmente automático** para K-means com 6 clusters que classifica os dados em **4 estados operacionais** (DESLIGADO, DESLIGANDO, LIGANDO, LIGADO) usando análise de features e detecção temporal de transições. **Sem necessidade de intervenção manual**.
 
-## 🎯 Objetivo
+## Objetivo
 - Executar clustering K-means com 6 clusters
 - **Classificar automaticamente** em 4 estados operacionais
 - Detectar transições temporais (LIGANDO/DESLIGANDO)
 - Gerar dataset completo para treinamento CNN
 - Sistema 100% automático baseado em heurísticas robustas
 
-## 📊 Entrada
+## Entrada
 - **Arquivo**: `data/normalized/dados_kmeans.csv`
 - **Formato**: CSV com dados normalizados (0-1)
 - **Dimensões**: ~772k linhas × 182 colunas
 - **Configuração**: `models/info_normalizacao.json`
 
-## 📤 Saída
+## Saída
 - **Dados classificados**: `data/processed/dados_classificados_kmeans_moderado.csv` (todos os 6 clusters)
 - **Dados limpos**: `data/normalized/dados_kmeans_rotulados_conservador.csv` (apenas clusters 2 e 3)
 - **Modelo K-means**: `models/kmeans_model_moderado.pkl`
@@ -24,7 +24,7 @@ Script **totalmente automático** para K-means com 6 clusters que classifica os 
 - **Info do modelo**: `models/info_kmeans_model_moderado.json`
 - **Visualizações**: `results/analise_kmeans_clusters_moderado.png`
 
-## 🔧 Funcionalidades
+## Funcionalidades
 
 ### 1. Carregamento de Dados
 - Carrega dados normalizados do CSV
@@ -43,25 +43,25 @@ Script **totalmente automático** para K-means com 6 clusters que classifica os 
 - Identifica padrões de atividade
 
 ### 4. Classificação Automática em 4 Estados
-**🤖 Totalmente Automático - Sem Intervenção Manual**
+** Totalmente Automático - Sem Intervenção Manual**
 
 **Etapa 1: Análise de Features por Cluster**
 - Calcula médias de RPM, Corrente e Vibração para cada cluster
 - Gera **score combinado** = RPM + Corrente + Vibração (normalizado 0-1)
-- Quanto maior o score → mais "ligado" o equipamento
+- Quanto maior o score  mais "ligado" o equipamento
 
 **Etapa 2: Classificação Inicial**
-- **Menor score** → **DESLIGADO** (equipamento parado)
-- **Maior score** → **LIGADO** (plena operação)
-- **Intermediários** → **LIGADO** (operação em potência reduzida)
+- **Menor score**  **DESLIGADO** (equipamento parado)
+- **Maior score**  **LIGADO** (plena operação)
+- **Intermediários**  **LIGADO** (operação em potência reduzida)
 
 **Etapa 3: Detecção Temporal de Transições**
 - Ordena dados por timestamp
 - Calcula variações temporais (derivadas e desvio padrão)
-- Detecta mudanças de estado DESLIGADO ↔ LIGADO
+- Detecta mudanças de estado DESLIGADO  LIGADO
 - Marca janela de ±15 amostras como transição
-- **LIGANDO**: DESLIGADO → LIGADO
-- **DESLIGANDO**: LIGADO → DESLIGADO
+- **LIGANDO**: DESLIGADO  LIGADO
+- **DESLIGANDO**: LIGADO  DESLIGADO
 
 ### 5. Resultados da Classificação Automática
 
@@ -105,7 +105,7 @@ Todos são considerados "LIGADO" pois o equipamento está em operação ativa.
 - Destaca clusters descartados
 - Análise de distribuição conservadora
 
-## 📈 Parâmetros do K-means
+## Parâmetros do K-means
 ```python
 KMeans(
     n_clusters=6,
@@ -115,7 +115,7 @@ KMeans(
 )
 ```
 
-## 🔧 Critérios de Classificação
+## Critérios de Classificação
 ```python
 # DESLIGADO: Todas as condições devem ser verdadeiras
 condicoes_desligado = [
@@ -128,19 +128,19 @@ condicoes_desligado = [
 equipamento_status = 'DESLIGADO' if todas_condicoes else 'LIGADO'
 ```
 
-## 🚀 Como Usar
+## Como Usar
 
 ```bash
 python scripts/kmeans_classificacao_moderado.py
 ```
 
-## 📋 Pré-requisitos
+## Pré-requisitos
 - Arquivo `dados_kmeans.csv` normalizado
 - Arquivo `info_normalizacao.json` com configurações
 - Scaler `scaler_maxmin.pkl` salvo
 - Diretórios: `models/`, `results/`, `plots/`
 
-## 📊 Exemplo de Saída
+## Exemplo de Saída
 ```
 === K-MEANS RIGOROSO - 6 CLUSTERS COM CRITÉRIOS ESPECÍFICOS ===
 Executando K-means com 6 clusters...
@@ -155,7 +155,7 @@ Clusters com mais certeza:
   - Cluster 2: LIGADO com 100.0% de certeza (67,880 LIGADO)
   - Cluster 3: DESLIGADO com 99.5% de certeza (25,892 DESLIGADO)
 
-📊 Resumo do modo rigoroso (apenas clusters de alta certeza):
+ Resumo do modo rigoroso (apenas clusters de alta certeza):
   - Total de amostras: 772,231
   - Amostras para treinamento CNN: 93,910
   - Amostras LIGADO: 68,014
@@ -165,36 +165,36 @@ Clusters com mais certeza:
   - Clusters descartados: [0, 1, 4, 5]
 ```
 
-## 🔍 Estratégia Rigorosa
+## Estratégia Rigorosa
 1. **Critérios Físicos**: Baseado em valores reais das variáveis
 2. **Classificação Binária**: DESLIGADO vs LIGADO
 3. **Validação**: Critérios baseados em conhecimento do domínio
 4. **Consistência**: Todos os dados são classificados
 
-## 📊 Vantagens do Modo Rigoroso
+## Vantagens do Modo Rigoroso
 - **Base Física**: Critérios baseados em valores reais
 - **Interpretabilidade**: Critérios claros e compreensíveis
 - **Consistência**: Classificação baseada em regras fixas
 - **Robustez**: Não depende de clustering para classificação
 
-## ⚠️ Considerações do Modo Rigoroso
+## Considerações do Modo Rigoroso
 - **Rigidez**: Critérios fixos podem não capturar nuances
 - **Thresholds**: Valores específicos podem precisar ajuste
 - **Variabilidade**: Pode não capturar estados intermediários
 
-## 📈 Qualidade dos Dados Rigorosos
+## Qualidade dos Dados Rigorosos
 - **Consistência**: 100% dos dados classificados com critérios claros
 - **Interpretabilidade**: Baseado em conhecimento do domínio
 - **Reprodutibilidade**: Critérios fixos e documentados
 - **Validação**: Fácil de validar e ajustar
 
-## 📊 Visualizações Especiais
+## Visualizações Especiais
 1. **Clusters K-means**: Mostra os 2 clusters
 2. **Classificação por Critérios**: Separação LIGADO/DESLIGADO
 3. **Distribuição dos Clusters**: Contagem dos 2 clusters
 4. **Distribuição do Status**: Proporção LIGADO/DESLIGADO
 
-## 🔄 Fluxo de Trabalho Rigoroso
+## Fluxo de Trabalho Rigoroso
 1. Carregar dados normalizados
 2. Executar K-means com 2 clusters
 3. Analisar características dos clusters
@@ -203,7 +203,7 @@ Clusters com mais certeza:
 6. Gerar dataset com classificação física
 7. Salvar modelos e dados classificados
 
-## 📁 Estrutura de Saída
+## Estrutura de Saída
 ```
 data/processed/
 ├── dados_classificados_kmeans_moderado.csv  # Todos os dados
@@ -217,13 +217,13 @@ results/
 └── analise_kmeans_clusters_moderado.png    # Visualizações
 ```
 
-## 🎯 Aplicações do Dataset Rigoroso
+## Aplicações do Dataset Rigoroso
 - **Treinamento CNN**: Dados com classificação física
 - **Validação**: Benchmark baseado em critérios reais
 - **Análise**: Padrões baseados em conhecimento do domínio
 - **Deployment**: Modelos com critérios interpretáveis
 
-## 📊 Comparação: Moderado vs Rigoroso
+## Comparação: Moderado vs Rigoroso
 | Aspecto | Moderado | Rigoroso |
 |---------|----------|----------|
 | **Base de classificação** | Clustering | Critérios físicos |
@@ -232,20 +232,20 @@ results/
 | **Ajustabilidade** | Difícil | Fácil |
 | **Confiabilidade** | Baseada em clustering | Baseada em regras |
 
-## ⚠️ Observações Importantes
+## Observações Importantes
 - **Critérios fixos**: Baseados em valores específicos
 - **Interpretabilidade**: Fácil de entender e validar
 - **Ideal para**: Modelos que precisam de critérios claros
 - **Ajustável**: Thresholds podem ser modificados facilmente
 
-## 🎯 Próximos Passos
+## Próximos Passos
 Após execução, o dataset rigoroso pode ser usado para:
 1. Treinar CNN com critérios físicos
 2. Validar modelos com regras claras
 3. Análise baseada em conhecimento do domínio
 4. Benchmark com critérios interpretáveis
 
-## 📊 Estatísticas Típicas
+## Estatísticas Típicas
 - **Dados originais**: 772.231 amostras
 - **Dados para treino CNN**: 93.910 amostras (12.2%)
 - **LIGADO**: 68.014 amostras (72.4%)

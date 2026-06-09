@@ -1,29 +1,29 @@
 # Script: normalizar_dados_kmeans.py
 
-## 📋 Descrição
+## Descrição
 Script para normalizar dados completos (772k linhas) removendo colunas `m_point` e preparando dados para algoritmos de machine learning, especialmente K-means.
 
-## 🎯 Objetivo
+## Objetivo
 - Carregar dados unificados completos (772k linhas)
 - Remover colunas relacionadas a `m_point`
 - Normalizar dados com pipeline configurável (scikit-learn)
 - Preparar dados para K-means e outros algoritmos ML
 - Manter máximo de dados possível (removendo apenas o mínimo necessário)
 
-## 📊 Entrada
+## Entrada
 - **Arquivo**: `data/processed/dados_unificados_final.csv`
 - **Dimensões**: ~772k linhas × 187 colunas
 - **Conteúdo**: Dados unificados com todas as features
 - **Colunas m_point**: `m_point`, `fft_acc_m_point`, `fft_mag_m_point`, `slip_m_point`
 
-## 📤 Saída
+## Saída
 - **Dados K-means**: `data/normalized/dados_kmeans.csv`
 - **Dados completos**: `data/normalized/dados_normalizados_completos.npy`
 - **Scaler**: `models/scaler_maxmin.pkl`
 - **Pipeline**: `models/preprocess_pipeline.pkl`
 - **Configuração**: `models/info_normalizacao.json`
 
-## 🔧 Funcionalidades
+## Funcionalidades
 
 ### 1. Remoção de Colunas m_point
 - Identifica automaticamente colunas com `m_point`
@@ -54,7 +54,7 @@ Script para normalizar dados completos (772k linhas) removendo colunas `m_point`
 - Divide dados em treino/teste (80/20)
 - Salva dados em formatos otimizados (.npy, .csv)
 
-## 📈 Parâmetros de Normalização
+## Parâmetros de Normalização
 Flags CLI do script:
 ```bash
 --scaler {minmax,standard,robust}
@@ -66,7 +66,7 @@ Flags CLI do script:
 --pca-variance FLOAT
 ```
 
-## 🚀 Como Usar
+## Como Usar
 
 ```bash
 # Padrão (MinMax + VarianceThreshold 0.0)
@@ -85,12 +85,12 @@ python scripts/normalizar_dados_kmeans.py --quantile normal --pca-variance 0.95
 python scripts/normalizar_dados_kmeans.py --corr-threshold 0.95
 ```
 
-## 📋 Pré-requisitos
+## Pré-requisitos
 - Arquivo `dados_unificados_final.csv` deve existir
 - Diretórios: `data/normalized/`, `models/`, `plots/`
 - Bibliotecas: pandas, numpy, scikit-learn, matplotlib
 
-## 📊 Exemplo de Saída
+## Exemplo de Saída
 ```
 === NORMALIZAÇÃO DE DADOS PARA K-MEANS ===
 Carregando dados unificados...
@@ -112,36 +112,36 @@ Normalizando dados com Max-Min Scaler...
   - Features removidas (variância zero): 6
 ```
 
-## 🔍 Colunas Removidas
+## Colunas Removidas
 - `m_point`: Ponto de medição
 - `fft_acc_m_point`: FFT aceleração m_point
 - `fft_mag_m_point`: FFT magnitude m_point
 - `slip_m_point`: Slip m_point
 
-## 📊 Estratégia de Limpeza
+## Estratégia de Limpeza
 1. **Análise de nulos**: Identifica colunas problemáticas
 2. **Remoção conservadora**: Remove apenas colunas com >50% nulos
 3. **Preenchimento inteligente**: Usa mediana para preencher nulos
 4. **Validação final**: Remove apenas linhas com nulos restantes
 
-## 📈 Qualidade dos Dados
+## Qualidade dos Dados
 - **Dados mantidos**: 100% das linhas originais
 - **Features válidas**: 182 colunas
 - **Normalização**: Range [0, 1] uniforme
 - **Distribuição**: Preservada após normalização
 
-## 📊 Visualizações Geradas
+## Visualizações Geradas
 - **Distribuição Original vs Normalizada**: Box plots comparativos
 - **Histogramas**: Antes e depois da normalização
 - **Análise de Features**: Primeiras 20 colunas
 
-## ⚠️ Observações Importantes
+## Observações Importantes
 - Script mantém TODAS as 772k linhas originais
 - Remove apenas colunas `m_point` (não necessárias para ML)
 - Usa preenchimento com mediana (mais conservador que dropna)
 - Gera dados prontos para K-means e outros algoritmos
 
-## 🔄 Fluxo de Trabalho
+## Fluxo de Trabalho
 1. Carregar dados unificados completos
 2. Remover colunas m_point
 3. Analisar qualidade dos dados
@@ -151,7 +151,7 @@ Normalizando dados com Max-Min Scaler...
 7. Salvar dados e modelos
 8. Gerar visualizações
 
-## 📁 Estrutura de Saída
+## Estrutura de Saída
 ```
 data/normalized/
 ├── dados_kmeans.csv                    # Dados para K-means
@@ -164,14 +164,14 @@ plots/
 └── dados_normalizados_analise.png      # Visualizações
 ```
 
-## 🎯 Próximos Passos
+## Próximos Passos
 Após normalização, os dados estão prontos para:
 1. Executar K-means (`kmeans_classificacao.py`)
 2. Treinar CNN/ConvAE
 3. Análise exploratória
 4. Modelagem preditiva
 
-## 📊 Estatísticas Finais
+## Estatísticas Finais
 - **Linhas processadas**: 772,238
 - **Features normalizadas**: 182
 - **Dados mantidos**: 100%

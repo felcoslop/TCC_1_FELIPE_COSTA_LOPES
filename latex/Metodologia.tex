@@ -4,11 +4,11 @@
 
 A metodologia desenvolvida consiste em um sistema dual de processamento de dados e classificação adaptativa não supervisionada para detecção de estados operacionais de equipamentos industriais. O sistema foi projetado para operar com dados reais de sensores IoT de diferentes tipos de equipamentos, tratando desafios práticos como lacunas temporais, \textit{outliers}, sincronização de múltiplas fontes e adaptação automática ao tipo de equipamento.
 
-O processo metodológico inicia com a detecção automática do tipo de equipamento baseada nos arquivos de dados disponíveis e em verificações robustas de densidade de cobertura. Originalmente, o sistema exigia que pelo menos 30\% dos dados de corrente e RPM fossem válidos (não nulos) para prosseguir com a classificação elétrica. Entretanto, verificou-se que esta regra estatística relativa penalizava injustamente equipamentos que operam esporadicamente e passam a maior parte do tempo desligados (quando o sensor não gera estimativas elétricas). Para solucionar este viés, a lógica foi refinada para adotar um limite absoluto: se o arquivo \texttt{estimated} possuir pelo menos 1.000 registros reais e válidos de corrente ou RPM (mesmo que representem uma fração percentual mínima de um longo histórico), o equipamento é mantido e processado pelo \textit{pipeline} elétrico. Essa mesma verificação absoluta é imposta estritamente dentro da fase de clusterização e avaliação física do K-Means, garantindo que o algoritmo não descarte variáveis como corrente ou RPM sob a falsa premissa de insuficiência de dados relativos. Equipamentos elétricos ideais possuem este arquivo além de \texttt{validated\_default} e \texttt{validated\_slip}, enquanto equipamentos mecânicos possuem apenas os dois últimos.
-
-Entretanto, em cenários industriais reais, a inferência de dados elétricos como corrente e RPM a partir de sensores IoT baseia-se na análise espectral do fluxo magnético parasita e depende fundamentalmente da configuração da quantidade de polos do motor e de parâmetros de placa exatos na base relacional~\cite{romary2022airgap, doe2014motor, garcia2025estimation}. Quando esses dados cadastrais estão ausentes ou incorretos, o equipamento, mesmo possuindo sensores magnéticos e magnetômetro físicos, não consegue realizar o cálculo de inferência, resultando em valores nulos (\textit{NaN}) para corrente e RPM. Nestes casos específicos, o sistema aplica um \textit{fallback} automático de redundância: o equipamento elétrico é reclassificado e tratado como mecânico. Esta abordagem demonstrou-se altamente eficaz, uma vez que o modelo K-Means utilizando as 16 \textit{features} mecânicas (focadas em temperatura, vibração global/espectral e magnetômetro bruto) consegue distinguir os estados operacionais perfeitamente sem depender das estimativas elétricas falhas. Esta detecção automática permite selecionar o \textit{pipeline} correto, adaptar a estratégia de classificação e configurar visualizações apropriadas.
-
 \section{Visão Geral dos \textit{Pipelines}}
+
+A primeira etapa do sistema é a detecção automática do tipo de equipamento, realizada com base nos arquivos de dados disponíveis e em verificações robustas de densidade de cobertura. Originalmente, o sistema exigia que pelo menos 30\% dos dados de corrente e RPM fossem válidos (não nulos) para prosseguir com a classificação elétrica. Entretanto, verificou-se que esta regra estatística relativa penalizava injustamente equipamentos que operam esporadicamente e passam a maior parte do tempo desligados (quando o sensor não gera estimativas elétricas). Para solucionar este viés, a lógica foi refinada para adotar um limite absoluto: se o arquivo \texttt{estimated} possuir pelo menos 1.000 registros reais e válidos de corrente ou RPM (mesmo que representem uma fração percentual mínima de um longo histórico), o equipamento é mantido e processado pelo \textit{pipeline} elétrico. Essa mesma verificação absoluta é imposta estritamente dentro da fase de clusterização e avaliação física do K-Means, garantindo que o algoritmo não descarte variáveis como corrente ou RPM sob a falsa premissa de insuficiência de dados relativos. Equipamentos elétricos ideais possuem este arquivo além de \texttt{validated\_default} e \texttt{validated\_slip}, enquanto equipamentos mecânicos possuem apenas os dois últimos.
+
+Em cenários industriais reais, a inferência de dados elétricos como corrente e RPM a partir de sensores IoT baseia-se na análise espectral do fluxo magnético parasita e depende fundamentalmente da configuração da quantidade de polos do motor e de parâmetros de placa exatos na base relacional~\cite{romary2022airgap, doe2014motor, garcia2025estimation}. Quando esses dados cadastrais estão ausentes ou incorretos, o equipamento, mesmo possuindo sensores magnéticos e magnetômetro físicos, não consegue realizar o cálculo de inferência, resultando em valores nulos (\textit{NaN}) para corrente e RPM. Nestes casos específicos, o sistema aplica um \textit{fallback} automático de redundância: o equipamento elétrico é reclassificado e tratado como mecânico. Esta abordagem demonstrou-se altamente eficaz, uma vez que o modelo K-Means utilizando as 16 \textit{features} mecânicas (focadas em temperatura, vibração global/espectral e magnetômetro bruto) consegue distinguir os estados operacionais perfeitamente sem depender das estimativas elétricas falhas.
 
 O sistema implementa dois \textit{pipelines} especializados com etapas compartilhadas e específicas. O \textit{pipeline} elétrico processa equipamentos com corrente e RPM através de coleta de dados (\texttt{validated\_default}, \texttt{estimated} e \texttt{validated\_slip}), segmentação e validação de períodos contínuos, processamento e interpolação com KNN temporal e Spline Hermitiana, além do tratamento de \textit{outliers}, junção e sincronização de múltiplas fontes com diferentes frequências, normalização MinMax com \textit{clipping} de \textit{outliers} (percentil 99,5\%), e classificação K-Means com \textit{score} baseado em corrente (peso 2,0), RPM (peso 2,0), vibração (peso 1,0) e temperatura (peso 0,5).
 
@@ -38,7 +38,7 @@ Cada período deve atender critérios de validação: duração mínima de 24 ho
 \section{Processamento e Interpolação}
 \label{sec:processamento_interpolacao}
 
-O sistema executa detecção de \textit{outliers} por IQR (\textit{Interquartile Range})~\cite{tukey1977iqr} aplicado a cada coluna/sensor individualmente. Utiliza multiplicador conservador 3,0 (\textit{versus} 1,5 tradicional) para calcular limites inferior e superior, marcando valores \textit{outliers} como NaN. Adicionalmente, foi implementada uma trava de segurança dinâmica contra alucinações de sensores causadas por Interferência Eletromagnética (EMI)~\cite{romary2022airgap}. Como os sensores magnéticos calculam RPM e corrente lendo a distorção do campo magnético, ruídos de fontes externas (como o acionamento de motores vizinhos ou proximidade de cabos de alta tensão) podem levar o magnetômetro a captar campos espúrios. Nestes casos, o sensor pode registrar erroneamente altas rotações (ex: $> 100$ RPM) acompanhadas de correntes nulas ou irrisórias, mesmo com o eixo físico da máquina parado e vibração absoluta nula. Para neutralizar esse artefato sem distorcer os dados, o código calcula o Percentil 90 (P90)~\cite{tukey1977iqr} da corrente válida de cada motor. O P90 é uma medida estatística que indica o valor abaixo do qual se encontram 90\% das amostras; neste contexto, ele é utilizado como um estimador robusto do nível de corrente de operação nominal, sendo menos sensível a picos isolados de partida ou ruídos transitórios do que a média aritmética simples. Se o RPM indicar operação, mas a corrente não acompanhar (permanecendo abaixo de 5\% do P90 ou menor que $2,0$ A), o sistema classifica o pico como uma "falsa partida" por interferência e zera forçadamente tanto o RPM quanto a corrente. O limiar absoluto de $2,0$ A foi definido como piso de segurança a partir da natureza dos equipamentos monitorados: tratam-se de motores industriais de média e alta potência (como a motobomba de $125~\text{cv}$ analisada na Figura~\ref{fig:limpeza_outliers_iqr}), cujas correntes nominais de operação situam-se na ordem de dezenas a centenas de amperes. Dessa forma, qualquer leitura inferior a $2,0$ A é fisicamente incompatível com operação real sob carga, correspondendo apenas a ruído residual de instrumentação ou a correntes de fuga, o que justifica seu descarte como falsa partida. Isso impede que os picos fantasmas propaguem classificações errôneas de LIGADO no algoritmo K-Means.
+O sistema executa detecção de \textit{outliers} por IQR (\textit{Interquartile Range})~\cite{tukey1977iqr} aplicado a cada coluna/sensor individualmente. Utiliza multiplicador conservador 3,0 (\textit{versus} 1,5 tradicional) para calcular limites inferior e superior, marcando valores \textit{outliers} como NaN. Adicionalmente, foi implementada uma trava de segurança dinâmica contra alucinações de sensores causadas por Interferência Eletromagnética (EMI)~\cite{romary2022airgap}. Como os sensores magnéticos calculam RPM e corrente lendo a distorção do campo magnético, ruídos de fontes externas (como o acionamento de motores vizinhos ou proximidade de cabos de alta tensão) podem levar o magnetômetro a captar campos espúrios. Nestes casos, o sensor pode registrar erroneamente altas rotações (ex: $> 100$ RPM) acompanhadas de correntes nulas ou irrisórias, mesmo com o eixo físico da máquina parado e vibração absoluta nula. Para neutralizar esse artefato sem distorcer os dados, o código calcula o Percentil 90 (P90)~\cite{tukey1977iqr} da corrente válida de cada motor. O P90 é uma medida estatística que indica o valor abaixo do qual se encontram 90\% das amostras; neste contexto, ele é utilizado como um estimador robusto do nível de corrente de operação nominal, sendo menos sensível a picos isolados de partida ou ruídos transitórios do que a média aritmética simples. Se o RPM indicar operação, mas a corrente não acompanhar, o sistema classifica o pico como uma "falsa partida" por interferência e zera forçadamente tanto o RPM quanto a corrente. O limiar de detecção é calculado de forma dinâmica para cada equipamento: $\text{limiar} = \max(P90 \times 5\%,\ 2{,}0\ \text{A})$. O primeiro termo, $P90 \times 5\%$, representa 5\% do nível de corrente de operação nominal do equipamento, estimado de forma robusta pelo Percentil 90 dos valores válidos de corrente. Para os equipamentos de médio e alto porte analisados neste trabalho (como a motobomba de $125~\text{cv}$ da Figura~\ref{fig:limpeza_outliers_iqr}), cujas correntes nominais situam-se na ordem de dezenas a centenas de amperes, o P90 supera tipicamente 100 A, resultando em limiares efetivos da ordem de 5 a 10 A --- bem acima do piso de 2,0 A. O segundo termo, $2{,}0$ A, atua apenas como piso mínimo de segurança para evitar que o limiar dinâmico se torne numericamente insignificante em situações de dados escassos ou de equipamentos com correntes nominais muito baixas. Isso impede que os picos fantasmas propaguem classificações errôneas de LIGADO no algoritmo K-Means.
 
 A Figura~\ref{fig:limpeza_outliers_iqr} ilustra o processo completo de detecção e limpeza automática de uma motobomba elétrica de $125~\text{cv}$. No gráfico superior, observam-se picos de vibração RMS na faixa de 30 a 60 mm/s, valores fisicamente impossíveis para uma motobomba industrial em operação normal. Segundo a norma ISO 10816-3~\cite{iso10816_3}, equipamentos industriais dessa classe operam tipicamente com vibração RMS abaixo de 7,1 mm/s (Zona C -- alerta), sendo que valores acima desse limiar já indicam condição crítica. Picos da ordem de 60 mm/s são, portanto, inequivocamente artefatos espúrios causados por interferências eletromagnéticas ou falhas momentâneas do sensor, e não representam condição operacional real do equipamento. Após a limpeza automática pelo IQR, o gráfico inferior mostra o sinal tratado e contínuo, com valores coerentes dentro da faixa operacional esperada.
 
@@ -96,10 +96,11 @@ A Tabela~\ref{tab:exemplo_default} representa a fonte de dados base (\texttt{val
         \hline
         \textbf{Time (UTC)} & \textbf{object\_temp ($^\circ$C)} & \textbf{vel\_rms\_x (mm/s)} \\
         \hline
-        10:00:00 & 45,2 & 2,1 \\
-        10:00:20 & 45,3 & 2,2 \\
-        10:00:40 & 45,3 & 2,1 \\
-        10:01:00 & 45,4 & 2,3 \\
+        15/01/2025 10:00:00 & 45,2 & 2,1 \\
+        15/01/2025 10:00:20 & 45,3 & 2,2 \\
+        15/01/2025 10:00:40 & 45,3 & 2,1 \\
+        15/01/2025 10:01:00 & 45,4 & 2,3 \\
+        15/01/2025 10:01:20 & 45,4 & 2,2 \\
         \hline
     \end{tabular}
 \end{table}
@@ -112,8 +113,11 @@ A Tabela~\ref{tab:exemplo_default} representa a fonte de dados base (\texttt{val
         \hline
         \textbf{Time (UTC)} & \textbf{current (A)} & \textbf{rotational\_speed (RPM)} \\
         \hline
-        10:00:15 & 12,5 & 1180 \\
-        10:01:10 & 12,6 & 1182 \\
+        15/01/2025 10:00:15 & 12,5 & 1180 \\
+        15/01/2025 10:01:10 & 12,6 & 1182 \\
+        15/01/2025 10:02:08 & 12,6 & 1183 \\
+        15/01/2025 10:03:05 & 12,7 & 1181 \\
+        15/01/2025 10:04:02 & 12,7 & 1182 \\
         \hline
     \end{tabular}
 \end{table}
@@ -126,12 +130,16 @@ A Tabela~\ref{tab:exemplo_default} representa a fonte de dados base (\texttt{val
         \hline
         \textbf{Time (UTC)} & \textbf{fe\_frequency (Hz)} \\
         \hline
-        10:00:30 & 1,85 \\
+        15/01/2025 10:00:30 & 1,85 \\
+        15/01/2025 10:02:25 & 1,86 \\
+        15/01/2025 10:04:20 & 1,85 \\
+        15/01/2025 10:06:15 & 1,87 \\
+        15/01/2025 10:08:10 & 1,86 \\
         \hline
     \end{tabular}
 \end{table}
 
-A Tabela~\ref{tab:exemplo_sincronizado} apresenta o resultado da fusão e sincronização das três fontes na linha de base temporal de 20 segundos. Observa-se que, para o instante \texttt{10:00:00}, os valores elétricos (\texttt{current} e \texttt{rotational\_speed}) foram preenchidos com os dados de \texttt{10:00:15} (o primeiro valor futuro disponível dentro da tolerância de 6 minutos) e a frequência de escorregamento com o dado de \texttt{10:00:30} (tolerância de 3 minutos). Para os instantes \texttt{10:00:20}, \texttt{10:00:40} e \texttt{10:01:00}, as leituras elétricas foram preenchidas a partir de \texttt{10:01:10}, enquanto a frequência de escorregamento continuou sendo retropropagada a partir de \texttt{10:00:30} até o limite de sua respectiva tolerância.
+A Tabela~\ref{tab:exemplo_sincronizado} apresenta o resultado da fusão e sincronização das três fontes na linha de base temporal de 20 segundos. Observa-se que, para o instante \texttt{10:00:00}, os valores elétricos (\texttt{current} e \texttt{rotational\_speed}) foram preenchidos com os dados de \texttt{10:00:15} (o primeiro valor futuro disponível dentro da tolerância de 6 minutos) e a frequência de escorregamento com o dado de \texttt{10:00:30} (tolerância de 3 minutos). Para os instantes \texttt{10:00:20}, \texttt{10:00:40} e \texttt{10:01:00}, as leituras elétricas foram preenchidas a partir de \texttt{10:01:10}, enquanto a frequência de escorregamento continuou sendo retropropagada a partir de \texttt{10:00:30} até o limite de sua respectiva tolerância. O instante \texttt{10:01:20} já recebe a leitura elétrica de \texttt{10:02:08}, mas a frequência de escorregamento aparece como \textit{NaN} pois o próximo registro de \texttt{validated\_slip} (\texttt{10:02:25}) excede a janela de 3 minutos retroativos.
 
 \begin{table}[H]
     \centering
@@ -139,12 +147,13 @@ A Tabela~\ref{tab:exemplo_sincronizado} apresenta o resultado da fusão e sincro
     \label{tab:exemplo_sincronizado}
     \begin{tabular}{cccccc}
         \hline
-        \textbf{Time (UTC)} & \textbf{object\_temp} & \textbf{vel\_rms\_x} & \textbf{current} & \textbf{rotational\_speed} & \textbf{fe\_frequency} \\
+        \textbf{Time (UTC)} & \textbf{object\_temp} & \textbf{vel\_rms\_x} & \textbf{current} & \textbf{rot. speed} & \textbf{fe\_freq.} \\
         \hline
-        10:00:00 & 45,2 & 2,1 & 12,5 & 1180 & 1,85 \\
-        10:00:20 & 45,3 & 2,2 & 12,6 & 1182 & 1,85 \\
-        10:00:40 & 45,3 & 2,1 & 12,6 & 1182 & \textit{NaN} \\
-        10:01:00 & 45,4 & 2,3 & 12,6 & 1182 & \textit{NaN} \\
+        15/01/2025 10:00:00 & 45,2 & 2,1 & 12,5 & 1180 & 1,85 \\
+        15/01/2025 10:00:20 & 45,3 & 2,2 & 12,6 & 1182 & 1,85 \\
+        15/01/2025 10:00:40 & 45,3 & 2,1 & 12,6 & 1182 & \textit{NaN} \\
+        15/01/2025 10:01:00 & 45,4 & 2,3 & 12,6 & 1182 & \textit{NaN} \\
+        15/01/2025 10:01:20 & 45,4 & 2,2 & 12,6 & 1183 & \textit{NaN} \\
         \hline
     \end{tabular}
 \end{table}
@@ -161,7 +170,7 @@ O processo aplica normalização MinMax~\cite{minmax_sklearn}, escalando para in
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{plots/01_minmax_scaler.png}
+    \includegraphics[width=0.95\textwidth]{plots/01_minmax_scaler.png}
     \caption{Comparação entre dados brutos (esquerda) e dados normalizados (direita) pelo MinMax. A normalização preserva integralmente a distribuição estatística dos sinais, alterando apenas a escala para o intervalo $[0,1]$, sem distorcer a forma nem a dispersão dos dados originais~\cite{minmax_sklearn}.}
     \label{fig:minmax_scaler}
 \end{figure}
@@ -173,16 +182,7 @@ O MinMaxScaler treinado é persistido para garantir normalização consistente d
 
 O algoritmo K-Means é configurado com $k=6$ \textit{clusters}, inicialização \textit{k-means++} inteligente, 10 inicializações, máximo de 300 iterações e \textit{random state} 42 para reprodutibilidade. A escolha de $k=6$ busca representar a proporção aproximada de 1 para 2 entre os estados desligado e ligado, reservando \textit{clusters} para os estados puramente desligado, para os estados de \textit{standby}/transição (intermediários entre os dois extremos) e para os estados de operação em diferentes cargas/intensidades.
 
-A Figura~\ref{fig:kmeans_animacao} ilustra a convergência do algoritmo K-Means ao longo das iterações. Utilizou-se $k=6$ \textit{clusters}, e os centróides convergem para posições que representam os diferentes regimes operacionais. Na escala de cores, tons de verde mais escuros indicam valores mais elevados dos atributos (maior atividade operacional), enquanto tons de vermelho mais escuros representam valores mais baixos (menor atividade ou equipamento desligado). A animação completa está disponível no repositório do projeto (\href{https://1drv.ms/i/c/5f1c3aa3f12af1a2/IQBjyXW5EjddQaIrD6MY6jblAR4XaUFGNN3yKheuEY8MA7E?e=CTUrx6}{\texttt{03\_kmeans\_animacao.gif}}), pois o formato GIF não é suportado com animação em documentos PDF.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.75\textwidth]{plots/03_kmeans_animacao.png}
-    \caption[Convergência do algoritmo K-Means com $k=6$ \textit{clusters}]{Convergência do algoritmo K-Means com $k=6$ \textit{clusters}. Os centróides (marcadores em destaque) convergem para posições representativas de cada regime operacional. Verde escuro: valores elevados dos atributos; vermelho escuro: valores baixos. Animação completa disponível em: \href{https://1drv.ms/i/c/5f1c3aa3f12af1a2/IQBjyXW5EjddQaIrD6MY6jblAR4XaUFGNN3yKheuEY8MA7E?e=CTUrx6}{\texttt{03\_kmeans\_animacao.gif}}.}
-    \label{fig:kmeans_animacao}
-\end{figure}
-
-Após a clusterização, os \textit{clusters} são classificados automaticamente em LIGADO ou DESLIGADO baseado em \textit{scores} ponderados. Para equipamentos elétricos, o \textit{score} é calculado pela fórmula:
+Concluída a clusterização, o K-Means fornece os \textit{clusters} e seus centróides (o ponto médio das amostras em cada dimensão). A partir de cada centróide calcula-se um \textit{score} ponderado, que é então usado para ordenar os \textit{clusters} e classificá-los automaticamente em LIGADO ou DESLIGADO. Para equipamentos elétricos, o \textit{score} é calculado pela fórmula:
 
 \begin{equation}
     S_{eletrico} = 2{,}0 \cdot \bar{C}_{corrente} + 2{,}0 \cdot \bar{C}_{RPM} + 1{,}0 \cdot \bar{C}_{vibracao} + 0{,}5 \cdot \bar{C}_{temperatura}
@@ -196,7 +196,28 @@ Após a clusterização, os \textit{clusters} são classificados automaticamente
     \label{eq:score_mecanico}
 \end{equation}
 
-Os \textit{clusters} são ordenados por \textit{score} crescente com preferência conservadora: 1 \textit{cluster} com menor \textit{score} é classificado como DESLIGADO, e os 5 restantes como LIGADO. Entretanto, \textit{clusters} adicionais podem ser incluídos na categoria DESLIGADO se atenderem a critérios rigorosos de similaridade: (i) diferença de \textit{score} inferior a 0,3 em relação ao primeiro cluster, com \textit{score} absoluto abaixo de 0,5; e (ii) vibração máxima do cluster candidato não exceder em mais de 30\% a vibração máxima do \textit{cluster} base (limiar de vibração residual). Um exemplo típico ocorre quando o equipamento possui dois estados de repouso distintos (ex: motor parado com ventilação desligada vs. motor parado com vibração residual de máquinas adjacentes), onde ambos apresentam sinais elétricos nulos e vibrações mínimas.
+Por concepção, o sistema K-Means com $k=6$ foi estruturado para considerar sempre dois candidatos ao estado DESLIGADO: os dois \textit{clusters} de menor \textit{score} são avaliados em todos os equipamentos em cada execução, como reserva intencional para capturar eventuais variações sazonais de temperatura ambiente ou perfis distintos de repouso. Em seguida, aplica-se uma etapa de validação com critérios estritos para determinar se o segundo candidato realmente representa inatividade: (i) diferença de \textit{score} inferior a 0,3 em relação ao primeiro \textit{cluster}, com \textit{score} absoluto abaixo de 0,5; e (ii) vibração máxima do \textit{cluster} candidato não exceder em mais de 30\% a vibração máxima do \textit{cluster} base. Na prática, a maioria dos equipamentos possui apenas um regime claro de inatividade: o segundo candidato, ao falhar nos critérios, revela que se trata de um regime de baixa carga em operação, sendo reclassificado como LIGADO. A existência de dois \textit{clusters} DESLIGADO validados na classificação final é, portanto, o evento raro, e não a avaliação inicial dos dois candidatos, que é sistemática. Um exemplo em que a validação resulta em dois clusters DESLIGADO ocorre quando o equipamento possui perfis de repouso térmico distintos (ex: motor parado em verão vs.\ inverno), onde ambos apresentam sinais elétricos nulos e vibrações mínimas.
+
+As Figuras~\ref{fig:kmeans_animacao} e~\ref{fig:kmeans_classificacao_final} ilustram esse mecanismo no equipamento $c_{637}$. A Figura~\ref{fig:kmeans_animacao} mostra a convergência do algoritmo ao longo das iterações: os centróides convergem para posições que representam os diferentes regimes operacionais e, na iteração~11, os dois candidatos ao estado DESLIGADO ainda aparecem separados. Na escala de cores, tons de verde mais escuros indicam valores mais elevados dos atributos (maior atividade operacional), enquanto tons de vermelho mais escuros representam valores mais baixos (menor atividade ou equipamento desligado).
+
+É importante ressaltar que a coloração dos \textit{clusters} em tons de DESLIGADO e LIGADO já a partir da primeira iteração é apenas um recurso didático da animação: durante a execução real, o K-Means não tem conhecimento algum dos estados operacionais. O algoritmo se limita a inicializar 6 \textit{clusters} e a iterar (até 12 vezes, neste exemplo) reajustando exclusivamente as posições dos 6 centróides, sem qualquer noção de LIGADO ou DESLIGADO. Somente após o término das iterações é que o \textit{score} ponderado de cada centróide é calculado (Equações~\ref{eq:score_eletrico} e~\ref{eq:score_mecanico}); e é apenas nesse momento, pela ordenação dos \textit{scores}, que se identificam os 4 \textit{clusters} LIGADO e os 2 candidatos a DESLIGADO. As cores na animação foram atribuídas retroativamente, com base nessa classificação final, apenas para tornar a convergência mais intuitiva.
+
+\newpage
+A Figura~\ref{fig:kmeans_classificacao_final} apresenta a classificação final após a etapa de validação, na qual o segundo candidato é reclassificado como LIGADO. A animação completa está disponível no repositório do projeto (\href{https://1drv.ms/i/c/5f1c3aa3f12af1a2/IQAfBqvJTCaURJqst0fL3JzlAc1YmWKfL4e3FqxJm-HGR5U?e=PvGukI}{\texttt{03\_kmeans\_animacao.gif}}), pois o formato GIF não é suportado com animação em documentos PDF.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{plots/03_kmeans_animacao.png}
+    \caption[Convergência do K-Means (iteração 11) --- dois candidatos DESLIGADO visíveis]{Convergência do K-Means (K=6) na iteração~11, equipamento $c_{637}$ (projeção PCA 2D). Neste momento da convergência, dois centróides de baixa atividade (\textit{Desligado C1}, vermelho sólido, e \textit{Desligado C2}, vermelho claro) ainda se apresentam separados. A animação completa está disponível em: \href{https://1drv.ms/i/c/5f1c3aa3f12af1a2/IQAfBqvJTCaURJqst0fL3JzlAc1YmWKfL4e3FqxJm-HGR5U?e=PvGukI}{\texttt{03\_kmeans\_animacao.gif}}.}
+    \label{fig:kmeans_animacao}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.82\textwidth]{plots/03_kmeans_classificacao_final.png}
+    \caption{Classificação final do mesmo equipamento $c_{637}$ após a etapa de validação. O segundo candidato ao estado DESLIGADO (\textit{Desligado C2}) não satisfaz os critérios estritos de similaridade (diferença de \textit{score} $\geq 0{,}3$ ou \textit{score} acima de $0{,}5$), indicando que representa um regime de baixa carga em operação, não inatividade real. O sistema o reclassifica como LIGADO, resultando em apenas um \textit{cluster} DESLIGADO na saída final. Este comportamento é o esperado na grande maioria dos equipamentos.}
+    \label{fig:kmeans_classificacao_final}
+\end{figure}
 
 Adicionalmente, implementou-se uma trava de segurança denominada \textit{Vibration Safety Floor}, fundamentada no princípio de que níveis de vibração acima do patamar residual indicam máquina em operação, conforme as faixas de severidade de vibração estabelecidas pela norma ISO 10816-3~\cite{iso10816_3}: independente do \textit{score} ou da ausência de dados elétricos, qualquer \textit{cluster} com vibração normalizada acima de um limiar fixo de segurança (0,06 para elétricos e 0,08 para mecânicos) é obrigatoriamente classificado como LIGADO. Esta proteção garante que o sistema identifique corretamente a operação mesmo em estados de baixa carga ou quando sensores de corrente/RPM falham, evitando que estados operacionais ruidosos sejam erroneamente classificados como repouso devido a falhas de instrumentação elétrica.
 
@@ -419,11 +440,11 @@ Funcionalidades da Aba de Análise por Intervalo: Permite configuração do Infl
 
 O processamento nesta aba opera em cinco fases, conforme ilustrado na Figura~\ref{fig:pipeline_cinco_fases}:
 \begin{enumerate}
-    \item \textbf{Validação de requisitos:} Verifica a existência do modelo K-Means treinado e do \textit{scaler} MinMax persistidos para o equipamento, além de testar a conectividade com o InfluxDB e exigir um intervalo de análise de no mínimo 24 horas.
-    \item \textbf{Extração e validação:} Converte as marcações de horário fornecidas pelo operador (GMT-3) para UTC, efetua o \textit{download} das séries brutas e valida a densidade do intervalo, exigindo cobertura de dados maior que 70\% e rejeitando períodos com lacunas consecutivas maiores que 10 minutos (valores 0,0 são válidos; o que invalida são ausências reais de sinal).
-    \item \textbf{Processamento:} Realiza a segmentação temporal, interpolação adaptativa de lacunas e a sincronização multifrequência.
-    \item \textbf{Classificação avançada:} Aplica o classificador K-Means nos dados normalizados e realiza correções usando os limiares físicos salvos durante a etapa de treinamento. Não há necessidade de re-treinar o modelo ou recalcular limiares; a classificação utiliza a lógica de máxima cautela descrita na Seção~\ref{sec:kmeans_classification}, comparando valores físicos reais (RPM, corrente e vibração). Por fim, aplica-se o filtro de \textit{outliers} temporais para remover transições espúrias com duração menor que 10 minutos.
-    \item \textbf{Análise de métricas:} Calcula e reporta o tempo acumulado em cada estado operacional (LIGADO, DESLIGADO, e Incerteza/Sem Conexão) com base nas durações temporais reais, gerando relatórios textuais e gráficos de reconstrução temporal.
+    \item Validação de requisitos: Verifica a existência do modelo K-Means treinado e do \textit{scaler} MinMax persistidos para o equipamento, além de testar a conectividade com o InfluxDB e exigir um intervalo de análise de no mínimo 24 horas.
+    \item Extração e validação: Converte as marcações de horário fornecidas pelo operador (GMT-3) para UTC, efetua o \textit{download} das séries brutas e valida a densidade do intervalo, exigindo cobertura de dados maior que 70\% e rejeitando períodos com lacunas consecutivas maiores que 10 minutos (valores 0,0 são válidos; o que invalida são ausências reais de sinal).
+    \item Processamento: Realiza a segmentação temporal, interpolação adaptativa de lacunas e a sincronização multifrequência.
+    \item Classificação avançada: Aplica o classificador K-Means nos dados normalizados e realiza correções usando os limiares físicos salvos durante a etapa de treinamento. Não há necessidade de re-treinar o modelo ou recalcular limiares; a classificação utiliza a lógica de máxima cautela descrita na Seção~\ref{sec:kmeans_classification}, comparando valores físicos reais (RPM, corrente e vibração). Por fim, aplica-se o filtro de \textit{outliers} temporais para remover transições espúrias com duração menor que 10 minutos.
+    \item Análise de métricas: Calcula e reporta o tempo acumulado em cada estado operacional (LIGADO, DESLIGADO, e Incerteza/Sem Conexão) com base nas durações temporais reais, gerando relatórios textuais e gráficos de reconstrução temporal.
 \end{enumerate}
 
 \begin{figure}[H]
@@ -448,14 +469,14 @@ A terceira aba (Figura~\ref{fig:gui_visualizacao}) é projetada para a renderiza
 
 Para evitar gargalos de processamento gráfico e travamentos do sistema (uma vez que os históricos contêm mais de 1 milhão de registros e o Matplotlib possui limitações severas de desempenho para grandes volumes de pontos interativos), o sistema não renderiza a totalidade dos dados na frequência original de 20 em 20 segundos. Em vez disso, aplica-se uma estratégia dupla de seleção e redução de dados (\textit{downsampling}):
 \begin{itemize}
-    \item \textbf{Seleção de Intervalo Otimizado:} O sistema emprega um algoritmo de busca para identificar e recortar o "melhor período" de dados contínuos. Este intervalo representativo é escolhido de forma que apresente uma distribuição equilibrada entre os estados LIGADO e DESLIGADO, além de maximizar a presença de transições entre os estados e garantir que a densidade e a qualidade do sinal sejam ideais.
-    \item \textbf{Downsampling Sistemático:} Sobre o intervalo selecionado, os pontos são amostrados sistematicamente (por exemplo, aplicando um fator de passo para extrair uma amostra a cada $N$ registros), reduzindo a quantidade de elementos gráficos a um volume ótimo para renderização instantânea (tipicamente limitado a cerca de 10.000 pontos).
+    \item Seleção de intervalo otimizado: O sistema emprega um algoritmo de busca para identificar e recortar o "melhor período" de dados contínuos. Este intervalo representativo é escolhido de forma que apresente uma distribuição equilibrada entre os estados LIGADO e DESLIGADO, além de maximizar a presença de transições entre os estados e garantir que a densidade e a qualidade do sinal sejam ideais.
+    \item \textit{Downsampling} sistemático: Sobre o intervalo selecionado, os pontos são amostrados sistematicamente (por exemplo, aplicando um fator de passo para extrair uma amostra a cada $N$ registros), reduzindo a quantidade de elementos gráficos a um volume ótimo para renderização instantânea (tipicamente limitado a cerca de 10.000 pontos).
 \end{itemize}
 
 Os eixos tridimensionais dos gráficos gerados são adaptados dinamicamente com base nas características físicas de cada equipamento:
 \begin{itemize}
-    \item \textbf{Equipamentos Elétricos:} São gerados dois gráficos distintos. O primeiro utiliza os eixos Corrente (A) $\times$ Vibração RMS (mm/s) $\times$ Tempo. O segundo utiliza RPM $\times$ Vibração RMS (mm/s) $\times$ Tempo. Esses gráficos buscam relacionar os sinais elétricos estimados com a resposta física de vibração ao longo da série histórica.
-    \item \textbf{Equipamentos Mecânicos:} Como não há sensores elétricos, o sistema gera o gráfico utilizando Temperatura ($^\circ$C) $\times$ Vibração RMS (mm/s) $\times$ Tempo, mostrando a dependência térmica inerente ao regime mecânico operacional.
+    \item Equipamentos elétricos: São gerados dois gráficos distintos. O primeiro utiliza os eixos Corrente (A) $\times$ Vibração RMS (mm/s) $\times$ Tempo. O segundo utiliza RPM $\times$ Vibração RMS (mm/s) $\times$ Tempo. Esses gráficos buscam relacionar os sinais elétricos estimados com a resposta física de vibração ao longo da série histórica.
+    \item Equipamentos mecânicos: Como não há sensores elétricos, o sistema gera o gráfico utilizando Temperatura ($^\circ$C) $\times$ Vibração RMS (mm/s) $\times$ Tempo, mostrando a dependência térmica inerente ao regime mecânico operacional.
 \end{itemize}
 
 O sistema aplica uma coloração binária automática nos pontos baseando-se na classificação dos clusters (verde para LIGADO e vermelho para DESLIGADO) e salva automaticamente a imagem estática no diretório \texttt{results/}. A Figura~\ref{fig:exemplo_grafico_3d_gui} ilustra um exemplo de gráfico tridimensional (Corrente $\times$ Vibração $\times$ Tempo) gerado automaticamente a partir desta funcionalidade para a motobomba $c_{637}$. Uma explanação profunda de cada um dos gráficos tridimensionais históricos e de intervalos gerados por esta aba do sistema, acompanhada da devida análise física, é detalhada no Capítulo~\ref{chap:resultados} (Resultados) nas Figuras 4.1, 4.7, etc.

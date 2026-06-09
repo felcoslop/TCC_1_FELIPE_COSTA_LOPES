@@ -331,10 +331,10 @@ def plotar_3d(df_dados, mpoint=None):
     z_meio = (tempo_max - tempo_min).total_seconds() / 3600 / 2
     z_fim = (tempo_max - tempo_min).total_seconds() / 3600
     
-    # Labels formatados
-    label_inicio = tempo_min.strftime('%d/%m %H:%M')
-    label_meio = tempo_meio.strftime('%d/%m %H:%M')
-    label_fim = tempo_max.strftime('%d/%m %H:%M')
+    # Labels formatados com ano e hora
+    label_inicio = tempo_min.strftime('%d/%m/%y\n%Hh')
+    label_meio = tempo_meio.strftime('%d/%m/%y\n%Hh')
+    label_fim = tempo_max.strftime('%d/%m/%y\n%Hh')
     
     # Estatísticas
     print(f"\n[STATS] Estatísticas dos dados:")
@@ -362,15 +362,15 @@ def plotar_3d(df_dados, mpoint=None):
 
     # Gráfico 1: Corrente x Vibração x Tempo
     print("\n[VIZ 1/2] Corrente x Vibração x Tempo - Janela Interativa...")
-    fig1 = plt.figure(figsize=(16, 12))
+    fig1 = plt.figure(figsize=(22, 12))
     ax1 = fig1.add_subplot(111, projection='3d')
-    
+
     for estado in ['DESLIGADO', 'LIGADO']:
         mask = status == estado
         if mask.sum() > 0:
             ax1.scatter(
-                corrente[mask], 
-                vibracao[mask], 
+                corrente[mask],
+                vibracao[mask],
                 tempo_horas[mask],
                 c=cores.get(estado, '#95a5a6'),
                 label=estado,
@@ -380,17 +380,28 @@ def plotar_3d(df_dados, mpoint=None):
                 linewidths=0.5
             )
 
-    ax1.set_xlabel('Corrente (A)', fontsize=12, fontweight='bold', labelpad=10)
-    ax1.set_ylabel('Vibração (mm/s)', fontsize=12, fontweight='bold', labelpad=10)
-    ax1.set_zlabel('Tempo', fontsize=12, fontweight='bold', labelpad=10)
-    
-    # Configurar ticks do eixo Z com 3 datas
+    ax1.set_xlabel('Corrente (A)', fontsize=20, fontweight='bold', labelpad=14)
+    ax1.set_ylabel('Vibracao (mm/s)', fontsize=20, fontweight='bold', labelpad=14)
+    ax1.set_zlabel('Tempo', fontsize=20, fontweight='bold', labelpad=90)
+
+    # Configurar ticks do eixo Z com 3 datas e fundo branco
     ax1.set_zticks([z_inicio, z_meio, z_fim])
-    ax1.set_zticklabels([label_inicio, label_meio, label_fim], fontsize=10)
-    
-    ax1.set_title(f'Corrente x Vibração x Tempo (3 dias) - Estados do Equipamento\n{mpoint or ""}',
-                  fontsize=14, fontweight='bold', pad=20)
-    ax1.legend(loc='upper left', fontsize=10, framealpha=0.9)
+    ax1.set_zticklabels([label_inicio, label_meio, label_fim], fontsize=14)
+    ax1.tick_params(axis='x', labelsize=14)
+    ax1.tick_params(axis='y', labelsize=14)
+    ax1.zaxis.pane.fill = True
+    ax1.zaxis.pane.set_facecolor((1.0, 1.0, 1.0, 0.85))
+    for lbl in ax1.get_zticklabels():
+        lbl.set_bbox(dict(facecolor='white', edgecolor='none', alpha=0.85, pad=3))
+
+    ax1.set_title(f'Corrente x Vibracao x Tempo (3 dias) — {mpoint or ""}',
+                  fontsize=20, fontweight='bold', pad=20)
+    from matplotlib.lines import Line2D as _L2D
+    _leg1 = [_L2D([0],[0], marker='o', color='w', markerfacecolor=cores[e],
+                   markeredgecolor='k', markeredgewidth=0.5, markersize=13, label=e)
+             for e in ['DESLIGADO', 'LIGADO']]
+    ax1.legend(handles=_leg1, loc='upper left', fontsize=17, framealpha=0.95,
+               handletextpad=0.4, labelspacing=0.35, borderpad=0.7)
     ax1.grid(True, alpha=0.3)
     ax1.view_init(elev=20, azim=45)
     
@@ -402,17 +413,17 @@ def plotar_3d(df_dados, mpoint=None):
     print(f"  [OK] Salvo: {output1}")
     
     # Gráfico 2: Eixo X adaptativo x Vibração x Tempo
-    titulo_g2 = f'{eixo_x_label} x Vibração x Tempo (3 dias) - Estados do Equipamento\n{mpoint or ""}'
-    print(f"\n[VIZ 2/2] {eixo_x_label} x Vibração x Tempo - Janela Interativa...")
-    fig2 = plt.figure(figsize=(16, 12))
+    titulo_g2 = f'{eixo_x_label} x Vibracao x Tempo (3 dias) — {mpoint or ""}'
+    print(f"\n[VIZ 2/2] {eixo_x_label} x Vibracao x Tempo - Janela Interativa...")
+    fig2 = plt.figure(figsize=(22, 12))
     ax2 = fig2.add_subplot(111, projection='3d')
-    
+
     for estado in ['DESLIGADO', 'LIGADO']:
         mask = status == estado
         if mask.sum() > 0:
             ax2.scatter(
                 eixo_x_valores[mask],
-                vibracao[mask], 
+                vibracao[mask],
                 tempo_horas[mask],
                 c=cores.get(estado, '#95a5a6'),
                 label=estado,
@@ -422,16 +433,26 @@ def plotar_3d(df_dados, mpoint=None):
                 linewidths=0.5
             )
 
-    ax2.set_xlabel(eixo_x_label, fontsize=12, fontweight='bold', labelpad=10)
-    ax2.set_ylabel('Vibração (mm/s)', fontsize=12, fontweight='bold', labelpad=10)
-    ax2.set_zlabel('Tempo', fontsize=12, fontweight='bold', labelpad=10)
-    
-    # Configurar ticks do eixo Z com 3 datas
+    ax2.set_xlabel(eixo_x_label, fontsize=20, fontweight='bold', labelpad=14)
+    ax2.set_ylabel('Vibracao (mm/s)', fontsize=20, fontweight='bold', labelpad=14)
+    ax2.set_zlabel('Tempo', fontsize=20, fontweight='bold', labelpad=90)
+
+    # Configurar ticks do eixo Z com 3 datas e fundo branco
     ax2.set_zticks([z_inicio, z_meio, z_fim])
-    ax2.set_zticklabels([label_inicio, label_meio, label_fim], fontsize=10)
-    
-    ax2.set_title(titulo_g2, fontsize=14, fontweight='bold', pad=20)
-    ax2.legend(loc='upper left', fontsize=10, framealpha=0.9)
+    ax2.set_zticklabels([label_inicio, label_meio, label_fim], fontsize=14)
+    ax2.tick_params(axis='x', labelsize=14)
+    ax2.tick_params(axis='y', labelsize=14)
+    ax2.zaxis.pane.fill = True
+    ax2.zaxis.pane.set_facecolor((1.0, 1.0, 1.0, 0.85))
+    for lbl in ax2.get_zticklabels():
+        lbl.set_bbox(dict(facecolor='white', edgecolor='none', alpha=0.85, pad=3))
+
+    ax2.set_title(titulo_g2, fontsize=20, fontweight='bold', pad=20)
+    _leg2 = [_L2D([0],[0], marker='o', color='w', markerfacecolor=cores[e],
+                   markeredgecolor='k', markeredgewidth=0.5, markersize=13, label=e)
+             for e in ['DESLIGADO', 'LIGADO']]
+    ax2.legend(handles=_leg2, loc='upper left', fontsize=17, framealpha=0.95,
+               handletextpad=0.4, labelspacing=0.35, borderpad=0.7)
     ax2.grid(True, alpha=0.3)
     ax2.view_init(elev=20, azim=45)
     

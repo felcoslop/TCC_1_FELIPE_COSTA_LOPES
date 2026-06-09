@@ -2,6 +2,9 @@
 
 > **Resultados Finais — Visualizador de Estados Operacionais:**  
 > [https://evolution-tcc-felipe-costa-lopes-visualizador.hfzba0.easypanel.host/](https://evolution-tcc-felipe-costa-lopes-visualizador.hfzba0.easypanel.host/)
+>
+> **Monografia (PDF):** [latex/Monografia.pdf](latex/Monografia.pdf)  
+> **Apresentação de defesa (PDF):** [latex/apresentacao/apresentacao.pdf](latex/apresentacao/apresentacao.pdf)
 
 ## Visão Geral
 
@@ -561,22 +564,6 @@ Tempos médios por etapa (Intel i7, 16GB RAM):
 
 ---
 
-## Trabalhos Futuros
-
-### Melhorias Técnicas
-- Implementação de aprendizado incremental
-- Detecção de múltiplos estados (standby, carga parcial)
-- Integração com sistemas SCADA
-- Otimização para dados em tempo real
-
-### Expansões Funcionais
-- Interface web para visualização
-- Alertas automáticos (Telegram/email)
-- API REST para integração
-- Suporte a novos tipos de sensores
-
----
-
 ## Referências Técnicas
 
 ### Algoritmos e Métodos
@@ -611,66 +598,6 @@ Tempos médios por etapa (Intel i7, 16GB RAM):
 - Sistema Operacional: Windows 10/11, Linux, ou macOS
 - Python: 3.11 ou superior
 - InfluxDB: Acesso a servidor (leitura)
-
----
-
-## Aplicações Práticas
-
-### Gestão Energética
-- Identificação de padrões de consumo
-- Cálculo preciso de tempo de operação
-- Otimização de turnos de produção
-- Planejamento de demanda energética
-
-### Manutenção Preditiva
-- Contabilização precisa de horas de operação
-- Identificação de padrões anormais
-- Agendamento baseado em tempo real de uso
-- Análise de degradação por tempo de operação
-
-### Análise de Eficiência
-- Taxa de utilização de equipamentos
-- Identificação de períodos ociosos
-- Otimização de processos
-- Análise comparativa entre equipamentos
-
----
-
-## Glossário
-
-**Cluster**: Grupo de dados similares identificado pelo algoritmo K-means.
-
-**ELÉTRICO**: Equipamento com sensores de corrente e RPM (possui dados_estimated).
-
-**InfluxDB**: Banco de dados otimizado para séries temporais.
-
-**Interpolação**: Técnica de estimação de valores entre pontos conhecidos.
-
-**K-means**: Algoritmo de clustering não supervisionado.
-
-**MECÂNICO**: Equipamento sem sensores elétricos (NÃO possui dados_estimated).
-
-**MinMax**: Técnica de normalização que escala dados para intervalo [0,1].
-
-**Mpoint**: Identificador único de ponto de monitoramento (equipamento).
-
-**Outlier**: Valor atípico que se afasta significativamente do padrão.
-
-**Pipeline**: Sequência automatizada de etapas de processamento.
-
-**RMS**: Root Mean Square, medida de magnitude de vibração.
-
-**Scaler**: Objeto que armazena parâmetros de normalização.
-
-**Score**: Valor calculado para classificação automática de clusters.
-
-**Segmentação**: Divisão de dados em períodos baseado em gaps temporais.
-
-**Threshold**: Limite dinâmico calculado para classificação de estados.
-
-**Timestamp**: Marca temporal que identifica momento de aquisição de dado.
-
-**UTC**: Tempo Universal Coordenado (referência temporal padrão).
 
 ---
 

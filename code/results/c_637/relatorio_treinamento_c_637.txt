@@ -2,8 +2,8 @@
 RELATÓRIO DE TREINAMENTO K-MEANS - c_637
 ================================================================================
 
-Data: 2026-06-04 13:26:40.467891
-Tempo de execução: 0 minutos e 30 segundos
+Data: 2026-06-09 19:18:36.093623
+Tempo de execução: 0 minutos e 28 segundos
 
 ARQUIVOS GERADOS:
   - Modelo K-means: C:\Users\Felipe Costa\Downloads\BACKUP\Downloads\TCC_1_FELIPE_COSTA_LOPES-master\code\models\c_637\kmeans_model_moderado_c_637.pkl

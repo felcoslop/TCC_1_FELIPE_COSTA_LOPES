@@ -13,7 +13,7 @@
 
 \title[Detecção de Estados Operacionais]{Sistema de Detecção de Estados Operacionais de Equipamentos Industriais utilizando Machine Learning}
 \subtitle{Trabalho de Conclusão de Curso}
-\author[Felipe C. Lopes]{Felipe Costa Lopes \\ {\footnotesize Matrícula: 2018019648} \\ {\footnotesize Orientadora: Profa. Gabriela Nunes}}
+\author[Felipe C. Lopes]{Felipe Costa Lopes \\ {\footnotesize Matrícula: 2018019648} \\ {\footnotesize Orientadora: Profa. Dra. Gabriela Nunes}}
 \institute[UFMG]{Universidade Federal de Minas Gerais}
 \date{\today}
 
@@ -53,17 +53,32 @@
     \end{columns}
 \end{frame}
 
+% Slide: Por que não limiares fixos?
+\begin{frame}{Por que não simplesmente definir limiares fixos?}
+    \textbf{Ideia ingênua:} vibração $\approx 0$ e corrente $\approx 0$ $\Rightarrow$ DESLIGADO.
+
+    \vspace{0.2cm}
+    \textbf{Problemas na prática:}
+    \begin{itemize}
+        \item \textbf{Cada equipamento é único:} uma motobomba de 125\,cv vibra a $\sim$8\,mm/s em operação; um mancal opera abaixo de 1\,mm/s. O mesmo limiar fixo classificaria ambos errado.
+        \item \textbf{Desgaste natural:} após 1 ano de uso o mesmo equipamento, em plenas condições, pode vibrar 20\% a mais. Um limiar fixo começa a classificar estado LIGADO como DESLIGADO.
+        \item \textbf{Ambiente não controlado:} vibração de máquinas vizinhas, sazonalidade térmica e interferências eletromagnéticas sobrepõem-se ao sinal real, deslocando a ``linha de base''.
+    \end{itemize}
+
+\end{frame}
+
 % Slide: Objetivo
 \begin{frame}{Objetivo}
+    \small
     \begin{block}{Meta principal}
-        Detectar de forma \textbf{não invasiva} e \textbf{automática} os estados LIGADO/DESLIGADO usando sensores IoT \textbf{já instalados}.
+        Desenvolver um sistema \textbf{não invasivo} e \textbf{automático} capaz de detectar os estados LIGADO/DESLIGADO de equipamentos industriais, utilizando \textbf{exclusivamente} os sensores IoT já instalados na planta --- sem necessidade de limiares manuais, rotulação humana ou hardware adicional.
     \end{block}
-    \vspace{0.3cm}
-    \textbf{Diferenciais:}
+    \vspace{0.2cm}
+    \textbf{Diferenciais da solução:}
     \begin{itemize}
-        \item \textbf{Agnóstico:} atende equipamentos elétricos e mecânicos.
-        \item \textbf{Não supervisionado:} aprende os padrões sem rotulação manual.
-        \item \textbf{Baixo custo:} reaproveita a infraestrutura IoT existente.
+        \item \textbf{Agnóstico ao tipo:} um único sistema atende equipamentos elétricos (com corrente e RPM) e mecânicos (apenas vibração e temperatura), sem reconfiguração.
+        \item \textbf{Não supervisionado:} o algoritmo aprende os padrões operacionais de cada equipamento diretamente dos dados (sem necessidade de exemplos rotulados).
+        \item \textbf{Baixo custo e escalável:} reaproveita a infraestrutura IoT existente e processa cada equipamento em menos de 14 minutos.
     \end{itemize}
 \end{frame}
 
@@ -71,12 +86,12 @@
 \begin{frame}{Por que aprendizado não supervisionado?}
     \textbf{Primeira tentativa: redes profundas (CNN / \textit{Autoencoders}).}
     \begin{itemize}
-        \item Acurácia de treino aparente de 100\%, mas \textbf{não generalizavam}.
-        \item Classificavam como LIGADO períodos com RPM\,=\,0 e corrente nula.
+        \item Acurácia de treino de 100\%, mas os modelos \textbf{memorizavam} os padrões do conjunto de treino.
+        \item \textbf{Extremamente sensíveis a variações bruscas:} pequenas mudanças nos valores de corrente ou temperatura causavam predições completamente diferentes (o modelo não entendia o fenômeno, apenas decorava sequências).
     \end{itemize}
-    \vspace{0.3cm}
-    \begin{block}{Lição}
-        Problemas simples pedem soluções simples. Migrou-se para \textbf{K-Means}: robusto, interpretável, sem \textit{overfitting} e de treino rápido.
+    \vspace{0.2cm}
+    \begin{block}{Nova solução}
+        Complexidade excessiva para um problema binário. Foi implementado o \textbf{K-Means} puro: robusto a variações, interpretável, sem \textit{overfitting} e de treino rápido.
     \end{block}
 \end{frame}
 
@@ -107,12 +122,27 @@
             \item Interpolação e tratamento de \textit{outliers}.
             \item Sincronização e normalização.
             \item Classificação K-Means.
+            \item JSON de thresholds.
         \end{enumerate}
         \column{0.54\textwidth}
         \begin{center}
             \includegraphics[height=0.78\textheight]{05_pipeline_treino.png}
         \end{center}
     \end{columns}
+\end{frame}
+
+% Slide: Pipeline (imagem) - Fases 1 e 2
+\begin{frame}{Pipeline de treinamento: fases 1 e 2}
+    \begin{center}
+        \includegraphics[width=\linewidth,height=0.82\textheight,keepaspectratio]{pipeline_fases_1_2.png}
+    \end{center}
+\end{frame}
+
+% Slide: Pipeline (imagem) - Fases 2 a 6
+\begin{frame}{Pipeline de treinamento: fases 2 a 6}
+    \begin{center}
+        \includegraphics[width=\linewidth,height=0.82\textheight,keepaspectratio]{pipeline_fases_2_6.png}
+    \end{center}
 \end{frame}
 
 % Slide: Coleta e segmentação
@@ -127,6 +157,48 @@
     \begin{block}{Tratamento das lacunas internas}
         Intervalos sem dados dentro de um período ($\leq$ 3\,h) são preenchidos por \textbf{interpolação adaptativa}: \textit{spline} hermitiana (PCHIP) para lacunas curtas ou KNN temporal para lacunas médias, garantindo continuidade na série.
     \end{block}
+\end{frame}
+
+% Slide: As três tabelas de dados brutos
+\begin{frame}{As três fontes de dados (equipamento elétrico)}
+    \footnotesize
+    \textbf{validated\_default} (20\,s) --- temperatura e vibração:
+
+    \begin{tabular}{lrr}
+        \hline
+        \textbf{Time (UTC)} & \textbf{object\_temp (°C)} & \textbf{vel\_rms\_x (mm/s)} \\
+        \hline
+        15/01/2025 10:00:00 & 45,2 & 2,1 \\
+        15/01/2025 10:00:20 & 45,3 & 2,2 \\
+        15/01/2025 10:00:40 & 45,3 & 2,1 \\
+        \hline
+    \end{tabular}
+
+    \vspace{0.25cm}
+    \textbf{estimated} ($\sim$1\,min) --- corrente e RPM:
+
+    \begin{tabular}{lrr}
+        \hline
+        \textbf{Time (UTC)} & \textbf{current (A)} & \textbf{rotational\_speed (RPM)} \\
+        \hline
+        15/01/2025 10:00:15 & 12,5 & 1180 \\
+        15/01/2025 10:01:10 & 12,6 & 1182 \\
+        15/01/2025 10:02:08 & 12,6 & 1183 \\
+        \hline
+    \end{tabular}
+
+    \vspace{0.25cm}
+    \textbf{validated\_slip} ($\sim$2\,min) --- análise espectral:
+
+    \begin{tabular}{lrrr}
+        \hline
+        \textbf{Time (UTC)} & \textbf{fe\_frequency (Hz)} & \textbf{fe\_magnitude\_0 (mT)} & \textbf{rms (mT)} \\
+        \hline
+        15/01/2025 10:00:30 & 1,85 & 50,7 & 2,40 \\
+        15/01/2025 10:02:25 & 1,86 & 50,8 & 2,41 \\
+        15/01/2025 10:04:20 & 1,85 & 50,7 & 2,39 \\
+        \hline
+    \end{tabular}
 \end{frame}
 
 % Slide: Sincronização e fusão das tabelas
@@ -155,27 +227,27 @@
         \item Exigência de \textbf{$>$ 70\%} de sobreposição temporal entre fontes.
     \end{enumerate}
 
-    \vspace{0.1cm}
-    \begin{block}{Resultado}
-        Tabela unificada com \textbf{24 atributos}, todos a 20\,s, com 100\% de cobertura. Ex.: $c_{636}$ gera 863.450 registros sincronizados.
+    \begin{block}{\textit{Backward-fill}}
+        Cada instante sem leitura recebe o \textbf{próximo valor futuro} disponível dentro da janela de tolerância, garantindo que só dados já existentes preencham o grid, sem extrapolar valores passados.
     \end{block}
 \end{frame}
 
 % Slide: Interpolação adaptativa
 \begin{frame}{Interpolação adaptativa de lacunas}
     \begin{columns}
-        \column{0.42\textwidth}
+        \column{0.38\textwidth}
         \textbf{Estratégia por tamanho:}
         \begin{itemize}
-            \item $\leq$ 30\,min: \textbf{PCHIP} (sem oscilações de Runge).
-            \item 30\,min--3\,h: \textbf{KNN} temporal + linear.
-            \item $>$ 3\,h: \textbf{não interpola} (novo período).
+            \item $\leq$ 30\,min: \textbf{PCHIP} (Spline Hermitiana (curva suave, sem oscilações)).
+            \item 30\,min--3\,h: \textbf{KNN} temporal + linear (captura padrões cíclicos locais).
+            \item $>$ 3\,h: \textbf{não interpola} (novo período independente).
         \end{itemize}
-        \vspace{0.2cm}
-        \footnotesize LSTM testada, mas sem ganho frente ao KNN --- complexidade desnecessária.
-        \column{0.58\textwidth}
+        \vspace{0.15cm}
+        \footnotesize LSTM testada mas sem ganho frente ao KNN (complexidade desnecessária).
+        \column{0.62\textwidth}
         \begin{center}
-            \includegraphics[width=\linewidth]{02_comparativo_knn_lstm_subplots.png}
+            \includegraphics[width=\linewidth]{02_spline_interpolacao.png}\\[2pt]
+            \includegraphics[width=\linewidth]{02_knn_interpolacao.png}
         \end{center}
     \end{columns}
 \end{frame}
@@ -235,25 +307,6 @@
     \end{columns}
 \end{frame}
 
-% Slide: Visualização PCA dos clusters
-\begin{frame}{Visualização dos \textit{clusters} via PCA}
-    \begin{columns}
-        \column{0.42\textwidth}
-        \textbf{PCA --- Análise de Componentes Principais:}
-        \begin{itemize}
-            \item Reduz as \textbf{19 dimensões} originais para 2 (visualização).
-            \item \textbf{PC1} (38,7\%): separa LIGADO de DESLIGADO --- correlação forte com corrente ($\rho$=0,94) e RPM ($\rho$=0,92).
-            \item \textbf{PC2} (19,4\%): variações de carga dentro do estado LIGADO.
-            \item Juntas: \textbf{58,1\%} da variabilidade total em apenas 2 dimensões.
-        \end{itemize}
-        \footnotesize Nota: PCA é usado apenas para visualização; o K-Means opera no espaço original (19D/16D).
-        \column{0.58\textwidth}
-        \begin{center}
-            \includegraphics[width=\linewidth]{analise_kmeans_clusters_moderado_c_636.png}
-        \end{center}
-    \end{columns}
-\end{frame}
-
 % Slide: Classificação ponderada (scores)
 \begin{frame}{Classificação ponderada por física}
     \textbf{Centróides:} cada \textit{cluster} $k$ do K-Means possui um centróide $\bar{C}_k$, que é o ponto médio (em cada dimensão) de todas as amostras atribuídas àquele grupo. O centróide resume o ``perfil típico'' de operação daquele grupo.
@@ -265,26 +318,48 @@
         S_{\text{mecânico}} &= 1{,}5\,\bar{C}_{\text{temp}} + 1{,}0\,\bar{C}_{\text{vib}} + 0{,}5\,\bar{C}_{\text{mag}}
     \end{align*}
     \begin{itemize}
-        \item Os \textit{clusters} são ordenados pelo \textit{score}: o de menor valor é classificado como \textbf{DESLIGADO} (perfil de baixa atividade).
-        \item \textbf{Travas físicas:} corrente $<$ 15\% e RPM $<$ 20\% $\Rightarrow$ DESLIGADO forçado.
+        \item Os \textit{clusters} são ordenados pelo \textit{score}: os \textbf{dois de menor valor} são avaliados como candidatos ao estado \textbf{DESLIGADO} (perfis de baixa atividade), passando em seguida pela etapa de validação.
     \end{itemize}
 \end{frame}
 
-% Slide: 1 ou 2 clusters DESLIGADO
-\begin{frame}{Quando o K-Means encontra 2 \textit{clusters} DESLIGADO}
-    \textbf{Caso padrão (maioria):} apenas 1 dos 6 \textit{clusters} é classificado como DESLIGADO --- o de menor \textit{score}.
+% Slide: 1 ou 2 clusters DESLIGADO (movido para logo apos a classificacao ponderada)
+\begin{frame}{Dois candidatos DESLIGADO: design e validação}
+    \textbf{Design intencional:} os dois \textit{clusters} de menor \textit{score} são \textit{sempre} avaliados como candidatos ao estado DESLIGADO, em todos os equipamentos.
 
     \vspace{0.2cm}
-    \textbf{Caso raro --- 2 \textit{clusters} DESLIGADO:}
+    \textbf{Etapa de validação (aplicada a todos):}
     \begin{itemize}
-        \item Ocorre quando o equipamento apresenta \textbf{dois perfis distintos de inatividade}: por exemplo, desligamento com temperatura ambiente \textbf{alta} (verão) vs. \textbf{baixa} (inverno), gerando centróides separados.
-        \item O sistema admite um segundo \textit{cluster} DESLIGADO \textbf{somente} se: diferença de \textit{score} $<$ 0,3, ambos \textit{scores} $<$ 0,5 e vibração $<$ 1,5 (residual).
+        \item Diferença de \textit{score} entre os dois candidatos $<$ 0,3.
+        \item Ambos os \textit{scores} $<$ 0,5 (baixa atividade absoluta).
+        \item Vibração do 2\textdegree{} candidato $<$ 1,5 (nível residual).
     \end{itemize}
 
     \vspace{0.2cm}
-    \begin{block}{Exemplo real: equipamento $c_{637}$}
-        Na visualização RPM $\times$ Vibração $\times$ Tempo, identificam-se \textbf{dois agrupamentos DESLIGADO} distintos e múltiplos \textit{clusters} LIGADO, refletindo variações sazonais no perfil de parada.
-    \end{block}
+    \textbf{Resultado após validação:}
+    \begin{itemize}
+        \item \textbf{Na maioria dos casos:} o 2\textdegree{} candidato falha (regime de baixa carga, não repouso) $\Rightarrow$ reclassificado como LIGADO.
+        \item \textbf{Evento raro:} ambos sobrevivem $\Rightarrow$ dois perfis distintos de inatividade real (ex: temperatura ambiente alta vs.\ baixa).
+    \end{itemize}
+
+\end{frame}
+
+% Slide: Visualização PCA dos clusters
+\begin{frame}{Visualização dos \textit{clusters} via PCA}
+    \begin{columns}
+        \column{0.42\textwidth}
+        \small
+        \textbf{PCA --- Análise de Componentes Principais:}
+        \begin{itemize}
+            \item Reduz as \textbf{19 dimensões} originais para 2 (só para visualização).
+            \item \textbf{PC1} (38,7\%): separa LIGADO de DESLIGADO (correlação forte com corrente ($\rho$=0,94) e RPM ($\rho$=0,92)).
+            \item \textbf{PC2} (19,4\%): variações de carga dentro do estado LIGADO.
+        \end{itemize}
+        \footnotesize Nota: o K-Means opera no espaço original (19D/16D); PCA é apenas para visualização.
+        \column{0.58\textwidth}
+        \begin{center}
+            \includegraphics[width=\linewidth]{analise_kmeans_clusters_moderado_c_636.png}
+        \end{center}
+    \end{columns}
 \end{frame}
 
 % Slide: Análise por intervalo / GUI
@@ -349,7 +424,7 @@
         \end{itemize}
         \column{0.6\textwidth}
         \begin{center}
-            \includegraphics[width=\linewidth]{estados_corrente_vibracao_tempo_3d_c_636.png}
+            \includegraphics[width=\linewidth]{estados_temperatura_vibracao_tempo_3d_c_636.png}
         \end{center}
     \end{columns}
 \end{frame}
@@ -425,7 +500,7 @@
         \begin{itemize}
             \item \textbf{Gestão energética:} identificação precisa de períodos ociosos revela desperdício oculto (equipamentos ligados desnecessariamente).
             \item \textbf{Redução de resíduos:} manutenção baseada em horas reais evita troca prematura de peças, óleos e lubrificantes.
-            \item \textbf{Sobriedade computacional:} K-Means treina em minutos em hardware modesto, sem GPU --- menor consumo energético que redes profundas.
+            \item \textbf{Custo computacional:} K-Means treina em minutos em hardware modesto, sem GPU (menor consumo energético e computacional de redes profundas).
         \end{itemize}
         \column{0.5\textwidth}
         \textbf{Impacto social:}
@@ -439,10 +514,6 @@
 
 % Slide: Conclusão e próximos passos
 \begin{frame}{Conclusão e próximos passos}
-    \begin{block}{Síntese}
-        Solução simples, interpretável e escalável, validada em 5 equipamentos (elétricos e mecânicos) com mais de 5,4 milhões de registros. A manutenção baseada em condição pode reduzir custos em até 30\% comparada a abordagens preventivas baseadas em tempo fixo.
-    \end{block}
-    \vspace{0.3cm}
     \textbf{Trabalho futuro principal:}
     \begin{itemize}
         \item \textbf{\textit{Online learning}:} retreinamento automático e incremental do K-Means, adaptando o modelo continuamente a mudanças graduais nos padrões operacionais (desgaste natural, sazonalidade) --- sem necessidade de re-treinar do zero.
@@ -460,7 +531,7 @@
         {\large Perguntas?}\\[1cm]
         \footnotesize
         Felipe Costa Lopes --- Matrícula: 2018019648\\
-        Orientadora: Profa. Gabriela Nunes --- UFMG
+        Orientadora: Profa. Dra. Gabriela Nunes --- UFMG
     \end{center}
 \end{frame}
 

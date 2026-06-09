@@ -1,222 +1,89 @@
-# 📚 Índice da Documentação
+# Índice da Documentação
 
-Este documento serve como índice para toda a documentação do projeto de classificação de status de equipamentos industriais.
+Índice da documentação do sistema de detecção de estados operacionais (LIGADO/DESLIGADO)
+de equipamentos industriais.
 
-## 🎯 Visão Geral do Projeto
+## Visão Geral do Projeto
 
-**Objetivo**: Classificar equipamentos industriais como LIGADO/DESLIGADO com **99.92% de precisão** usando dados limpos e estratégia inteligente de seleção de clusters.
+Objetivo: classificar automaticamente equipamentos industriais como LIGADO ou DESLIGADO a
+partir de dados de sensores IoT, usando K-Means (não supervisionado) com regras e
+pontuações baseadas em thresholds dinâmicos por equipamento. A classificação é binária e o
+sistema trata tanto equipamentos elétricos (com corrente e RPM) quanto mecânicos (apenas
+temperatura e vibração), sem intervenção manual.
 
-**Performance Final**:
-- ✅ **Acurácia**: 99.92%
-- ✅ **Precision/Recall**: 100% para ambas as classes
-- ✅ **Incerteza**: 0.0003 (muito baixa)
-- ✅ **Tempo de treinamento**: 43 minutos (100 épocas)
-- ✅ **Dados**: 93.910 amostras de alta qualidade (12.2% dos dados originais)
-- ✅ **Robustez**: Filtro EMI Antialucinação + Threshold Absoluto (1.000 records)
-- ✅ **Resiliência**: Tratamento Unicode/Encoding Windows (CP1252/UTF-8)
+Características principais:
 
----
+- Motor único de K-Means (k = 6) com classificação por score ponderado.
+- Filtro EMI antialucinação com limiar dinâmico `max(P90 x 5%, 2,0 A)`.
+- Trava física Vibration Safety Floor e limite absoluto de 1.000 registros para a rota
+  elétrica.
+- Interpolação adaptativa (PCHIP e KNN temporal) e segmentação por lacunas maiores que 3 h.
 
-## 📖 Documentação por Categoria
+## Documentação por Categoria
 
-### 🏗️ **Documentação Geral**
+### Documentação Geral
 
-#### 📋 [README_PROJETO_FINAL.md](README_PROJETO_FINAL.md)
-**Documentação principal e completa do projeto**
-- Visão geral do sistema completo
-- Arquitetura CNN + ConvAE + K-means
-- Estratégia inteligente de seleção de dados
-- Performance e resultados finais
-- Fluxo de trabalho completo
-- Comparação antes vs depois
-- Próximos passos e aplicações
+- [README_PROJETO_FINAL.md](README_PROJETO_FINAL.md): documentação principal do projeto
+  final (visão geral, tipos de equipamento, pipeline, execução e estrutura).
+- [README_SCRIPTS_PROCESSAMENTO.md](README_SCRIPTS_PROCESSAMENTO.md): scripts do pipeline
+  de processamento, fluxo passo-a-passo e parâmetros.
 
-#### 🔧 [README_SCRIPTS_PROCESSAMENTO.md](README_SCRIPTS_PROCESSAMENTO.md)
-**Documentação de todos os scripts do pipeline**
-- Pipeline completo de processamento
-- Scripts principais e auxiliares
-- Fluxo de trabalho step-by-step
-- Configurações e parâmetros
-- Estatísticas de performance
-- Execução rápida
+### Modelos e Algoritmos
 
----
+- [README_KMEANS_CLASSIFICACAO_MODERADO.md](README_KMEANS_CLASSIFICACAO_MODERADO.md):
+  K-Means com k = 6 e a lógica de classificação por score (rota elétrica).
 
-### 🤖 **Modelos e Algoritmos**
+### Scripts Específicos
 
-#### 🧠 [README_MODELO_ROBUSTO_KMEANS.md](README_MODELO_ROBUSTO_KMEANS.md)
-**Documentação detalhada do modelo CNN + ConvAE robusto**
-- Arquitetura do modelo
-- Detecção de incerteza (Monte Carlo Dropout)
-- Performance final (99.92% acurácia)
-- Configurações de treinamento
-- Características especiais
-- Como usar e aplicar
+- [README_NORMALIZAR_DADOS_KMEANS.md](README_NORMALIZAR_DADOS_KMEANS.md): normalização e
+  preparo dos dados para o K-Means.
 
-#### 🔄 [README_KMEANS_CLASSIFICACAO_MODERADO.md](README_KMEANS_CLASSIFICACAO_MODERADO.md)
-**Documentação do K-means com seleção inteligente**
-- Estratégia de 6 clusters com seleção de 2
-- Critérios de classificação rigorosos
-- Clusters com alta certeza (99.5%+)
-- Análise de clusters vs classificação
-- Resultados e estatísticas
+## Guia de Início Rápido
 
----
+Treinar todos os equipamentos de uma vez (detecta elétrico/mecânico automaticamente):
 
-### 🔧 **Scripts Específicos**
+```bash
+cd code
+python treinar_todos.py
+# ou apenas alguns:
+python treinar_todos.py c_636 c_1518
+```
 
-#### 🏭 [README_CLASSIFICADOR_PRODUCAO.md](README_CLASSIFICADOR_PRODUCAO.md)
-**Documentação do classificador para produção**
-- Classificação em tempo real
-- Detecção de incerteza
-- Filtros por data/hora
-- Interface de linha de comando
-- Exemplos de uso
-- Configurações avançadas
+Treinar um equipamento individualmente:
 
-#### 📊 [README_NORMALIZAR_DADOS_KMEANS.md](README_NORMALIZAR_DADOS_KMEANS.md)
-**Documentação da normalização de dados**
-- Pipeline configurável do scikit-learn (Imputer → Transform → Scaler → Feature Selection → PCA)
-- Transformações: Power, Quantile, MinMax/Standard/Robust
-- Redução de dimensionalidade: VarianceThreshold, Correlação, PCA
-- Validação de timestamp (monotonicidade, duplicatas, timezone)
-- Salvamento completo de pipeline e metadados
+```bash
+cd code
+python pipeline_deteccao_estados.py --mpoint c_636            # elétrico
+python pipeline_deteccao_estados_mecanico.py --mpoint c_1518  # mecânico
+```
 
----
+Interface gráfica (treino, análise de intervalos e visualização 3D):
 
-## 🚀 **Guia de Início Rápido**
+```bash
+cd code
+python gui_pipeline.py
+```
 
-### **Para Usar o Sistema Completo:**
-
-1. **Unificação de Dados** (se necessário):
-   ```bash
-   python scripts/unificar_dados_final.py
-   ```
-
-2. **Preparação de Dados** (com pipeline sklearn):
-   ```bash
-   python scripts/normalizar_dados_kmeans.py
-   # Ou com opções avançadas:
-   python scripts/normalizar_dados_kmeans.py --power yeo-johnson --pca-variance 0.95
-   ```
-
-3. **Clustering Inteligente**:
-   ```bash
-   python scripts/kmeans_classificacao_moderado.py
-   ```
-
-4. **Treinamento do Modelo**:
-   ```bash
-   python scripts/treinar_cnn_status_equipamento.py
-   ```
-
-5. **Classificação em Produção**:
-   ```bash
-   python scripts/classificador_producao.py
-   ```
-
-### **Para Entender o Projeto:**
-1. Comece com [README_PROJETO_FINAL.md](README_PROJETO_FINAL.md)
-2. Veja o pipeline em [README_SCRIPTS_PROCESSAMENTO.md](README_SCRIPTS_PROCESSAMENTO.md)
-3. Entenda o modelo em [README_MODELO_ROBUSTO_KMEANS.md](README_MODELO_ROBUSTO_KMEANS.md)
-
----
-
-## 📊 **Resumo dos Resultados**
-
-### **Estratégia Implementada:**
-- **K-means com 6 clusters** → Identifica padrões
-- **Seleção inteligente** → Apenas 2 clusters com alta certeza (99.5%+)
-- **Dataset limpo** → 93.910 amostras de alta qualidade
-- **CNN + ConvAE** → Arquitetura robusta com detecção de incerteza
-
-### **Performance Final:**
-- **Dados**: 93.910 amostras (12.2% dos 772.231 originais)
-- **Acurácia**: 99.92%
-- **Precision/Recall**: 100% para ambas as classes
-- **Incerteza**: 0.0003 (muito baixa)
-- **Tempo**: 43 minutos de treinamento
-
-### **Benefícios Alcançados:**
-- ✅ **Qualidade sobre quantidade**: Dados 12x mais limpos
-- ✅ **Performance superior**: 99.92% vs modelos anteriores
-- ✅ **Treinamento eficiente**: 43 min vs horas
-- ✅ **Modelo confiável**: Incerteza quase zero
-- ✅ **Pronto para produção**: Classificador funcional
-
----
-
-## 🎯 **Aplicações**
-
-### **1. Monitoramento Industrial**
-- Status LIGADO/DESLIGADO em tempo real
-- Detecção de casos ambíguos
-- Alertas inteligentes
-
-### **2. Controle de Qualidade**
-- Classificação automática precisa
-- Validação com detecção de incerteza
-- Relatórios de confiabilidade
-
-### **3. Análise de Dados**
-- Padrões comportamentais
-- Tendências temporais
-- Insights para otimização
-
----
-
-## 🔧 **Estrutura do Projeto**
+## Estrutura do Projeto
 
 ```
 code/
-├── data/
-│   ├── raw/                    # Dados brutos (ex: dados_c_{{m_mpoint}}.csv)
-│   ├── processed/              # Dados unificados (ex: dados_unificados_final_c_{{m_mpoint}}.csv)
-│   └── normalized/             # Dados normalizados (ex: dados_kmeans_c_{{m_mpoint}}.csv)
-├── models/
-│   └── c_{{m_mpoint}}/              # Modelos por equipamento (ex: kmeans_model_moderado_c_{{m_mpoint}}.pkl)
-├── results/
-│   └── c_{{m_mpoint}}/              # Resultados e visualizações (ex: results_c_{{m_mpoint}}.txt)
-├── logs/                       # Logs de execução (ex: pipeline_complete_c_{{m_mpoint}}.txt)
-├── scripts/                    # Scripts do pipeline
-├── utils/                      # Utilitários
-└── gui_pipeline.py             # Interface gráfica
+├── gui_pipeline.py                        # Interface gráfica unificada
+├── treinar_todos.py                       # Executa o pipeline para todos os mpoints
+├── pipeline_deteccao_estados.py           # Orquestrador ELÉTRICO
+├── pipeline_deteccao_estados_mecanico.py  # Orquestrador MECÂNICO
+├── data/                                  # raw, raw_preenchido, processed, normalized
+├── models/c_<mpoint>/                     # Modelos, scaler e configs por equipamento
+├── results/c_<mpoint>/                    # Visualizações e relatórios
+├── logs/                                  # Logs de execução
+├── scripts/                               # Módulos do pipeline
+├── utils/                                 # Utilitários
+└── docs/                                  # Esta documentação
 ```
 
----
+## Suporte
 
-## 📈 **Comparação: Antes vs Depois**
-
-| Aspecto | Abordagem Anterior | Nova Abordagem |
-|---------|-------------------|----------------|
-| **Dados** | 772.231 amostras com ruído | 93.910 amostras limpos |
-| **Clusters** | Todos os 6 clusters | Apenas 2 com alta certeza |
-| **Acurácia** | ~85-90% | **99.92%** |
-| **Incerteza** | Alta | **0.0003** |
-| **Treinamento** | Lento e instável | **43 minutos** |
-| **Confiabilidade** | Moderada | **Muito alta** |
-
----
-
-## 🎉 **Conclusão**
-
-Este projeto demonstra como uma **estratégia inteligente de seleção de dados** pode transformar um problema complexo em uma solução de alta performance. Ao focar em **qualidade sobre quantidade**, conseguimos:
-
-1. **Reduzir dados em 87.8%** (772k → 93k)
-2. **Aumentar precisão para 99.92%**
-3. **Manter incerteza muito baixa** (0.0003)
-4. **Criar modelo robusto** e confiável
-
-**🚀 O modelo está pronto para produção com confiança total!**
-
----
-
-## 📞 **Suporte**
-
-Para dúvidas ou problemas:
-1. Consulte a documentação específica de cada script
-2. Verifique os logs de execução
-3. Confirme se todos os pré-requisitos estão instalados
-4. Execute os scripts na ordem correta do pipeline
-
-**📚 Documentação completa e atualizada - Todos os READMEs refletem a versão final do projeto!**
+1. Consulte a documentação específica de cada etapa.
+2. Verifique os logs em `code/logs/`.
+3. Confirme os pré-requisitos (Python 3.11+, pandas 2.x, scikit-learn).
+4. Execute as etapas na ordem do pipeline, ou use `treinar_todos.py`.

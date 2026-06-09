@@ -13,24 +13,26 @@ Um experimento adicional mostrou que o equipamento $c_{636}$ (motobomba), quando
 \section{Interpolação Adaptativa de Lacunas}
 \label{sec:resultados_interpolacao}
 
-A Tabela~\ref{tab:interpolacao_horas} apresenta a quantidade de dados interpolados para o equipamento $c_{637}$, discriminada por método de interpolação. No total, 157,83 horas de dados foram reconstruídas, sendo 141,74 horas via PCHIP (lacunas $\leq$ 30 minutos) e 16,09 horas via KNN multivariado (lacunas entre 30 minutos e 3 horas). Esses valores representam apenas 2,3\% do total de dados processados, demonstrando que a grande maioria do sinal é composta por dados originais do sensor. A coluna Qualidade corresponde ao indicador de confiabilidade atribuído a cada amostra conforme sua origem, definido na Seção~\ref{chap:metodologia} (Processamento e Interpolação): 1,00 para dados originais do sensor, 0,95 para valores reconstruídos por PCHIP e 0,75 para valores reconstruídos por KNN. Trata-se de um peso de confiança decrescente que reflete a incerteza progressivamente maior associada à interpolação, sendo máximo para a leitura direta do sensor e reduzido à medida que a lacuna preenchida é maior e o método de estimativa, menos direto.
+A Tabela~\ref{tab:interpolacao_horas} apresenta, para cada equipamento analisado, o volume de dados reconstruídos pela interpolação adaptativa, discriminado entre os métodos PCHIP (lacunas $\leq$ 30 minutos) e KNN multivariado (lacunas entre 30 minutos e 3 horas), em contraste com os dados originais do sensor. A coluna Qualidade corresponde ao indicador de confiabilidade atribuído a cada amostra conforme sua origem, definido na Seção~\ref{chap:metodologia} (Processamento e Interpolação): 1,00 para dados originais do sensor, 0,95 para valores reconstruídos por PCHIP e 0,75 para valores reconstruídos por KNN. Trata-se de um peso de confiança decrescente que reflete a incerteza progressivamente maior associada à interpolação, sendo máximo para a leitura direta do sensor e reduzido à medida que a lacuna preenchida é maior e o método de estimativa, menos direto.
 
 \begin{table}[H]
     \centering
-    \caption{Horas interpoladas por método -- Equipamento $c_{637}$}
+    \caption{Horas interpoladas por método e por equipamento}
     \label{tab:interpolacao_horas}
-    \begin{tabular}{|l|r|r|r|}
+    \begin{tabular}{|l|r|r|r|r|r|}
         \hline
-        \textbf{Método}            & \textbf{Pontos} & \textbf{Horas}  & \textbf{Qualidade} \\
+        \textbf{Equipamento} & \textbf{Originais (h)} & \textbf{PCHIP (h)} & \textbf{KNN (h)} & \textbf{Total interp. (h)} & \textbf{Interp. (\%)} \\
         \hline
-        PCHIP ($\leq$ 30 min)      & 25.514          & 141,74          & 0,95               \\
-        KNN (30 min -- 3h)         & 2.896           & 16,09           & 0,75               \\
-        \hline
-        \textbf{Total interpolado} & \textbf{28.410} & \textbf{157,83} & \textbf{---}       \\
-        Dados originais            & 1.214.583       & 6.747,68        & 1,00               \\
+        $c_{636}$ (El.) & 4.251,2 & 533,8 & 12,0  & 545,8  & 11,4 \\
+        $c_{637}$ (El.) & 6.747,7 & 141,7 & 16,1  & 157,8  &  2,3 \\
+        $c_{640}$ (El.) & 7.547,6 & 153,5 & 16,5  & 170,0  &  2,2 \\
+        $c_{1518}$ (Mec.) & 2.860,1 & 342,6 & 49,4  & 391,9  & 12,1 \\
+        $c_{670}$ (Mec.)  & 6.463,1 & 948,7 & 243,1 & 1.191,8 & 15,6 \\
         \hline
     \end{tabular}
 \end{table}
+
+Os resultados revelam comportamentos distintos entre os equipamentos. Os elétricos $c_{637}$ e $c_{640}$ apresentaram as menores proporções de interpolação (2,3\% e 2,2\%, respectivamente), indicando séries temporais com poucas lacunas. O $c_{636}$ demandou reconstrução mais expressiva (11,4\%), com a quase totalidade via PCHIP, o que sugere lacunas frequentes mas curtas. Nos mecânicos, o $c_{670}$ (redutora) exigiu o maior volume de interpolação absoluto (1.191,8 horas, 15,6\%), com proporção relevante de KNN (243,1 horas), sinalizando lacunas de maior duração. Em todos os casos, o método KNN foi aplicado em volume inferior ao PCHIP, o que reflete a menor frequência de lacunas de duração intermediária (30 minutos a 3 horas) em comparação às lacunas curtas.
 
 \section{Análise de Dados Normalizados}
 
@@ -84,7 +86,14 @@ Por fim, a Figura~\ref{fig:dados_normalizados_c_1518} exibe a distribuição nor
 
 \section{Resultados da Clusterização K-Means}
 
-O algoritmo K-Means foi executado com $k = 6$ \textit{clusters} para todos os equipamentos, mostrando convergência robusta. A escolha de $k = 6$ foi motivada pela necessidade de representar a proporção aproximada de 1 para 2 entre os estados desligado e ligado, reservando parte dos \textit{clusters} para capturar estados de transição (desligando ou ligando, ou seja, estados intermediários entre os dois extremos). Concebeu-se inicialmente a reserva de dois \textit{clusters} para o estado DESLIGADO; na lógica final de classificação, porém, apenas o \textit{cluster} de menor \textit{score} é atribuído como DESLIGADO por padrão, admitindo-se um segundo \textit{cluster} somente quando atendidos os critérios estritos de similaridade descritos na Seção~\ref{sec:kmeans_classification}. Os \textit{clusters} restantes representam diferentes regimes de operação LIGADO sob cargas variáveis. Essa configuração assegura que o sistema não confunda estados transitórios com estados estacionários, melhorando a robustez da classificação final.
+O algoritmo K-Means foi executado com $k = 6$ \textit{clusters} para todos os equipamentos, mostrando convergência robusta. A escolha de $k = 6$ foi motivada pela necessidade de representar a proporção aproximada de 1 para 2 entre os estados desligado e ligado, reservando parte dos \textit{clusters} para capturar estados de transição (desligando ou ligando, ou seja, estados intermediários entre os dois extremos). Por concepção, o algoritmo K-Means com $k=6$ avalia sistematicamente os dois \textit{clusters} de menor \textit{score} como candidatos ao estado DESLIGADO em todos os equipamentos, conforme a reserva intencional descrita na Seção~\ref{sec:kmeans_classification}. Após a clusterização, ambos os candidatos passam por uma etapa de validação com critérios estritos (diferença de \textit{score} $<$ 0,3, ambos com \textit{score} $<$ 0,5 e vibração residual dentro do limiar). Na prática, o segundo candidato quase sempre falha na validação, revelando um regime de baixa carga operacional e não inatividade real, sendo então reclassificado como LIGADO. O evento raro é que o segundo candidato \textit{sobreviva} à validação, confirmando dois perfis distintos de repouso; o restante dos \textit{clusters} representa diferentes regimes LIGADO sob cargas variáveis. A Figura~\ref{fig:kmeans_2desligado} ilustra justamente esse caso no equipamento $c_{637}$, mostrando o momento da convergência (iteração~11) em que dois centróides de baixa atividade ainda se apresentam separados antes da validação final.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.58\textwidth]{plots/03_kmeans_animacao.png}
+    \caption{Convergência do K-Means (K = 6) na iteração 11 --- equipamento $c_{637}$ (projeção PCA 2D). Dois centróides de baixa atividade emergem durante a convergência: \textit{Desligado C1} (vermelho sólido, menor \textit{score}) e \textit{Desligado C2} (vermelho claro). Na classificação final do \textit{pipeline}, o segundo agrupamento (\textit{Desligado C2}) não satisfaz os critérios estritos de similaridade com C1 --- diferença de \textit{score} $\geq 0{,}3$ ou \textit{score} acima de $0{,}5$ --- indicando que C2 captura um regime de operação em baixa carga, e não inatividade verdadeira, sendo portanto reclassificado como LIGADO. A figura exibe a iteração 11, na qual os dois padrões de baixa atividade ainda estão separados, servindo como ilustração do mecanismo que motiva a reserva de dois \textit{clusters} para o estado DESLIGADO na concepção do sistema.}
+    \label{fig:kmeans_2desligado}
+\end{figure}
 
 As inércias finais variaram entre cerca de 127 e 178 mil, indicando que os \textit{clusters} formados apresentaram baixa dispersão interna, ou seja, os pontos dentro de cada \textit{cluster} estavam próximos entre si. O tempo de processamento foi de 1 a 2 minutos por equipamento, utilizando um notebook Dell equipado com processador Intel Core i3 de 13\textsuperscript{a} geração e 64 GB de memória RAM. A reprodutibilidade dos resultados foi garantida através de \textit{random state} controlado. A classificação dinâmica baseada em \textit{scores} combinados identificou automaticamente \textit{clusters} LIGADO e DESLIGADO.
 
@@ -165,20 +174,20 @@ A Figura~\ref{fig:3d_corrente_c636} apresenta o espaço Corrente $\times$ Vibra�
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.55\textwidth]{results/estados_corrente_vibracao_tempo_3d_c_636.png}
+    \includegraphics[width=0.75\textwidth]{results/estados_corrente_vibracao_tempo_3d_c_636.png}
     \caption{Corrente $\times$ Vibração $\times$ Tempo -- $c_{636}$, período histórico. Verde: LIGADO, vermelho: DESLIGADO.}
     \label{fig:3d_corrente_c636}
 \end{figure}
 
-A Figura~\ref{fig:3d_rpm_c636} mostra o espaço RPM $\times$ Vibração $\times$ Tempo para o mesmo equipamento $c_{636}$ e constitui um caso de exceção de comportamento, em contraste com a coerência física observada nos demais equipamentos. Nela, os pontos classificados como LIGADO (verde) concentram-se em RPM elevado (próximo de 1200) com vibração praticamente nula, enquanto os pontos DESLIGADO (vermelho) situam-se em RPM próximo de zero. Esse padrão não reflete a correlação física esperada entre velocidade rotacional e vibração, pois uma máquina efetivamente girando a 1200 RPM deveria apresentar vibração não desprezível. Trata-se de uma alucinação persistente na inferência de RPM e corrente a partir do fluxo magnético do sensor, fenômeno descrito na Seção~\ref{sec:processamento_interpolacao} (Interferência Eletromagnética). Diferentemente dos picos transitórios, neste equipamento o sensor reportou de forma persistente valores espúrios e simultâneos de RPM e corrente, de modo que a trava anti-EMI --- que zera as leituras quando a corrente cai abaixo de $2,0$ A --- não chegou a ser acionada. Como o \textit{score} elétrico pondera fortemente RPM e corrente (peso $2,0$), o estado LIGADO acabou sendo determinado por esses sinais estimados, e não pela vibração. Registra-se, portanto, esta figura como uma exceção atribuível a artefato de instrumentação, e não como evidência da correlação física entre rotação e vibração.
+A Figura~\ref{fig:3d_rpm_c636} mostra o espaço RPM $\times$ Vibração $\times$ Tempo para o mesmo equipamento $c_{636}$ e constitui um caso de exceção de comportamento, em contraste com a coerência física observada nos demais equipamentos. Nela, os pontos classificados como LIGADO (verde) concentram-se em RPM elevado (próximo de 1200) com vibração praticamente nula, enquanto os pontos DESLIGADO (vermelho) situam-se em RPM próximo de zero. Esse padrão não reflete a correlação física esperada entre velocidade rotacional e vibração, pois uma máquina efetivamente girando a 1200 RPM deveria apresentar vibração não desprezível. Trata-se de uma alucinação persistente na inferência de RPM e corrente a partir do fluxo magnético do sensor, fenômeno descrito na Seção~\ref{sec:processamento_interpolacao} (Interferência Eletromagnética). Diferentemente dos picos transitórios, neste equipamento o sensor reportou de forma persistente valores espúrios e simultâneos de RPM e corrente, de modo que a trava anti-EMI --- que zera as leituras quando a corrente cai abaixo do limiar dinâmico $\max(P90 \times 5\%,\ 2{,}0\ \text{A})$ --- não chegou a ser acionada. Como o \textit{score} elétrico pondera fortemente RPM e corrente (peso $2,0$), o estado LIGADO acabou sendo determinado por esses sinais estimados, e não pela vibração. Registra-se, portanto, esta figura como uma exceção atribuível a artefato de instrumentação, e não como evidência da correlação física entre rotação e vibração.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.55\textwidth]{results/estados_rpm_vibracao_tempo_3d_c_636.png}
+    \includegraphics[width=0.75\textwidth]{results/estados_rpm_vibracao_tempo_3d_c_636.png}
     \caption{RPM $\times$ Vibração $\times$ Tempo -- $c_{636}$, período histórico. Caso de exceção: pontos LIGADO (verde) em RPM próximo de 1200 com vibração praticamente nula, decorrentes de uma alucinação persistente na inferência de RPM e corrente (Interferência Eletromagnética), e não da correlação física esperada entre rotação e vibração.}
     \label{fig:3d_rpm_c636}
 \end{figure}
-
+\newpage
 A Figura~\ref{fig:3d_corrente_c637} exibe o espaço Corrente $\times$ Vibração $\times$ Tempo do equipamento $c_{637}$, com 4,52\% do tempo em DESLIGADO.
 
 \begin{figure}[H]
@@ -187,7 +196,7 @@ A Figura~\ref{fig:3d_corrente_c637} exibe o espaço Corrente $\times$ Vibração
     \caption{Corrente $\times$ Vibração $\times$ Tempo -- $c_{637}$, período histórico. 95,48\% LIGADO e 4,52\% DESLIGADO.}
     \label{fig:3d_corrente_c637}
 \end{figure}
-
+\newpage
 A Figura~\ref{fig:3d_rpm_c637} apresenta o espaço RPM $\times$ Vibração $\times$ Tempo do equipamento $c_{637}$, onde se identificam dois \textit{clusters} DESLIGADO distintos e múltiplos \textit{clusters} LIGADO, revelando diferentes regimes de velocidade durante a operação.
 
 \begin{figure}[H]
@@ -196,12 +205,12 @@ A Figura~\ref{fig:3d_rpm_c637} apresenta o espaço RPM $\times$ Vibração $\tim
     \caption{RPM $\times$ Vibração $\times$ Tempo -- $c_{637}$, período histórico. Dois \textit{clusters} DESLIGADO e múltiplos LIGADO.}
     \label{fig:3d_rpm_c637}
 \end{figure}
-
+\newpage
 A Figura~\ref{fig:3d_corrente_c640} mostra o espaço Corrente $\times$ Vibração $\times$ Tempo do equipamento $c_{640}$ (Motor REC). Com 5,64\% do tempo em estado DESLIGADO e 94,36\% LIGADO.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.55\textwidth]{results/estados_corrente_vibracao_tempo_3d_c_640.png}
+    \includegraphics[width=0.50\textwidth]{results/estados_corrente_vibracao_tempo_3d_c_640.png}
     \caption{Corrente $\times$ Vibração $\times$ Tempo -- $c_{640}$, período histórico. 94,36\% LIGADO e 5,64\% DESLIGADO.}
     \label{fig:3d_corrente_c640}
 \end{figure}
@@ -210,7 +219,7 @@ Por fim, a Figura~\ref{fig:3d_rpm_c640} exibe o espaço RPM $\times$ Vibração 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\textwidth]{results/estados_rpm_vibracao_tempo_3d_c_640.png}
+    \includegraphics[width=0.50\textwidth]{results/estados_rpm_vibracao_tempo_3d_c_640.png}
     \caption{RPM $\times$ Vibração $\times$ Tempo -- $c_{640}$, período histórico. Distribuição equilibrada de \textit{clusters} LIGADO.}
     \label{fig:3d_rpm_c640}
 \end{figure}
@@ -248,19 +257,22 @@ A Tabela~\ref{tab:tempos_execucao} apresenta o tempo de execução de cada etapa
         \hline
         \textbf{Etapa}  & \textbf{$c_{636}$} & \textbf{$c_{637}$} & \textbf{$c_{640}$} & \textbf{$c_{1518}$} & \textbf{$c_{670}$} \\
         \hline
-        Segmentação     & 0,51               & 1,08               & 4,68               & ---                 & ---                \\
-        Processamento   & 1,12               & 1,37               & 1,37               & 0,32                & 1,33               \\
-        Sincronização   & 0,81               & 2,15               & 2,34               & 0,40                & 1,10               \\
-        Normalização    & 0,98               & 2,73               & 2,53               & 1,12                & 2,61               \\
-        K-Means         & 1,93               & 3,37               & 2,63               & 2,80                & 3,52               \\
-        Visualização 3D & 0,26               & 0,33               & 0,30               & 0,31                & 0,41               \\
+        Segmentação$^{*}$ & 0,51             & 1,08               & 4,68               & \multicolumn{2}{c|}{incorporada ao processamento} \\
+        Processamento     & 1,12             & 1,37               & 1,37               & 0,32                & 1,33               \\
+        Sincronização     & 0,81             & 2,15               & 2,34               & 0,40                & 1,10               \\
+        Normalização      & 0,98             & 2,73               & 2,53               & 1,12                & 2,61               \\
+        K-Means           & 1,93             & 3,37               & 2,63               & 2,80                & 3,52               \\
+        Visualização 3D   & 0,26             & 0,33               & 0,30               & 0,31                & 0,41               \\
         \hline
-        \textbf{Total}  & \textbf{5,61}      & \textbf{11,03}     & \textbf{13,85}     & \textbf{4,95}       & \textbf{8,97}      \\
+        \textbf{Total}    & \textbf{5,61}    & \textbf{11,03}     & \textbf{13,85}     & \textbf{4,95}       & \textbf{8,97}      \\
         \hline
     \end{tabular}
+
+    \smallskip
+    \footnotesize{$^{*}$ No \textit{pipeline} mecânico ($c_{1518}$ e $c_{670}$), a segmentação temporal é realizada internamente pelo script de processamento, sem etapa dedicada separada; por isso o tempo está consolidado na linha Processamento.}
 \end{table}
 
-Os resultados demonstram que o \textit{pipeline} completo processa cada equipamento em menos de 14 minutos, mesmo com mais de 1,3 milhão de amostras. A etapa de K-Means é consistentemente a mais custosa (1,9 a 3,5 minutos), seguida pela normalização. Os equipamentos mecânicos ($c_{1518}$ e $c_{670}$) não possuem etapa de segmentação separada, pois esta é incorporada ao processamento. O tempo total para processar todos os cinco equipamentos foi de aproximadamente 44,4 minutos.
+Os resultados demonstram que o \textit{pipeline} completo processa cada equipamento em menos de 14 minutos, mesmo com mais de 1,3 milhão de amostras. A etapa de K-Means é consistentemente a mais custosa (1,9 a 3,5 minutos), seguida pela normalização. O tempo total para processar todos os cinco equipamentos foi de aproximadamente 44,4 minutos.
 
 A Tabela~\ref{tab:volume_dados} resume o volume total de dados processados pelo \textit{pipeline}, incluindo o número de períodos contínuos identificados e validados para cada equipamento.
 
@@ -293,7 +305,7 @@ A Figura~\ref{fig:vibracao_c_636} apresenta a reconstrução temporal do equipam
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{results/vibracao_reconstrucao_c_636.png}
+    \includegraphics[width=0.9\textwidth]{results/vibracao_reconstrucao_c_636.png}
     \caption{Reconstrução temporal da vibração RMS -- $c_{636}$ (motobomba elétrica). Verde: LIGADO original, vermelho: DESLIGADO original, azul: interpolação PCHIP, amarelo: interpolação KNN.}
     \label{fig:vibracao_c_636}
 \end{figure}
@@ -302,7 +314,7 @@ A Figura~\ref{fig:vibracao_c_637} mostra a reconstrução do equipamento $c_{637
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{results/vibracao_reconstrucao_c_637.png}
+    \includegraphics[width=0.9\textwidth]{results/vibracao_reconstrucao_c_637.png}
     \caption{Reconstrução temporal da vibração RMS -- $c_{637}$ (motobomba elétrica). Operação predominantemente contínua com 95,5\% do tempo em estado LIGADO.}
     \label{fig:vibracao_c_637}
 \end{figure}
@@ -311,7 +323,7 @@ A Figura~\ref{fig:vibracao_c_640} exibe a reconstrução do equipamento $c_{640}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{results/vibracao_reconstrucao_c_640.png}
+    \includegraphics[width=0.9\textwidth]{results/vibracao_reconstrucao_c_640.png}
     \caption{Reconstrução temporal da vibração RMS -- $c_{640}$ (Motor REC). 1.389.174 amostras classificadas com 94,4\% em estado LIGADO.}
     \label{fig:vibracao_c_640}
 \end{figure}
@@ -320,7 +332,7 @@ A Figura~\ref{fig:vibracao_c_1518} apresenta a reconstrução do equipamento mec
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{results/vibracao_reconstrucao_c_1518.png}
+    \includegraphics[width=0.9\textwidth]{results/vibracao_reconstrucao_c_1518.png}
     \caption{Reconstrução temporal da vibração RMS -- $c_{1518}$ (mancal mecânico). Classificação baseada em temperatura e vibração com 95,2\% em estado LIGADO.}
     \label{fig:vibracao_c_1518}
 \end{figure}
@@ -329,7 +341,7 @@ Por fim, a Figura~\ref{fig:vibracao_c_670} mostra a reconstrução do equipament
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{results/vibracao_reconstrucao_c_670.png}
+    \includegraphics[width=0.9\textwidth]{results/vibracao_reconstrucao_c_670.png}
     \caption{Reconstrução temporal da vibração RMS -- $c_{670}$ (redutora \textit{bridle} mecânica). Maior proporção de DESLIGADO (21\%) entre os equipamentos mecânicos, com 1.377.884 amostras.}
     \label{fig:vibracao_c_670}
 \end{figure}

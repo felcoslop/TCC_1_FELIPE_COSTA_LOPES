@@ -6,7 +6,7 @@ O `classificador_producao.py` é um script para classificação em tempo real de
 
 ## Funcionalidades
 
-### ✅ Principais Características
+### Principais Características
 
 - **Classificação em tempo real** usando modelo CNN robusto pré-treinado
 - **Detecção de incerteza** usando Monte Carlo Dropout (100 amostras)
@@ -19,7 +19,7 @@ O `classificador_producao.py` é um script para classificação em tempo real de
 - **Suporte a dados já normalizados (dados_kmeans.csv) para melhor performance**
 - **Modelo treinado com dados rotulados do K-means** para maior confiabilidade
 
-### 📊 Dados de Entrada
+### Dados de Entrada
 
 O classificador trabalha com dados normalizados do arquivo `dados_kmeans.csv` que contém:
 
@@ -31,12 +31,12 @@ O classificador trabalha com dados normalizados do arquivo `dados_kmeans.csv` qu
 | **Metadados** | `time`, `cluster`, `equipamento_status` | 3 colunas |
 | **Total** | 19 features + metadados (já normalizados) | 22 colunas |
 
-### 🎯 Classes de Saída
+### Classes de Saída
 
 - **LIGADO**: Equipamento em funcionamento
 - **DESLIGADO**: Equipamento parado
 
-### ⏱️ Janela Temporal
+### Janela Temporal
 
 O classificador usa janelas temporais para analisar sequências de dados:
 
@@ -45,12 +45,12 @@ O classificador usa janelas temporais para analisar sequências de dados:
 - **Personalização**: Pode ser ajustada via parâmetro `--janela`
 - **Importante**: Deve corresponder ao tamanho usado no treinamento do modelo (30 timesteps)
 
-### 🔄 Dados Normalizados
+### Dados Normalizados
 
 O classificador foi otimizado para trabalhar com dados já normalizados:
 
 - **Arquivo padrão**: `dados_kmeans.csv` (dados normalizados entre 0 e 1)
-- **Vantagens**: 
+- **Vantagens**:
   - Não precisa aplicar normalização durante a classificação
   - Performance melhorada (processamento mais rápido)
   - Consistência com o processo de treinamento
@@ -58,14 +58,14 @@ O classificador foi otimizado para trabalhar com dados já normalizados:
 
 ## Instalação e Dependências
 
-### 📋 Pré-requisitos
+### Pré-requisitos
 
 ```bash
 # Dependências Python necessárias
 pip install pandas numpy tensorflow scikit-learn joblib
 ```
 
-### 📁 Estrutura de Arquivos Necessários
+### Estrutura de Arquivos Necessários
 
 ```
 projeto/
@@ -83,7 +83,7 @@ projeto/
 
 ## Uso
 
-### 🚀 Execução Básica
+### Execução Básica
 
 ```bash
 # Classificar arquivo completo
@@ -93,9 +93,9 @@ python scripts/classificador_producao.py
 python scripts/classificador_producao.py --help
 ```
 
-### 📅 Filtro por Data/Hora
+### Filtro por Data/Hora
 
-⚠️ **IMPORTANTE - Fusos Horários**: 
+ **IMPORTANTE - Fusos Horários**:
 - As datas/horas devem ser informadas em **Horário de Brasília (GMT-3)**
 - O script converte automaticamente para **UTC (GMT+0)** usado no banco de dados
 - Exemplo: Se você inserir "16:30:00", será convertido para "19:30:00" UTC
@@ -113,7 +113,7 @@ python scripts/classificador_producao.py \
     --saida results/analise_30min.csv
 ```
 
-### ⚙️ Configurações Avançadas
+### Configurações Avançadas
 
 ```bash
 # Janela temporal personalizada (padrão: 30)
@@ -150,7 +150,7 @@ python scripts/classificador_producao.py \
 
 ## Saída e Resultados
 
-### 📄 Formato do Arquivo de Saída
+### Formato do Arquivo de Saída
 
 O arquivo CSV gerado contém as seguintes colunas:
 
@@ -163,7 +163,7 @@ O arquivo CSV gerado contém as seguintes colunas:
 | `incerteza` | Nível de incerteza da predição (0-1) |
 | `alta_incerteza` | Boolean indicando se incerteza > 0.5 |
 
-### 📊 Estatísticas Exibidas
+### Estatísticas Exibidas
 
 Durante a execução, o script exibe:
 
@@ -175,7 +175,7 @@ Durante a execução, o script exibe:
 - Estatísticas de incerteza (média, máxima, alta incerteza)
 - Confiança da classificação
 
-### 💾 Exemplo de Saída
+### Exemplo de Saída
 
 ```csv
 timestamp,predicao,prob_ligado,prob_desligado,incerteza,alta_incerteza
@@ -186,7 +186,7 @@ timestamp,predicao,prob_ligado,prob_desligado,incerteza,alta_incerteza
 
 ## Exemplos Práticos
 
-### 🔍 Análise de Período de Manutenção
+### Análise de Período de Manutenção
 
 ```bash
 # Analisar 2 horas antes e depois de uma manutenção
@@ -196,7 +196,7 @@ python scripts/classificador_producao.py \
     --saida results/analise_manutencao.csv
 ```
 
-### ⏰ Análise por Turno de Trabalho
+### Análise por Turno de Trabalho
 
 ```bash
 # Turno da manhã (6h às 14h)
@@ -212,7 +212,7 @@ python scripts/classificador_producao.py \
     --saida results/turno_noite.csv
 ```
 
-### 📈 Análise de Evento Específico
+### Análise de Evento Específico
 
 ```bash
 # Analisar 30 minutos antes e depois de um evento
@@ -225,14 +225,14 @@ python scripts/classificador_producao.py \
 
 ## Tratamento de Erros
 
-### ⚠️ Possíveis Problemas
+### Possíveis Problemas
 
 1. **Dados insuficientes**: Se o range especificado contém menos dados que a janela temporal
 2. **Formato de data inválido**: Data/hora em formato incorreto
 3. **Arquivo não encontrado**: Caminho para dados ou modelos incorreto
 4. **Features ausentes**: Colunas necessárias não presentes no arquivo
 
-### 🔧 Soluções
+### Soluções
 
 - Verifique o formato da data: `"YYYY-MM-DD HH:MM:SS"`
 - **Lembre-se**: Use horário de Brasília (GMT-3), não UTC
@@ -243,7 +243,7 @@ python scripts/classificador_producao.py \
 
 ## Integração com Outros Scripts
 
-### 🔗 Fluxo de Trabalho
+### Fluxo de Trabalho
 
 ```bash
 # 1. Processar dados brutos
@@ -263,13 +263,13 @@ python scripts/classificador_producao.py \
 
 ## Performance e Otimização
 
-### ⚡ Considerações de Performance
+### Considerações de Performance
 
 - **Janela temporal**: Valores menores = mais predições, maior processamento
 - **Range de dados**: Períodos maiores = mais tempo de processamento
 - **Memória**: Arquivos grandes podem exigir mais RAM
 
-### 🎯 Recomendações
+### Recomendações
 
 - Use janelas de 30 timesteps (padrão) para corresponder ao modelo treinado
 - Para análises longas, processe em chunks menores
@@ -277,7 +277,7 @@ python scripts/classificador_producao.py \
 
 ## Logs e Debugging
 
-### 📝 Informações de Log
+### Informações de Log
 
 O script fornece logs detalhados incluindo:
 
@@ -287,7 +287,7 @@ O script fornece logs detalhados incluindo:
 - Resultados da classificação
 - Tempo de processamento
 
-### 🐛 Modo Debug
+### Modo Debug
 
 Para debug mais detalhado, adicione prints adicionais no código ou use:
 
@@ -298,7 +298,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 ## Contribuição e Desenvolvimento
 
-### 🔄 Próximas Melhorias
+### Próximas Melhorias
 
 - [ ] Suporte a múltiplos arquivos
 - [ ] Interface web
@@ -306,7 +306,7 @@ logging.basicConfig(level=logging.DEBUG)
 - [ ] Alertas automáticos
 - [ ] Integração com bancos de dados
 
-### 📞 Suporte
+### Suporte
 
 Para dúvidas ou problemas:
 1. Verifique os logs de erro
@@ -316,31 +316,31 @@ Para dúvidas ou problemas:
 
 ---
 
-**Versão**: 3.1  
-**Última atualização**: 2025-10-25  
+**Versão**: 3.1
+**Última atualização**: 2025-10-25
 **Compatibilidade**: Python 3.7+, TensorFlow 2.x
 
 ## Histórico de Versões
 
 ### v3.1 (2025-10-25)
-- ✅ **Correção de fuso horário**: Entrada agora aceita horário de Brasília (GMT-3)
-- ✅ **Conversão automática**: Script converte automaticamente para UTC (GMT+0) do banco
-- ✅ **Mensagens aprimoradas**: Exibe horários em ambos os fusos para confirmação
-- ✅ **Documentação atualizada**: Instruções claras sobre o fuso horário correto
-- ✅ **Melhor UX**: Usuários não precisam mais calcular manualmente UTC
+- **Correção de fuso horário**: Entrada agora aceita horário de Brasília (GMT-3)
+- **Conversão automática**: Script converte automaticamente para UTC (GMT+0) do banco
+- **Mensagens aprimoradas**: Exibe horários em ambos os fusos para confirmação
+- **Documentação atualizada**: Instruções claras sobre o fuso horário correto
+- **Melhor UX**: Usuários não precisam mais calcular manualmente UTC
 
 ### v3.0 (2025-09-24)
-- ✅ **Corrigido tamanho da janela**: Alterado de 50 para 30 timesteps (10 minutos)
-- ✅ **Suporte a dados normalizados**: Novo método `preparar_dados_normalizados()`
-- ✅ **Modelos conservadores**: Usa `cnn_model_conservador.h5` por padrão
-- ✅ **Detecção automática**: Escolhe método baseado no tipo de dados
-- ✅ **Performance melhorada**: Dados já normalizados = processamento mais rápido
-- ✅ **Compatibilidade mantida**: Ainda funciona com dados não normalizados
+- **Corrigido tamanho da janela**: Alterado de 50 para 30 timesteps (10 minutos)
+- **Suporte a dados normalizados**: Novo método `preparar_dados_normalizados()`
+- **Modelos conservadores**: Usa `cnn_model_conservador.h5` por padrão
+- **Detecção automática**: Escolhe método baseado no tipo de dados
+- **Performance melhorada**: Dados já normalizados = processamento mais rápido
+- **Compatibilidade mantida**: Ainda funciona com dados não normalizados
 
 ### v2.0 (2025-02-18)
-- ✅ Filtro por range de data/hora
-- ✅ Interface de linha de comando
-- ✅ Salvamento automático de resultados
+- Filtro por range de data/hora
+- Interface de linha de comando
+- Salvamento automático de resultados
 
 ### v1.0 (2025-02-18)
-- ✅ Classificação básica com modelo CNN
+- Classificação básica com modelo CNN

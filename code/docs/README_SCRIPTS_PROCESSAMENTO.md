@@ -2,7 +2,7 @@
 
 Este documento explica os scripts principais utilizados para processar dados e treinar modelos de classificação de status de equipamentos industriais.
 
-## 📋 Visão Geral
+## Visão Geral
 
 O pipeline completo transforma dados brutos em um modelo de classificação LIGADO/DESLIGADO com 99.92% de precisão:
 
@@ -19,14 +19,14 @@ O pipeline completo transforma dados brutos em um modelo de classificação LIGA
 
 ---
 
-## 🔧 Scripts Principais
+## Scripts Principais
 
 ### 1. `normalizar_dados_kmeans.py`
 
 **Objetivo:** Normaliza dados brutos para uso em clustering K-means usando pipeline avançado do scikit-learn.
 
 **Entrada:** `data/processed/dados_unificados_final.csv`
-**Saída:** 
+**Saída:**
 - `data/normalized/dados_kmeans.csv`
 - `models/scaler_maxmin.pkl`
 - `models/preprocess_pipeline.pkl`
@@ -76,7 +76,7 @@ python scripts/normalizar_dados_kmeans.py --corr-threshold 0.95
 **Objetivo:** Executa K-means com 6 clusters e seleciona apenas os 2 clusters com mais certeza para treinamento.
 
 **Entrada:** `data/normalized/dados_kmeans.csv`
-**Saída:** 
+**Saída:**
 - `data/processed/dados_classificados_kmeans_moderado.csv` (todos os clusters)
 - `data/normalized/dados_kmeans_rotulados_conservador.csv` (apenas clusters de alta certeza)
 
@@ -143,7 +143,7 @@ python scripts/classificador_producao.py
 
 ### 4.1 `analise_intervalo_completa.py`
 
-**Objetivo:** Executa a análise completa de um intervalo temporal (download → processamento → classificação → visualização).
+**Objetivo:** Executa a análise completa de um intervalo temporal (download  processamento  classificação  visualização).
 
 **Funcionalidades:**
 - Orquestração completa do pipeline para intervalos específicos.
@@ -153,7 +153,7 @@ python scripts/classificador_producao.py
 
 ---
 
-## 🔧 Scripts Auxiliares
+## Scripts Auxiliares
 
 ### 5. `preenche_estimated.py`
 
@@ -173,7 +173,7 @@ python scripts/classificador_producao.py
 
 **Objetivo:** Unifica todos os dados processados em um arquivo final com limpeza de outliers.
 
-**Entrada:** 
+**Entrada:**
 - `data/raw/dados_c_636.csv`
 - `data/processed/dados_estimated_preenchidos_avancado.csv`
 - `data/raw/dados_slip_c_636.csv`
@@ -213,7 +213,7 @@ python scripts/unificar_dados_final.py --test
 
 ---
 
-## 🔄 Pipeline Completo
+## Pipeline Completo
 
 ```mermaid
 graph TD
@@ -221,7 +221,7 @@ graph TD
     B --> B1[Remove outliers + Merge nearest]
     B1 --> C[dados_unificados_final.csv - 772k]
     C --> D[normalizar_dados_kmeans.py]
-    D --> D1[Pipeline sklearn: Imputer → Power/Quantile → Scaler → Variance → PCA]
+    D --> D1[Pipeline sklearn: Imputer  Power/Quantile  Scaler  Variance  PCA]
     D1 --> E[dados_kmeans.csv - 772k normalizadas]
     E --> F[kmeans_classificacao_moderado.py]
     F --> F1[K-means 6 clusters + Seleção 99.5%+]
@@ -235,7 +235,7 @@ graph TD
 
 ---
 
-## 📊 Resultados Finais
+## Resultados Finais
 
 ### **Dataset Limpo:**
 - **Total**: 93.910 amostras (12.2% dos dados originais)
@@ -252,7 +252,7 @@ graph TD
 
 ---
 
-## 🚀 Execução Rápida
+## Execução Rápida
 
 Para executar o pipeline completo:
 
@@ -284,7 +284,7 @@ python scripts/normalizar_dados_kmeans.py --quantile normal --pca-components 50
 
 ---
 
-## 📁 Estrutura de Arquivos
+## Estrutura de Arquivos
 
 ```
 NN/
@@ -306,7 +306,7 @@ NN/
 
 ---
 
-## ⚙️ Configurações
+## Configurações
 
 ### **Parâmetros K-means:**
 - **Clusters**: 6
@@ -322,18 +322,18 @@ NN/
 
 ---
 
-## ✅ Validação
+## Validação
 
 O pipeline é validado para garantir:
-- ✅ **Dados limpos**: Apenas clusters com alta certeza
-- ✅ **Performance**: 99.92% de acurácia
-- ✅ **Incerteza baixa**: 0.0003
-- ✅ **Reprodutibilidade**: Scaler e modelos salvos
-- ✅ **Pronto para produção**: Classificador funcional
+- **Dados limpos**: Apenas clusters com alta certeza
+- **Performance**: 99.92% de acurácia
+- **Incerteza baixa**: 0.0003
+- **Reprodutibilidade**: Scaler e modelos salvos
+- **Pronto para produção**: Classificador funcional
 
 ---
 
-## 🎯 Características Especiais
+## Características Especiais
 
 ### **1. Pipeline Avançado de Pré-processamento**
 - **Framework**: scikit-learn completo
@@ -364,7 +364,7 @@ O pipeline é validado para garantir:
 
 ---
 
-## 🚀 Próximos Passos
+## Próximos Passos
 
 1. **Deploy**: Implementar API REST
 2. **Streaming**: Dados em tempo real
@@ -373,7 +373,7 @@ O pipeline é validado para garantir:
 
 ---
 
-## 📊 Estatísticas de Performance
+## Estatísticas de Performance
 
 | Script | Entrada | Saída | Tempo | Resultado |
 |--------|---------|-------|-------|-----------|
@@ -385,17 +385,17 @@ O pipeline é validado para garantir:
 
 ---
 
-## 🎉 Conclusão
+## Conclusão
 
 Este pipeline demonstra como uma **combinação de pré-processamento avançado e seleção inteligente de dados** pode transformar um problema complexo em uma solução de alta performance. As principais conquistas:
 
 ### **Pré-processamento Profissional:**
-- **Pipeline sklearn completo**: Imputer → Transform → Scaler → Feature Selection → PCA
+- **Pipeline sklearn completo**: Imputer  Transform  Scaler  Feature Selection  PCA
 - **Limpeza de outliers**: Baseada em limites físicos do sistema
 - **Validação temporal**: Garante integridade dos timestamps
 
 ### **Qualidade sobre Quantidade:**
-- **Redução inteligente**: 772k → 93k amostras (12.2%)
+- **Redução inteligente**: 772k  93k amostras (12.2%)
 - **Alta certeza**: Apenas clusters com 99.5%+ de pureza
 - **Performance excepcional**: 99.92% de acurácia
 
@@ -404,11 +404,11 @@ Este pipeline demonstra como uma **combinação de pré-processamento avançado 
 - **Reprodutibilidade**: Pipeline e modelos salvos
 - **Flexibilidade**: Múltiplas opções de configuração
 
-**🚀 O modelo está pronto para produção com confiança total!**
+** O modelo está pronto para produção com confiança total!**
 
 ### **Diferenciais:**
-✅ Pipeline modular e configurável  
-✅ Limpeza automática de outliers  
-✅ Validação temporal completa  
-✅ Detecção de incerteza integrada  
-✅ 99.92% de acurácia em produção
+ Pipeline modular e configurável
+ Limpeza automática de outliers
+ Validação temporal completa
+ Detecção de incerteza integrada
+ 99.92% de acurácia em produção
