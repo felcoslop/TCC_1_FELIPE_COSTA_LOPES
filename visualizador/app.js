@@ -104,12 +104,14 @@ function renderCards(lista) {
         return;
     }
     el("msg-selecao").textContent = "Selecione um equipamento:";
-    for (const eq of lista) {
+
+    // Cria o elemento de card para um equipamento
+    const criarCard = (eq) => {
         const pctOn = eq.pct_ligado != null ? eq.pct_ligado : 0;
         const card = document.createElement("div");
         card.className = "card";
         const info = EQUIP_INFO[eq.mpoint] || { nome: eq.mpoint, tipo: eq.tipo, descr: eq.mpoint, detalhes: "", horas: { ligado: 0, desligado: 0, sem_dados: 0 } };
-        
+
         // Define ícone com base no tipo (elétrico = raio, mecânico = engrenagem)
         const tagIcon = eq.tipo === "eletrico"
             ? `<i data-lucide="zap"></i>`
@@ -127,9 +129,25 @@ function renderCards(lista) {
             </div>
             <div class="bar"><span style="width:${pctOn}%"></span></div>`;
         card.onclick = () => abrirEquipamento(eq);
-        cont.appendChild(card);
+        return card;
+    };
+
+    // Separa por tipo: elétricos na primeira linha, mecânicos na segunda
+    const eletricos = lista.filter((eq) => eq.tipo === "eletrico");
+    const mecanicos = lista.filter((eq) => eq.tipo !== "eletrico");
+
+    const linhaEletricos = document.createElement("div");
+    linhaEletricos.className = "card-row";
+    for (const eq of eletricos) linhaEletricos.appendChild(criarCard(eq));
+    cont.appendChild(linhaEletricos);
+
+    if (mecanicos.length) {
+        const linhaMecanicos = document.createElement("div");
+        linhaMecanicos.className = "card-row";
+        for (const eq of mecanicos) linhaMecanicos.appendChild(criarCard(eq));
+        cont.appendChild(linhaMecanicos);
     }
-    
+
     // Inicializa todos os ícones Lucide no documento (tanto os botões quanto as tags)
     if (window.lucide) {
         lucide.createIcons();
