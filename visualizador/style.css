@@ -40,6 +40,82 @@ body {
     color: #7f8c8d;
 }
 
+/* Bloco de contexto do TCC no cabecalho */
+.tcc-info {
+    max-width: 760px;
+    margin: 14px auto 0;
+    padding: 12px 18px;
+    background: #f6f9fc;
+    border: 1px solid var(--borda);
+    border-radius: 10px;
+}
+
+.tcc-info .tcc-badge {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+    color: var(--azul);
+}
+
+.tcc-info .tcc-titulo {
+    margin: 6px 0 0;
+    font-size: 15px;
+    font-style: italic;
+    color: var(--texto);
+}
+
+.tcc-info .tcc-autor {
+    margin: 6px 0 0;
+    font-size: 13px;
+    color: #7f8c8d;
+}
+
+/* Rodape da pagina inicial */
+.rodape {
+    max-width: 820px;
+    margin: 28px auto 24px;
+    padding: 16px;
+    border-top: 1px solid var(--borda);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+}
+
+.rodape-autor {
+    font-size: 13px;
+    color: #7f8c8d;
+}
+
+.rodape-github {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border: 1px solid var(--borda);
+    border-radius: 999px;
+    background: var(--carta);
+    color: var(--texto);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: border-color .12s, color .12s, box-shadow .12s;
+}
+
+.rodape-github:hover {
+    border-color: var(--azul);
+    color: var(--azul);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
+}
+
+.rodape-github svg {
+    width: 18px;
+    height: 18px;
+}
+
 .msg {
     text-align: center;
     color: #7f8c8d;

@@ -559,11 +559,13 @@ window.addEventListener("click", (event) => {
 });
 
 // Marcador de versao: confira no console (F12) e no rodape se carregou o codigo novo.
-const BUILD = "2026-06-04-m3";
+const BUILD = "2026-06-09-tcc";
 console.log("%c[Visualizador] build " + BUILD, "color:#2980b9;font-weight:bold");
 window.addEventListener("DOMContentLoaded", () => {
     const d = document.querySelector(".dica");
     if (d) d.insertAdjacentText("beforeend", "  ·  build " + BUILD);
+    // Renderiza icones estaticos (rodape GitHub etc.) mesmo antes do manifest carregar
+    if (window.lucide) lucide.createIcons();
 });
 
 iniciar();
